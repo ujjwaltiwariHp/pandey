@@ -1573,11 +1573,58 @@ th:last-child { text-align: center; }
 /* Responsive styling updates */
 @media (max-width: 900px) {
   .admin-layout { flex-direction: column; }
-  .admin-sidebar { width: 100%; height: auto; max-height: 280px; border-right: none; border-bottom: 2px solid var(--secondary); }
-  .admin-main { flex-grow: 1; height: calc(100vh - 280px); }
+  
+  /* Mobile Admin Topbar */
+  .admin-topbar { padding: 16px 20px; flex-direction: column; gap: 15px; align-items: flex-start; height: auto; }
+  .topbar-left-group { display: flex; align-items: center; gap: 15px; width: 100%; }
+  
+  .mobile-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(46,125,50,0.1);
+    border: none;
+    color: var(--primary-dark);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background 0.3s;
+  }
+  .mobile-menu-btn:hover { background: rgba(46,125,50,0.2); }
+
+  .topbar-actions { width: 100%; justify-content: flex-start; overflow-x: auto; padding-bottom: 5px; }
+
+  /* Off-canvas sidebar */
+  .admin-sidebar {
+    position: fixed;
+    top: 0;
+    left: -300px;
+    width: 280px;
+    height: 100vh;
+    z-index: 1000;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 5px 0 15px rgba(0,0,0,0.2);
+  }
+  .admin-sidebar.open {
+    left: 0;
+  }
+  
+  .sidebar-mobile-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+    backdrop-filter: blur(2px);
+  }
+
+  .admin-main { flex-grow: 1; height: 100vh; }
   .hide-mobile { display: none; }
   .section-header h2 { font-size: 2.5rem; }
-  .admin-topbar { padding: 16px 20px; flex-direction: column; gap: 15px; align-items: flex-start; }
+  
   .admin-content { padding: 20px 10px; }
   .modal { padding: 20px; }
   .modal-grid-2, .modal-grid-3 { grid-template-columns: 1fr; }
@@ -1644,6 +1691,9 @@ th:last-child { text-align: center; }
   .site-footer {
     padding: 50px 16px 30px;
   }
+  .footer-content {
+    align-items: center;
+  }
   .footer-content h3 {
     font-size: 1.8rem;
   }
@@ -1652,10 +1702,22 @@ th:last-child { text-align: center; }
     gap: 12px;
     margin: 20px 0;
     font-size: 0.95rem;
+    text-align: center;
   }
   .footer-divider {
     display: none;
   }
+  .footer-map {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 30px;
+  }
+  /* Hide sidebar close btn on mobile since it's default display block? No, wait. */
+}
+
+/* Hide mobile elements on desktop */
+@media (min-width: 901px) {
+  .mobile-close-btn { display: none !important; }
 }
 
 @keyframes fadeInUp {

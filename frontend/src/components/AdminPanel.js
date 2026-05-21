@@ -31,7 +31,8 @@ import {
   FaExternalLinkAlt,
   FaAngleLeft,
   FaAngleRight,
-  FaQuestionCircle
+  FaQuestionCircle,
+  FaBars
 } from "react-icons/fa";
 import AdminHelpGuide from "./AdminHelpGuide";
 
@@ -40,6 +41,7 @@ export default function AdminPanel() {
   const [activeListId, setActiveListId] = useState(null); // null means Dashboard Home
   const [loading, setLoading] = useState(true);
   const [showListModal, setShowListModal] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
   // Item Form Panel (rendered above table)
   const [showItemForm, setShowItemForm] = useState(false);
@@ -463,20 +465,35 @@ export default function AdminPanel() {
         />
       )}
 
+      {/* Mobile Sidebar Overlay */}
+      {isSidebarOpen && (
+        <div className="sidebar-mobile-overlay" onClick={() => setIsSidebarOpen(false)}></div>
+      )}
+
       {renderPrintPages()}
 
       {/* Sidebar navigation */}
-      <aside className="admin-sidebar" style={{ paddingTop: '20px' }}>
+      <aside className={`admin-sidebar ${isSidebarOpen ? "open" : ""}`} style={{ paddingTop: '20px' }}>
+        <div className="sidebar-mobile-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 20px 20px', borderBottom: '1px solid rgba(255,255,255,0.15)', marginBottom: '20px' }}>
+          <span style={{ fontWeight: 800, fontSize: '1.2rem', color: '#fff' }}>मेनू (Menu)</span>
+          <button 
+            className="mobile-close-btn" 
+            onClick={() => setIsSidebarOpen(false)}
+            style={{ background: 'none', border: 'none', color: '#fff', fontSize: '1.5rem', cursor: 'pointer', padding: '5px' }}
+          >
+            <FaTimes />
+          </button>
+        </div>
         <div className="sidebar-menu">
           <button 
             className={`sidebar-menu-btn ${activeListId === null ? "active" : ""}`}
-            onClick={() => setActiveListId(null)}
+            onClick={() => { setActiveListId(null); setIsSidebarOpen(false); }}
           >
             <FaTachometerAlt /> Dashboard Home
           </button>
           <button 
             className={`sidebar-menu-btn ${activeListId === "help" ? "active" : ""}`}
-            onClick={() => setActiveListId("help")}
+            onClick={() => { setActiveListId("help"); setIsSidebarOpen(false); }}
           >
             <FaQuestionCircle /> कैसे उपयोग करें? (Guide)
           </button>
@@ -519,8 +536,13 @@ export default function AdminPanel() {
       <main className="admin-main">
         {/* Navigation Bar */}
         <div className="admin-topbar">
-          <div className="topbar-title">
-            {activeList ? activeList.title : activeListId === "help" ? "एडमिन गाइड (Help)" : "Dashboard"}
+          <div className="topbar-left-group">
+            <button className="mobile-menu-btn" onClick={() => setIsSidebarOpen(true)}>
+              <FaBars />
+            </button>
+            <div className="topbar-title">
+              {activeList ? activeList.title : activeListId === "help" ? "एडमिन गाइड (Help)" : "Dashboard"}
+            </div>
           </div>
           <div className="topbar-actions">
             {/* Edit & Delete only visible when a category is active */}

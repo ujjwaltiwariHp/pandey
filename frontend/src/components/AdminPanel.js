@@ -365,7 +365,7 @@ export default function AdminPanel() {
                </div>
                
                <div className="print-title">
-                 {activeList.title} — Page {pageIndex + 1} of {pages.length}
+                 {activeList.title}
                </div>
 
                <div className="print-table-wrap">
@@ -409,6 +409,11 @@ export default function AdminPanel() {
              
              <div className="print-footer">
                 <p>गुणवत्तापूर्ण खाद, बीज एवं कृषि रसायन के विश्वनीय विक्रेता।</p>
+                {pages.length > 1 && (
+                  <p style={{ fontSize: '10px', color: '#888', marginTop: '6px', fontWeight: 400 }}>
+                    पृष्ठ {pageIndex + 1} / {pages.length}
+                  </p>
+                )}
              </div>
           </div>
         ))}

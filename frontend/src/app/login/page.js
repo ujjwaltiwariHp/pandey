@@ -70,7 +70,12 @@ export default function LoginPage() {
               </div>
             </div>
             <button type="submit" className="btn-login" disabled={loading}>
-              {loading ? "Logging in..." : "Secure Login"}
+              {loading ? (
+                <>
+                  <span className="btn-login-spinner"></span>
+                  Logging in...
+                </>
+              ) : "Secure Login"}
             </button>
             {error && <div className="login-error">{error}</div>}
           </form>

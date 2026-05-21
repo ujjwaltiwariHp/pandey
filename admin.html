@@ -1695,23 +1695,38 @@
 
             if (savedLists) {
                 lists = JSON.parse(savedLists);
-                // MIGRATION: Add land type to dhanya_beej if missing
+                // MIGRATION: Split Land type and Nursery
                 let db = lists.find(l => l.id === 'dhanya_beej');
-                if (db && db.columns.length === 4) {
+                if (db && db.columns.length === 5 && db.columns[4] === 'भूमि का प्रकार') {
+                    db.columns.push('नर्सरी समय');
+                    db.items.forEach(item => {
+                        let oldVal = item.values[4] || '';
+                        if (oldVal.includes('नर्सरी:')) {
+                            let parts = oldVal.split('(नर्सरी:');
+                            item.values[4] = parts[0].trim();
+                            item.values.push(parts[1].replace(')', '').trim());
+                        } else {
+                            item.values.push('—');
+                        }
+                    });
+                    saveLists();
+                } else if (db && db.columns.length === 4) {
                     db.columns.push('भूमि का प्रकार');
+                    db.columns.push('नर्सरी समय');
                     db.items.forEach(item => {
                         let daysStr = item.values[3];
-                        let land = '—';
+                        let land = '—'; let nurs = '—';
                         if(daysStr) {
                             let match = daysStr.toString().match(/\d+/);
                             if(match) {
                                 let days = parseInt(match[0]);
-                                if(days > 140) land = 'खाला / जल जमाव (नर्सरी: 25 मई - 10 जून)';
-                                else if(days >= 120) land = 'मध्यम भूमि (नर्सरी: 10 जून - 20 जून)';
-                                else land = 'ऊँची भूमि (नर्सरी: 20 जून - 30 जून)';
+                                if(days > 140) { land = 'खाला / जल जमाव'; nurs = '25 मई - 10 जून'; }
+                                else if(days >= 120) { land = 'मध्यम भूमि'; nurs = '10 जून - 20 जून'; }
+                                else { land = 'ऊँची भूमि'; nurs = '20 जून - 30 जून'; }
                             }
                         }
                         item.values.push(land);
+                        item.values.push(nurs);
                     });
                     saveLists();
                 }
@@ -1729,7 +1744,8 @@
                                 item.type === 'motka' ? 'मोटा धान' : (item.type === 'mehi' ? 'महीन धान' : 'नई किस्म'),
                                 item.company || '—',
                                 item.days || '—',
-                                (function(d){ let m = (d||'').toString().match(/\d+/); if(!m) return '—'; let v = parseInt(m[0]); if(v>140) return 'खाला / जल जमाव (नर्सरी: 25 मई - 10 जून)'; if(v>=120) return 'मध्यम भूमि (नर्सरी: 10 जून - 20 जून)'; return 'ऊँची भूमि (नर्सरी: 20 जून - 30 जून)'; })(item.days)
+                                (function(d){ let m = (d||'').toString().match(/\d+/); if(!m) return '—'; let v = parseInt(m[0]); if(v>140) return 'खाला / जल जमाव'; if(v>=120) return 'मध्यम भूमि'; return 'ऊँची भूमि'; })(item.days),
+                                (function(d){ let m = (d||'').toString().match(/\d+/); if(!m) return '—'; let v = parseInt(m[0]); if(v>140) return '25 मई - 10 जून'; if(v>=120) return '10 जून - 20 जून'; return '20 जून - 30 जून'; })(item.days)
                             ],
                             highlight: item.type === 'naya' ? 'purple' : (item.type === 'motka' ? 'orange' : 'green')
                         };
@@ -1738,7 +1754,7 @@
                         {
                             id: "dhanya_beej",
                             title: "धान बीज मूल्य सूची — खरीफ",
-                            columns: ["बीज का नाम", "प्रकार", "कंपनी / ब्रांड", "अवधि (दिन)", "भूमि का प्रकार"],
+                            columns: ["बीज का नाम", "प्रकार", "कंपनी / ब्रांड", "अवधि (दिन)", "भूमि का प्रकार", "नर्सरी समय"],
                             highlights: {
                                 orange: "मोटा धान",
                                 green: "महीन धान",
@@ -1755,7 +1771,8 @@
                                 item.type === 'motka' ? 'मोटा धान' : (item.type === 'mehi' ? 'महीन धान' : 'नई किस्म'),
                                 item.company,
                                 item.days,
-                                (function(d){ let m = (d||'').toString().match(/\d+/); if(!m) return '—'; let v = parseInt(m[0]); if(v>140) return 'खाला / जल जमाव (नर्सरी: 25 मई - 10 जून)'; if(v>=120) return 'मध्यम भूमि (नर्सरी: 10 जून - 20 जून)'; return 'ऊँची भूमि (नर्सरी: 20 जून - 30 जून)'; })(item.days)
+                                (function(d){ let m = (d||'').toString().match(/\d+/); if(!m) return '—'; let v = parseInt(m[0]); if(v>140) return 'खाला / जल जमाव'; if(v>=120) return 'मध्यम भूमि'; return 'ऊँची भूमि'; })(item.days),
+                                (function(d){ let m = (d||'').toString().match(/\d+/); if(!m) return '—'; let v = parseInt(m[0]); if(v>140) return '25 मई - 10 जून'; if(v>=120) return '10 जून - 20 जून'; return '20 जून - 30 जून'; })(item.days)
                             ],
                             highlight: item.isNew ? 'purple' : (item.type === 'motka' ? 'orange' : 'green')
                         };
@@ -1765,7 +1782,7 @@
                         {
                             id: "dhanya_beej",
                             title: "धान बीज मूल्य सूची — खरीफ",
-                            columns: ["बीज का नाम", "प्रकार", "कंपनी / ब्रांड", "अवधि (दिन)", "भूमि का प्रकार"],
+                            columns: ["बीज का नाम", "प्रकार", "कंपनी / ब्रांड", "अवधि (दिन)", "भूमि का प्रकार", "नर्सरी समय"],
                             highlights: {
                                 orange: "मोटा धान",
                                 green: "महीन धान",
@@ -2488,10 +2505,10 @@
             phone: '8969730344',
             owner: 'प्रो. रत्नेश कुमार'
         };
-        const PER_PAGE = 20;
+        const PER_PAGE = 13;
 
-        const A4W = 794;
-        const A4H = 1123;
+        const A4W = 1123;
+        const A4H = 794;
         const SCALE = 2; // retina quality
 
         function drawPage(ctx, pageSeeds, pageNum, totalPages) {
@@ -2622,7 +2639,7 @@
             const availableW = tblW - snoW;
 
             // Column 1 is wider (38%), other custom columns are distributed equally
-            const col1W = Math.round(availableW * 0.38);
+            const col1W = Math.round(availableW * 0.25);
             const otherW = Math.round((availableW - col1W) / (numCols - 1));
 
             const cols = [];

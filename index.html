@@ -1,0 +1,2228 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>पाण्डेय ट्रेडर्स — खाद बीज भंडार</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --g1: #0a3d0a;
+            --g2: #1b5e20;
+            --g3: #2e7d32;
+            --g4: #388e3c;
+            --g5: #43a047;
+            --g-pale: #e8f5e9;
+            --gold: #ffd600;
+            --gold2: #f9a825;
+            --gold3: #e65100;
+            --gold-pale: #fffde7;
+            --amber: #fff3e0;
+            --purple: #6a1b9a;
+            --purple-pale: #f3e5f5;
+            --red: #c62828;
+            --red-pale: #ffebee;
+            --blue: #1565c0;
+            --blue-pale: #e3f2fd;
+            --cream: #fafaf0;
+            --brown: #1a0a00;
+            --text: #212121;
+            --text2: #5d4037;
+            --border: #a5c56a;
+            --border2: #c8a63a;
+            --shadow: 0 4px 24px rgba(0, 0, 0, .13);
+            --radius: 14px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #eef3e0;
+            background-image:
+                radial-gradient(ellipse at 10% 0%, rgba(27, 94, 32, .12) 0%, transparent 55%),
+                radial-gradient(ellipse at 90% 100%, rgba(200, 134, 11, .1) 0%, transparent 55%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232e7d32' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            min-height: 100vh;
+            color: var(--text);
+        }
+
+        /* ── PAGE ── */
+        .page {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 18px 12px 48px;
+        }
+
+        /* ── HEADER ── */
+        header {
+            background: linear-gradient(160deg, var(--g1) 0%, var(--g2) 40%, var(--g3) 100%);
+            border-radius: var(--radius) var(--radius) 0 0;
+            border: 3px solid var(--gold2);
+            border-bottom: none;
+            overflow: hidden;
+            position: relative;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0 Q60 25 50 50 Q40 75 50 100' stroke='rgba(255,214,0,0.06)' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        .top-strip {
+            background: rgba(0, 0, 0, .25);
+            padding: 5px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 4px;
+            border-bottom: 1px solid rgba(255, 214, 0, .2);
+        }
+
+        .top-strip span {
+            color: var(--gold);
+            font-family: 'Baloo 2', cursive;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .hdr-body {
+            padding: 20px 24px 10px;
+            text-align: center;
+            position: relative;
+        }
+
+        .leaf-deco {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+
+        .leaf-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold2), transparent);
+        }
+
+        .leaf-icon {
+            font-size: 18px;
+        }
+
+        .shop-name {
+            font-family: 'Baloo 2', cursive;
+            font-size: 36px;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, .4), 0 0 30px rgba(255, 214, 0, .2);
+            margin: 6px 0 2px;
+            letter-spacing: 1px;
+        }
+
+        .shop-name em {
+            color: var(--gold);
+            font-style: normal;
+        }
+
+        .shop-sub {
+            font-family: 'Baloo 2', cursive;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: .5px;
+            margin-bottom: 6px;
+        }
+
+        .hdr-tagline {
+            color: #b9f6ca;
+            font-size: 12.5px;
+            font-style: italic;
+            margin: 2px 0 10px;
+            opacity: .9;
+        }
+
+        .hdr-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .hdr-info-chip {
+            background: rgba(255, 255, 255, .1);
+            border: 1px solid rgba(255, 214, 0, .3);
+            border-radius: 20px;
+            padding: 4px 14px;
+            font-size: 12.5px;
+            color: #fff;
+            font-family: 'Baloo 2', cursive;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            backdrop-filter: blur(4px);
+        }
+
+        .hdr-info-chip strong {
+            color: var(--gold);
+        }
+
+        .title-bar {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 100%);
+            padding: 10px 20px;
+            text-align: center;
+            border-top: 2px solid rgba(255, 255, 255, .2);
+        }
+
+        .title-bar p {
+            font-family: 'Baloo 2', cursive;
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--g1);
+            letter-spacing: .5px;
+        }
+
+        /* ── MAIN CARD ── */
+        .main-card {
+            background: var(--cream);
+            border: 3px solid var(--gold2);
+            border-top: none;
+            border-radius: 0 0 var(--radius) var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        /* ── TOOLBAR ── */
+        .toolbar {
+            padding: 12px 16px;
+            background: #f7f9ee;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-wrap {
+            flex: 1;
+            min-width: 180px;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-wrap .s-icon {
+            position: absolute;
+            left: 10px;
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        .search-wrap input {
+            width: 100%;
+            padding: 8px 12px 8px 32px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 13.5px;
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            background: #fff;
+            outline: none;
+            transition: border-color .2s, box-shadow .2s;
+            color: var(--brown);
+        }
+
+        .search-wrap input:focus {
+            border-color: var(--g3);
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, .12);
+        }
+
+        .filter-sel {
+            padding: 8px 12px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 13px;
+            font-family: 'Baloo 2', cursive;
+            background: #fff;
+            cursor: pointer;
+            outline: none;
+            color: var(--brown);
+            transition: border-color .2s;
+        }
+
+        .filter-sel:focus {
+            border-color: var(--g3);
+        }
+
+        /* ── STATS ── */
+        .stats-bar {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 8px 16px;
+            background: #f0f4e0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stat-chip {
+            background: #fff;
+            border: 1.5px solid var(--border);
+            border-radius: 20px;
+            padding: 3px 12px;
+            font-size: 12px;
+            font-family: 'Baloo 2', cursive;
+            font-weight: 700;
+            color: var(--g2);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .stat-chip span {
+            background: var(--g3);
+            color: #fff;
+            border-radius: 10px;
+            padding: 0 6px;
+            font-size: 11px;
+        }
+
+        /* ── LEGEND ── */
+        .legend {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 8px 16px;
+            background: #f9f9e8;
+            border-bottom: 1px solid #e0d87a;
+            justify-content: center;
+        }
+
+        .leg-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 11.5px;
+            font-weight: 700;
+            font-family: 'Baloo 2', cursive;
+            border: 1.5px solid;
+        }
+
+        .lp-m {
+            background: var(--amber);
+            color: #bf4000;
+            border-color: var(--gold3);
+        }
+
+        .lp-h {
+            background: var(--g-pale);
+            color: var(--g2);
+            border-color: var(--g4);
+        }
+
+        .lp-n {
+            background: var(--purple-pale);
+            color: var(--purple);
+            border-color: var(--purple);
+        }
+
+        /* ── TABLE ── */
+        .tbl-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13.5px;
+            font-family: 'Noto Sans Devanagari', sans-serif;
+        }
+
+        thead th {
+            background: var(--g2);
+            color: var(--gold);
+            font-family: 'Baloo 2', cursive;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 11px 10px;
+            text-align: center;
+            border: 1px solid var(--g1);
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        thead th.left {
+            text-align: left;
+            padding-left: 14px;
+        }
+
+        tbody tr {
+            transition: background .15s;
+        }
+
+        tbody tr:nth-child(odd) {
+            background: rgba(255, 255, 255, .95);
+        }
+
+        tbody tr:nth-child(even) {
+            background: rgba(245, 255, 220, .6);
+        }
+
+        tbody tr.motka {
+            border-left: 4px solid var(--gold3);
+        }
+
+        tbody tr.mehi {
+            border-left: 4px solid var(--g4);
+        }
+
+        tbody tr.naya {
+            border-left: 4px solid var(--purple);
+            background: rgba(243, 229, 245, .45) !important;
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 215, 0, .15) !important;
+        }
+
+        tbody tr.editing {
+            background: rgba(225, 245, 254, .6) !important;
+            outline: 2px solid var(--blue) inset;
+        }
+
+        td {
+            padding: 9px 10px;
+            color: var(--brown);
+            border: 1px solid #dbc86a;
+            vertical-align: middle;
+            line-height: 1.4;
+        }
+
+        td.sno {
+            text-align: center;
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            color: #7a4000;
+            width: 42px;
+        }
+
+        td.name-col {
+            font-weight: 600;
+            min-width: 130px;
+        }
+
+        td.center {
+            text-align: center;
+        }
+
+        /* Tags */
+        .vtag {
+            display: inline-flex;
+            align-items: center;
+            font-size: 10.5px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-family: 'Baloo 2', cursive;
+            border: 1px solid;
+            white-space: nowrap;
+        }
+
+        .vtm {
+            background: var(--amber);
+            color: #bf4000;
+            border-color: var(--gold3);
+        }
+
+        .vth {
+            background: var(--g-pale);
+            color: var(--g2);
+            border-color: var(--g4);
+        }
+
+        .vtn {
+            background: var(--purple-pale);
+            color: var(--purple);
+            border-color: var(--purple);
+        }
+
+        .dbadge {
+            display: inline-block;
+            background: var(--g2);
+            color: var(--gold);
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-family: 'Baloo 2', cursive;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        /* ── ACTION BUTTONS in table ── */
+        .action-btns {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            flex-wrap: nowrap;
+        }
+
+        .btn-lbl {
+            font-size: 10.5px;
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            font-weight: 600;
+            margin-left: 3px;
+            font-style: normal;
+        }
+
+
+        .btn-edit {
+            background: var(--blue-pale);
+            color: var(--blue);
+            border: 1.5px solid #90caf9;
+            border-radius: 8px;
+            padding: 5px 11px;
+            cursor: pointer;
+            font-size: 13px;
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            font-weight: 600;
+            transition: background .15s, transform .1s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-edit:hover {
+            background: #bbdefb;
+            transform: scale(1.05);
+        }
+
+        .btn-del {
+            background: var(--red-pale);
+            color: var(--red);
+            border: 1.5px solid #ef9a9a;
+            border-radius: 8px;
+            padding: 5px 11px;
+            cursor: pointer;
+            font-size: 13px;
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            font-weight: 600;
+            transition: background .15s, transform .1s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-del:hover {
+            background: #ffcdd2;
+            transform: scale(1.05);
+        }
+
+        .btn-save-row {
+            background: #e8f5e9;
+            color: var(--g2);
+            border: 1.5px solid #a5d6a7;
+            border-radius: 8px;
+            padding: 5px 11px;
+            cursor: pointer;
+            font-size: 13px;
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            font-weight: 600;
+            transition: background .15s, transform .1s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-save-row:hover {
+            background: #c8e6c9;
+        }
+
+        .btn-cancel-row {
+            background: #fff3e0;
+            color: #bf4000;
+            border: 1.5px solid #ffcc80;
+            border-radius: 8px;
+            padding: 5px 11px;
+            cursor: pointer;
+            font-size: 13px;
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            font-weight: 600;
+            transition: background .15s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-cancel-row:hover {
+            background: #ffe0b2;
+        }
+
+        /* Inline edit inputs */
+        .inline-input {
+            width: 100%;
+            padding: 4px 8px;
+            border: 2px solid var(--blue);
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            background: #fff;
+            outline: none;
+            color: var(--brown);
+        }
+
+        .inline-sel {
+            width: 100%;
+            padding: 4px 6px;
+            border: 2px solid var(--blue);
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: 'Baloo 2', cursive;
+            background: #fff;
+            cursor: pointer;
+            color: var(--brown);
+        }
+
+        /* ── EMPTY STATE ── */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #aaa;
+            font-family: 'Baloo 2', cursive;
+            font-size: 18px;
+        }
+
+        .empty-state span {
+            display: block;
+            font-size: 40px;
+            margin-bottom: 8px;
+        }
+
+        /* ── NOTE STRIP ── */
+        .note-strip {
+            background: #f5f5dc;
+            border-top: 1px solid var(--border2);
+            padding: 7px 16px;
+            text-align: center;
+            font-size: 12px;
+            color: #3a2600;
+            font-style: italic;
+        }
+
+        /* ── ADD FORM PANEL ── */
+        .form-panel {
+            background: linear-gradient(155deg, var(--g1) 0%, var(--g2) 50%, var(--g3) 100%);
+            border-top: 3px solid var(--gold);
+            padding: 22px 22px 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-panel::before {
+            content: '🌾';
+            position: absolute;
+            right: 20px;
+            top: 14px;
+            font-size: 60px;
+            opacity: .06;
+            transform: rotate(15deg);
+            pointer-events: none;
+        }
+
+        .form-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--gold);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-title .badge {
+            background: var(--gold);
+            color: var(--g1);
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 900;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .field label {
+            font-size: 11.5px;
+            color: #ccff90;
+            font-family: 'Baloo 2', cursive;
+            font-weight: 700;
+            letter-spacing: .3px;
+            text-transform: uppercase;
+        }
+
+        .field input,
+        .field select {
+            background: rgba(255, 255, 255, .96);
+            border: 2px solid rgba(255, 214, 0, .35);
+            border-radius: 9px;
+            padding: 9px 12px;
+            font-size: 13.5px;
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            color: var(--brown);
+            outline: none;
+            transition: border-color .2s, box-shadow .2s;
+            width: 100%;
+        }
+
+        .field input:focus,
+        .field select:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(255, 214, 0, .2);
+        }
+
+        .field input.err {
+            border-color: #ff5252;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 100%);
+            color: var(--g1);
+            border: none;
+            border-radius: 10px;
+            padding: 10px 26px;
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform .15s, box-shadow .15s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 3px 12px rgba(255, 214, 0, .4);
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 18px rgba(255, 214, 0, .5);
+        }
+
+        .btn-add:active {
+            transform: scale(.97);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #ccff90;
+            border: 2px solid rgba(204, 255, 144, .5);
+            border-radius: 10px;
+            padding: 10px 18px;
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background .15s, border-color .2s;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, .08);
+            border-color: #ccff90;
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 18px;
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform .15s, box-shadow .15s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 3px 12px rgba(26, 35, 126, .4);
+            margin-left: auto;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 18px rgba(26, 35, 126, .5);
+        }
+
+        /* ── TOAST ── */
+        .toast-wrap {
+            position: fixed;
+            top: 18px;
+            right: 18px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: #fff;
+            border-left: 4px solid var(--g3);
+            border-radius: 10px;
+            padding: 12px 18px;
+            font-family: 'Baloo 2', cursive;
+            font-size: 14px;
+            color: var(--text);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, .18);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: toastIn .3s cubic-bezier(.175, .885, .32, 1.275);
+            max-width: 300px;
+        }
+
+        .toast.err {
+            border-left-color: #c62828;
+        }
+
+        .toast.warn {
+            border-left-color: #f57c00;
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes toastOut {
+            from {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+        }
+
+        .toast.out {
+            animation: toastOut .3s forwards;
+        }
+
+        /* ── CONFIRM MODAL ── */
+        .modal-bg {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 8000;
+            background: rgba(0, 0, 0, .5);
+            backdrop-filter: blur(3px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-bg.open {
+            display: flex;
+        }
+
+        .modal {
+            background: #fff;
+            border-radius: 16px;
+            padding: 28px 28px 24px;
+            max-width: 380px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .3);
+            text-align: center;
+            animation: modalIn .25s cubic-bezier(.175, .885, .32, 1.275);
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(.85);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+
+        .modal h3 {
+            font-family: 'Baloo 2', cursive;
+            font-size: 20px;
+            font-weight: 800;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .modal p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .modal-btns {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .modal-cancel {
+            padding: 9px 22px;
+            border-radius: 10px;
+            background: #f5f5f5;
+            color: #555;
+            border: none;
+            font-family: 'Baloo 2', cursive;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .15s;
+        }
+
+        .modal-cancel:hover {
+            background: #e0e0e0;
+        }
+
+        .modal-confirm {
+            padding: 9px 22px;
+            border-radius: 10px;
+            background: var(--red);
+            color: #fff;
+            border: none;
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background .15s, transform .1s;
+        }
+
+        .modal-confirm:hover {
+            background: #b71c1c;
+            transform: scale(1.03);
+        }
+
+        /* ── DOWNLOAD MODAL ── */
+        .dl-modal {
+            background: #fff;
+            border-radius: 16px;
+            padding: 32px 28px 28px;
+            max-width: 440px;
+            width: 92%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .3);
+            text-align: center;
+            animation: modalIn .25s cubic-bezier(.175, .885, .32, 1.275);
+        }
+
+        .dl-modal h3 {
+            font-family: 'Baloo 2', cursive;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--g2);
+            margin-bottom: 6px;
+        }
+
+        .dl-modal p {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .dl-prog {
+            background: #e8f5e9;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .dl-bar-wrap {
+            background: #c8e6c9;
+            border-radius: 6px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .dl-bar {
+            background: linear-gradient(90deg, var(--g3), var(--g5));
+            height: 100%;
+            width: 0;
+            transition: width .4s;
+        }
+
+        .dl-status {
+            font-family: 'Baloo 2', cursive;
+            font-size: 13px;
+            color: var(--g2);
+            font-weight: 600;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            background: linear-gradient(135deg, var(--g1) 0%, var(--g2) 100%);
+            border-top: 3px solid var(--gold);
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .ftr-l p {
+            color: #b9f6ca;
+            font-size: 12px;
+            line-height: 1.9;
+        }
+
+        .ftr-l p:first-child {
+            color: #fff;
+            font-family: 'Baloo 2', cursive;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .ftr-r {
+            text-align: right;
+        }
+
+        .ftr-r .fn {
+            color: #b9f6ca;
+            font-size: 11.5px;
+        }
+
+        .ftr-r .fp {
+            font-family: 'Baloo 2', cursive;
+            color: var(--gold);
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        /* ── ROW ANIM ── */
+        @keyframes rowIn {
+            from {
+                opacity: 0;
+                background: rgba(255, 214, 0, .35);
+                transform: translateX(-8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .row-new {
+            animation: rowIn .4s ease;
+        }
+
+        /* ── TRANSLITERATION SUGGESTIONS ── */
+        .translit-wrap {
+            position: relative;
+        }
+
+        .translit-suggestions {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: #fff;
+            border: 2px solid var(--gold);
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .18);
+            overflow: hidden;
+        }
+
+        .translit-suggestions.show {
+            display: block;
+        }
+
+        .translit-hint {
+            padding: 5px 12px;
+            font-size: 11px;
+            color: #888;
+            background: #f9f9f0;
+            font-family: 'Baloo 2', cursive;
+            border-bottom: 1px solid #eee;
+        }
+
+        .translit-opt {
+            padding: 10px 14px;
+            cursor: pointer;
+            font-size: 15px;
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            font-weight: 600;
+            color: var(--brown);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            border-bottom: 1px solid #eee;
+            transition: background .15s;
+        }
+
+        .translit-opt:last-child {
+            border-bottom: none;
+        }
+
+        .translit-opt:hover,
+        .translit-opt:active {
+            background: var(--gold-pale);
+        }
+
+        .translit-opt .t-hindi {
+            font-size: 16px;
+        }
+
+        .translit-opt .t-eng {
+            font-size: 11px;
+            color: #999;
+            font-family: 'Baloo 2', cursive;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media(max-width:768px) {
+            .page {
+                padding: 8px 4px 32px;
+            }
+
+            .hdr-info {
+                gap: 8px;
+            }
+
+            .hdr-info-chip {
+                padding: 3px 10px;
+                font-size: 11px;
+            }
+
+            .toolbar {
+                padding: 10px 10px;
+            }
+
+            .form-panel {
+                padding: 16px 12px 20px;
+            }
+
+            .btn-row {
+                flex-direction: column;
+            }
+
+            .btn-add,
+            .btn-outline,
+            .btn-download {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .btn-download {
+                margin-left: 0;
+            }
+
+            footer {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+                padding: 12px 14px;
+            }
+
+            .ftr-r {
+                text-align: center;
+            }
+        }
+
+        @media(max-width:600px) {
+            .shop-name {
+                font-size: 26px;
+            }
+
+            .shop-sub {
+                font-size: 16px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            thead th:nth-child(4) {
+                display: none;
+            }
+
+            td:nth-child(4) {
+                display: none;
+            }
+
+            .btn-lbl {
+                display: none;
+            }
+
+            .btn-edit,
+            .btn-del,
+            .btn-save-row,
+            .btn-cancel-row {
+                padding: 6px 9px;
+                font-size: 14px;
+            }
+
+            .action-btns {
+                gap: 4px;
+            }
+
+            td {
+                padding: 6px 5px;
+                font-size: 12px;
+            }
+
+            thead th {
+                padding: 8px 5px;
+                font-size: 11px;
+            }
+
+            .dbadge {
+                font-size: 10.5px;
+                padding: 1px 7px;
+            }
+
+            .vtag {
+                font-size: 9.5px;
+                padding: 1px 6px;
+            }
+
+            .stat-chip {
+                font-size: 10.5px;
+                padding: 2px 8px;
+            }
+
+            .leg-pill {
+                font-size: 10px;
+                padding: 2px 8px;
+            }
+        }
+
+        @media(max-width:400px) {
+            .shop-name {
+                font-size: 22px;
+            }
+
+            .shop-sub {
+                font-size: 14px;
+            }
+
+            .hdr-tagline {
+                font-size: 11px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            thead th:nth-child(5) {
+                display: none;
+            }
+
+            td:nth-child(5) {
+                display: none;
+            }
+
+            .top-strip {
+                padding: 4px 10px;
+            }
+
+            .top-strip span {
+                font-size: 10px;
+            }
+        }
+
+
+        .print-left-bar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+        }
+
+        .pl-m {
+            background: repeating-linear-gradient(180deg, #e65100 0, #e65100 8px, transparent 8px, transparent 14px);
+        }
+
+        .pl-h {
+            background: repeating-linear-gradient(180deg, #388e3c 0, #388e3c 8px, transparent 8px, transparent 14px);
+        }
+
+        .pl-n {
+            background: repeating-linear-gradient(180deg, #6a1b9a 0, #6a1b9a 8px, transparent 8px, transparent 14px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-wrap" id="toastWrap"></div>
+
+    <!-- DELETE CONFIRM MODAL -->
+    <div class="modal-bg" id="delModal">
+        <div class="modal">
+            <div class="modal-icon">🗑️</div>
+            <h3>Delete Item?</h3>
+            <p>Are you sure you want to delete <strong id="delName"></strong> from the list?<br><small>This action
+                    cannot be undone.</small></p>
+            <div class="modal-btns">
+                <button class="modal-cancel" onclick="closeDelModal()">Cancel</button>
+                <button class="modal-confirm" onclick="confirmDelete()">🗑️ Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DOWNLOAD MODAL -->
+    <div class="modal-bg" id="dlModal">
+        <div class="dl-modal">
+            <div style="font-size:36px;margin-bottom:8px;">📥</div>
+            <h3>Downloading Image...</h3>
+            <p id="dlInfo">Converting the list to A4 image format.</p>
+            <div class="dl-prog">
+                <div class="dl-bar-wrap">
+                    <div class="dl-bar" id="dlBar"></div>
+                </div>
+                <div class="dl-status" id="dlStatus">Preparing...</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page">
+
+        <!-- HEADER -->
+        <header>
+            <div class="top-strip">
+                <span>📍 बड़का गांव, गोपालगंज, बिहार</span>
+                <span>⏰ <span id="liveTime"></span></span>
+            </div>
+            <div class="hdr-body">
+                <div class="leaf-deco">
+                    <div class="leaf-line"></div>
+                    <span class="leaf-icon">🌱</span>
+                    <div class="leaf-line"></div>
+                </div>
+                <div class="shop-name"><em>पाण्डेय ट्रेडर्स</em></div>
+                <div class="shop-sub">खाद बीज भंडार</div>
+                <div class="hdr-tagline">सभी प्रकार के खाद एवं बीज उचित मूल्य पर उपलब्ध हैं</div>
+                <div class="hdr-info">
+                    <div class="hdr-info-chip">📞 <strong>8969730344</strong></div>
+                    <div class="hdr-info-chip">👨‍💼 प्रो. <strong>रत्नेश कुमार</strong></div>
+                    <div class="hdr-info-chip">📍 <strong>गोपालगंज, बिहार</strong></div>
+                </div>
+                <div class="leaf-deco">
+                    <div class="leaf-line"></div><span class="leaf-icon">🌾</span>
+                    <div class="leaf-line"></div>
+                </div>
+            </div>
+            <div class="title-bar">
+                <p>🌾 धान बीज मूल्य सूची — खरीफ 🌾</p>
+            </div>
+        </header>
+
+        <!-- MAIN CARD -->
+        <div class="main-card">
+
+            <!-- TOOLBAR -->
+            <div class="toolbar">
+                <div class="search-wrap">
+                    <span class="s-icon">🔍</span>
+                    <input type="text" id="searchInput" placeholder="बीज का नाम या कंपनी से खोजें..."
+                        oninput="filterTable()">
+                </div>
+                <select class="filter-sel" id="filterType" onchange="filterTable()">
+                    <option value="">— सभी प्रकार —</option>
+                    <option value="motka">मोटका</option>
+                    <option value="mehi">महीन</option>
+                    <option value="naya">नई किस्म</option>
+                </select>
+            </div>
+
+            <!-- STATS -->
+            <div class="stats-bar" id="statsBar">
+                <div class="stat-chip">🌾 कुल <span id="sTotal">0</span></div>
+                <div class="stat-chip">🟠 मोटका <span id="sMotka">0</span></div>
+                <div class="stat-chip">🟢 महीन <span id="sMehi">0</span></div>
+                <div class="stat-chip">🟣 नई किस्म <span id="sNaya">0</span></div>
+            </div>
+
+            <!-- LEGEND -->
+            <div class="legend">
+                <div class="leg-pill lp-m">🟠 मोटका = मोटा दाना</div>
+                <div class="leg-pill lp-h">🟢 महीन = पतला / सुगंधित</div>
+                <div class="leg-pill lp-n">🟣 नई किस्म</div>
+            </div>
+
+            <!-- TABLE -->
+            <div class="tbl-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>क्र.</th>
+                            <th class="left">बीज का नाम</th>
+                            <th>प्रकार</th>
+                            <th>कंपनी / ब्रांड</th>
+                            <th>अवधि (दिन)</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody"></tbody>
+                </table>
+                <div class="empty-state" id="emptyState" style="display:none">
+                    <span>🌱</span>कोई किस्म नहीं मिली
+                </div>
+            </div>
+
+            <!-- NOTE -->
+            <div class="note-strip">
+                ★ सभी बीज प्रमाणित व उच्च गुणवत्ता वाले हैं &nbsp;|&nbsp; अवधि दिनों में &nbsp;|&nbsp; कीमत व उपलब्धता
+                हेतु सम्पर्क करें ★
+            </div>
+
+            <!-- ADD FORM -->
+            <div class="form-panel">
+                <div class="form-title">
+                    <div class="badge">➕</div>
+                    नई किस्म जोड़ें
+                </div>
+                <div class="form-grid">
+                    <div class="field">
+                        <label>बीज का नाम * <small style="color:#90caf9;font-weight:400">(Type in
+                                English)</small></label>
+                        <div class="translit-wrap">
+                            <input type="text" id="iName" placeholder="e.g. bangbandhu, sonam..." autocomplete="off"
+                                oninput="onTranslitInput('iName')">
+                            <div class="translit-suggestions" id="tSug_iName"></div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>प्रकार *</label>
+                        <select id="iType">
+                            <option value="">— चुनें —</option>
+                            <option value="motka">मोटका (मोटा दाना)</option>
+                            <option value="mehi">महीन (पतला/सुगंधित)</option>
+                            <option value="naya">नई किस्म</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>कंपनी / ब्रांड <small style="color:#90caf9;font-weight:400">(Type in
+                                English)</small></label>
+                        <div class="translit-wrap">
+                            <input type="text" id="iCompany" placeholder="e.g. mali, shreeram..." autocomplete="off"
+                                oninput="onTranslitInput('iCompany')">
+                            <div class="translit-suggestions" id="tSug_iCompany"></div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>अवधि (दिन)</label>
+                        <input type="text" id="iDays" placeholder="जैसे: 120-125, 140">
+                    </div>
+                </div>
+                <div class="btn-row">
+                    <button class="btn-add" onclick="addSeed()">➕ Add Item</button>
+                    <button class="btn-outline" onclick="clearForm()">🔄 Clear</button>
+                    <button class="btn-download" onclick="downloadImages()">📥 Download List</button>
+                </div>
+            </div>
+
+            <!-- FOOTER -->
+            <footer>
+                <div class="ftr-l">
+                    <p>प्रो. रत्नेश कुमार — पाण्डेय ट्रेडर्स</p>
+                    <p>📍 बड़का गांव, गोपालगंज, बिहार</p>
+                    <p>🌿 उत्तम बीज • उत्तम फसल • उत्तम जीवन</p>
+                </div>
+                <div class="ftr-r">
+                    <div class="fn">सम्पर्क करें</div>
+                    <div class="fp">📞 8969730344</div>
+                </div>
+            </footer>
+
+        </div>
+    </div>
+
+    <script>
+        // ── DATA ──
+        const INITIAL = [
+            { name: "बंगबंधु", type: "motka", company: "माली", days: "140–145", isNew: false },
+            { name: "राजेंद्र मंसूरी", type: "motka", company: "माली", days: "145", isNew: false },
+            { name: "सोना मंसूरी", type: "motka", company: "माली", days: "140–145", isNew: false },
+            { name: "सांभा", type: "mehi", company: "श्रीराम", days: "140", isNew: false },
+            { name: "कुबेर", type: "mehi", company: "सावन", days: "130–135", isNew: false },
+            { name: "606", type: "mehi", company: "महेन्द्रा सीड्स", days: "110", isNew: false },
+            { name: "मोती–360", type: "mehi", company: "नुज़ीवीडू", days: "135–140", isNew: false },
+            { name: "सरजू–52", type: "motka", company: "Brar Seed", days: "130–135", isNew: false },
+            { name: "प्रसन्ना", type: "mehi", company: "कृषक", days: "130–135", isNew: false },
+            { name: "पूनम", type: "mehi", company: "गोदावरी गंगा", days: "120–125", isNew: false },
+            { name: "6201", type: "mehi", company: "U.S.", days: "120–125", isNew: false },
+            { name: "गोरखनाथ–509", type: "mehi", company: "हाइब्रिड", days: "120–125", isNew: false },
+            { name: "चिंटू", type: "mehi", company: "—", days: "150", isNew: false },
+            { name: "सोनम", type: "mehi", company: "—", days: "135–140", isNew: true },
+            { name: "खुशबू–100001", type: "mehi", company: "—", days: "125–130", isNew: true },
+            { name: "काला नमक", type: "mehi", company: "—", days: "135–145", isNew: true },
+        ];
+
+        let seeds = JSON.parse(localStorage.getItem('pandeySeeds') || 'null') || [...INITIAL];
+        let editingIdx = null;
+        let pendingDeleteIdx = null;
+
+        function save() { localStorage.setItem('pandeySeeds', JSON.stringify(seeds)); }
+
+        // ── HINDI NUMBERS ──
+        function toH(n) { return String(n); }
+
+        // ── TYPE TAG ──
+        function typeTag(type) {
+            if (type === 'motka') return '<span class="vtag vtm">मोटका</span>';
+            if (type === 'mehi') return '<span class="vtag vth">महीन</span>';
+            if (type === 'naya') return '<span class="vtag vtn">नई किस्म</span>';
+            return '';
+        }
+
+        // ── RENDER ──
+        function filterTable() {
+            const q = document.getElementById('searchInput').value.trim().toLowerCase();
+            const ft = document.getElementById('filterType').value;
+            let data = seeds.filter((s, i) => {
+                const matchQ = !q || s.name.toLowerCase().includes(q) || (s.company || '').toLowerCase().includes(q);
+                const matchT = !ft || (ft === 'naya' ? s.isNew : s.type === ft);
+                return matchQ && matchT;
+            });
+            renderRows(data);
+        }
+
+        function renderRows(data) {
+            const tbody = document.getElementById('tbody');
+            const empty = document.getElementById('emptyState');
+            if (!data) data = seeds;
+
+            tbody.innerHTML = '';
+            if (data.length === 0) { empty.style.display = 'block'; updateStats(); return; }
+            empty.style.display = 'none';
+
+            let sno = 0;
+            data.forEach(s => {
+                const idx = seeds.indexOf(s);
+                sno++;
+                if (editingIdx === idx) {
+                    renderEditRow(tbody, s, idx, sno);
+                } else {
+                    renderViewRow(tbody, s, idx, sno);
+                }
+            });
+            updateStats();
+        }
+
+        function renderViewRow(tbody, s, idx, sno) {
+            const rc = s.isNew ? 'naya' : (s.type === 'motka' ? 'motka' : 'mehi');
+            const newBadge = s.isNew ? ' <span class="vtag vtn" style="font-size:9.5px;padding:1px 6px;">नया</span>' : '';
+            const tr = document.createElement('tr');
+            tr.className = rc;
+            tr.innerHTML = `
+    <td class="sno">${toH(sno)}</td>
+    <td class="name-col">${s.name}${newBadge}</td>
+    <td class="center">${typeTag(s.type)}</td>
+    <td class="center">${s.company || '—'}</td>
+    <td class="center"><span class="dbadge">${s.days || '—'}</span></td>
+    <td class="center">
+      <div class="action-btns">
+        <button class="btn-edit" onclick="startEdit(${idx})" title="Edit">✏️<span class="btn-lbl">Edit</span></button>
+        <button class="btn-del" onclick="askDelete(${idx})" title="Delete">🗑️<span class="btn-lbl">Delete</span></button>
+      </div>
+    </td>
+  `;
+            tbody.appendChild(tr);
+        }
+
+        function renderEditRow(tbody, s, idx, sno) {
+            const tr = document.createElement('tr');
+            tr.className = 'editing';
+            tr.innerHTML = `
+    <td class="sno">${toH(sno)}</td>
+    <td class="name-col">
+      <input class="inline-input" id="eN${idx}" value="${s.name}" placeholder="नाम">
+    </td>
+    <td class="center">
+      <select class="inline-sel" id="eT${idx}">
+        <option value="motka" ${s.type === 'motka' ? 'selected' : ''}>मोटका</option>
+        <option value="mehi"  ${s.type === 'mehi' ? 'selected' : ''}>महीन</option>
+        <option value="naya"  ${s.type === 'naya' ? 'selected' : ''}>नई किस्म</option>
+      </select>
+    </td>
+    <td class="center">
+      <input class="inline-input" id="eC${idx}" value="${s.company === '—' ? '' : s.company}" placeholder="कंपनी">
+    </td>
+    <td class="center">
+      <input class="inline-input" id="eD${idx}" value="${s.days === '—' ? '' : s.days}" placeholder="दिन" style="width:80px">
+    </td>
+    <td class="center">
+      <div class="action-btns">
+        <button class="btn-save-row" onclick="saveEdit(${idx})" title="Save">💾<span class="btn-lbl">Save</span></button>
+        <button class="btn-cancel-row" onclick="cancelEdit()" title="Cancel">✕<span class="btn-lbl">Cancel</span></button>
+      </div>
+    </td>
+  `;
+            tbody.appendChild(tr);
+        }
+
+        function updateStats() {
+            document.getElementById('sTotal').textContent = seeds.length;
+            document.getElementById('sMotka').textContent = seeds.filter(s => s.type === 'motka').length;
+            document.getElementById('sMehi').textContent = seeds.filter(s => s.type === 'mehi').length;
+            document.getElementById('sNaya').textContent = seeds.filter(s => s.isNew).length;
+        }
+
+        // ── CRUD: ADD ──
+        function addSeed() {
+            const name = document.getElementById('iName').value.trim();
+            const type = document.getElementById('iType').value;
+            const company = document.getElementById('iCompany').value.trim();
+            const days = document.getElementById('iDays').value.trim();
+
+            document.getElementById('iName').classList.remove('err');
+            document.getElementById('iType').classList.remove('err');
+
+            if (!name) { document.getElementById('iName').classList.add('err'); toast('❌', 'Please enter seed name!', 'err'); return; }
+            if (!type) { document.getElementById('iType').classList.add('err'); toast('❌', 'Please select type!', 'err'); return; }
+
+            seeds.push({ name, type, company: company || '—', days: days || '—', isNew: type === 'naya' });
+            save();
+            filterTable();
+            clearForm();
+            toast('✅', `"${name}" added successfully!`);
+
+            // flash last row
+            setTimeout(() => {
+                const rows = document.getElementById('tbody').querySelectorAll('tr');
+                if (rows.length) { rows[rows.length - 1].classList.add('row-new'); }
+            }, 50);
+        }
+
+        // ── CRUD: EDIT ──
+        function startEdit(idx) {
+            editingIdx = idx;
+            filterTable();
+            setTimeout(() => { const el = document.getElementById('eN' + idx); if (el) el.focus(); }, 50);
+        }
+
+        function saveEdit(idx) {
+            const name = (document.getElementById('eN' + idx)?.value || '').trim();
+            const type = document.getElementById('eT' + idx)?.value || '';
+            const company = (document.getElementById('eC' + idx)?.value || '').trim();
+            const days = (document.getElementById('eD' + idx)?.value || '').trim();
+
+            if (!name) { toast('❌', 'Name cannot be empty!', 'err'); return; }
+
+            seeds[idx] = { ...seeds[idx], name, type, company: company || '—', days: days || '—', isNew: type === 'naya' };
+            editingIdx = null;
+            save();
+            filterTable();
+            toast('💾', `"${name}" updated successfully!`);
+        }
+
+        function cancelEdit() {
+            editingIdx = null;
+            filterTable();
+        }
+
+        // ── CRUD: DELETE ──
+        function askDelete(idx) {
+            pendingDeleteIdx = idx;
+            document.getElementById('delName').textContent = seeds[idx].name;
+            document.getElementById('delModal').classList.add('open');
+        }
+        function closeDelModal() {
+            pendingDeleteIdx = null;
+            document.getElementById('delModal').classList.remove('open');
+        }
+        function confirmDelete() {
+            if (pendingDeleteIdx === null) return;
+            const name = seeds[pendingDeleteIdx].name;
+            seeds.splice(pendingDeleteIdx, 1);
+            if (editingIdx === pendingDeleteIdx) editingIdx = null;
+            pendingDeleteIdx = null;
+            save();
+            closeDelModal();
+            filterTable();
+            toast('🗑️', `"${name}" deleted successfully!`, 'warn');
+        }
+
+        function clearForm() {
+            ['iName', 'iCompany', 'iDays'].forEach(id => { document.getElementById(id).value = ''; document.getElementById(id).classList.remove('err'); });
+            document.getElementById('iType').value = '';
+            // Close any open suggestion dropdowns
+            document.querySelectorAll('.translit-suggestions').forEach(el => { el.classList.remove('show'); el.innerHTML = ''; });
+        }
+
+        // ── TRANSLITERATION (Hinglish → Hindi) ──
+        let translitTimers = {};
+
+        function hasLatin(text) {
+            return /[a-zA-Z]/.test(text);
+        }
+
+        async function getHindiSuggestions(text) {
+            if (!text || !hasLatin(text)) return [];
+            try {
+                const url = `https://inputtools.google.com/request?text=${encodeURIComponent(text)}&itc=hi-t-i0-und&num=5&cp=0&cs=1&ie=utf-8&oe=utf-8`;
+                const res = await fetch(url);
+                const data = await res.json();
+                if (data[0] === 'SUCCESS' && data[1] && data[1][0] && data[1][0][1]) {
+                    return data[1][0][1].slice(0, 3);
+                }
+            } catch (e) {
+                console.warn('Transliteration API unavailable:', e.message);
+            }
+            return [];
+        }
+
+        function onTranslitInput(fieldId) {
+            const input = document.getElementById(fieldId);
+            const sugDiv = document.getElementById('tSug_' + fieldId);
+            const val = input.value.trim();
+
+            clearTimeout(translitTimers[fieldId]);
+
+            if (!val || !hasLatin(val)) {
+                sugDiv.classList.remove('show');
+                sugDiv.innerHTML = '';
+                return;
+            }
+
+            translitTimers[fieldId] = setTimeout(async () => {
+                const suggestions = await getHindiSuggestions(val);
+                if (suggestions.length > 0 && document.activeElement === input) {
+                    let html = '<div class="translit-hint">🔤 Select Hindi conversion:</div>';
+                    suggestions.forEach(s => {
+                        const div = document.createElement('div');
+                        div.className = 'translit-opt';
+                        div.innerHTML = `<span class="t-hindi">${s}</span><span class="t-eng">${val}</span>`;
+                        html += `<div class="translit-opt" onclick="selectTranslit('${fieldId}', this)" data-val="${s}"><span class="t-hindi">${s}</span><span class="t-eng">${val}</span></div>`;
+                    });
+                    sugDiv.innerHTML = html;
+                    sugDiv.classList.add('show');
+                } else {
+                    sugDiv.classList.remove('show');
+                    sugDiv.innerHTML = '';
+                }
+            }, 350);
+        }
+
+        function selectTranslit(fieldId, el) {
+            const input = document.getElementById(fieldId);
+            input.value = el.getAttribute('data-val');
+            const sugDiv = document.getElementById('tSug_' + fieldId);
+            sugDiv.classList.remove('show');
+            sugDiv.innerHTML = '';
+            input.focus();
+        }
+
+        // Close suggestions when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.translit-wrap')) {
+                document.querySelectorAll('.translit-suggestions').forEach(el => {
+                    el.classList.remove('show');
+                    el.innerHTML = '';
+                });
+            }
+        });
+
+        // ── TOAST ──
+        function toast(icon, msg, type = '') {
+            const wrap = document.getElementById('toastWrap');
+            const el = document.createElement('div');
+            el.className = `toast ${type}`;
+            el.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+            wrap.appendChild(el);
+            setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 350); }, 3000);
+        }
+
+        // ── LIVE CLOCK ──
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('liveTime').textContent =
+                now.toLocaleTimeString('hi-IN', { hour: '2-digit', minute: '2-digit' });
+        }
+        setInterval(updateClock, 1000); updateClock();
+
+        // ── PURE CANVAS DOWNLOAD ──
+        const SHOP = {
+            name: 'पाण्डेय ट्रेडर्स',
+            sub: 'खाद बीज भंडार',
+            tag: 'सभी प्रकार के खाद एवं बीज उचित मूल्य पर उपलब्ध हैं',
+            addr: 'बड़का गांव, गोपालगंज, बिहार',
+            phone: '8969730344',
+            owner: 'प्रो. रत्नेश कुमार',
+            title: 'धान बीज मूल्य सूची — खरीफ 2026'
+        };
+        const PER_PAGE = 20;
+
+        // px at 96dpi — A4 = 210×297mm
+        const A4W = 794;
+        const A4H = 1123;
+        const SCALE = 2; // retina quality
+
+        function hex(h) { return h; }
+
+        function drawPage(ctx, pageSeeds, pageNum, totalPages) {
+            const W = A4W * SCALE;
+            const H = A4H * SCALE;
+            const s = SCALE;
+
+            ctx.save();
+
+            // ════════════════════════════════════════
+            // FULL GREEN GRADIENT BACKGROUND
+            // ════════════════════════════════════════
+            const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+            bgGrad.addColorStop(0, '#1a5c1a');
+            bgGrad.addColorStop(0.4, '#2e7d32');
+            bgGrad.addColorStop(1, '#1b5e20');
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, W, H);
+
+            // Subtle radial highlight centre
+            const radGrad = ctx.createRadialGradient(W / 2, H * 0.3, 50 * s, W / 2, H * 0.3, 400 * s);
+            radGrad.addColorStop(0, 'rgba(255,255,255,0.07)');
+            radGrad.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = radGrad;
+            ctx.fillRect(0, 0, W, H);
+
+            // ── OUTER DECORATIVE BORDER (thick gold) ──
+            const brd = 12 * s;
+            ctx.strokeStyle = '#ffd600';
+            ctx.lineWidth = brd;
+            ctx.strokeRect(brd / 2, brd / 2, W - brd, H - brd);
+
+            // inner thin white border
+            ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+            ctx.lineWidth = 2 * s;
+            ctx.strokeRect(brd + 4 * s, brd + 4 * s, W - 2 * brd - 8 * s, H - 2 * brd - 8 * s);
+
+            // ════════════════════════════════════════
+            // TOP ROW — owner left | phone right
+            // ════════════════════════════════════════
+            const pad = 22 * s;
+            let curY = brd + 18 * s;
+
+            ctx.font = `600 ${13 * s}px "Noto Sans Devanagari", serif`;
+            ctx.fillStyle = '#ffffff';
+            ctx.textAlign = 'left';
+            ctx.fillText(SHOP.owner, pad, curY + 13 * s);
+
+            ctx.textAlign = 'right';
+            ctx.fillText('मो.: ' + SHOP.phone, W - pad, curY + 13 * s);
+
+            // gold underline for top row
+            curY += 26 * s;
+            ctx.strokeStyle = 'rgba(255,214,0,0.5)';
+            ctx.lineWidth = 1.5 * s;
+            ctx.beginPath(); ctx.moveTo(pad, curY); ctx.lineTo(W - pad, curY); ctx.stroke();
+            curY += 10 * s;
+
+            // ════════════════════════════════════════
+            // MAIN SHOP NAME — big bold white with gold shadow
+            // ════════════════════════════════════════
+            ctx.textAlign = 'center';
+            ctx.font = `900 ${52 * s}px "Noto Sans Devanagari", serif`;
+            // shadow
+            ctx.fillStyle = 'rgba(0,0,0,0.35)';
+            ctx.fillText(SHOP.name, W / 2 + 3 * s, curY + 52 * s + 3 * s);
+            // gold outline
+            ctx.strokeStyle = '#c8860b';
+            ctx.lineWidth = 3 * s;
+            ctx.strokeText(SHOP.name, W / 2, curY + 52 * s);
+            // white fill
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText(SHOP.name, W / 2, curY + 52 * s);
+            curY += 62 * s;
+
+            // ── KHAD BEEJ BHANDAR — outlined red-filled big text ──
+            ctx.font = `900 ${40 * s}px "Noto Sans Devanagari", serif`;
+            ctx.fillStyle = 'rgba(0,0,0,0.25)';
+            ctx.fillText(SHOP.sub, W / 2 + 2 * s, curY + 40 * s + 2 * s);
+            ctx.strokeStyle = '#1a0000';
+            ctx.lineWidth = 2.5 * s;
+            ctx.strokeText(SHOP.sub, W / 2, curY + 40 * s);
+            ctx.fillStyle = '#ff1a1a';
+            ctx.fillText(SHOP.sub, W / 2, curY + 40 * s);
+            curY += 50 * s;
+
+            // ── TAGLINE ──
+            ctx.font = `500 ${12.5 * s}px "Noto Sans Devanagari", serif`;
+            ctx.fillStyle = '#ffffff';
+            ctx.textAlign = 'center';
+            const tagLine1 = 'हमारे यहाँ सभी प्रकार के उन्नत किस्म के धान के बीज,';
+            const tagLine2 = 'खाद एवं कीटनाशक उचित मूल्य पर उपलब्ध';
+            ctx.fillText(tagLine1, W / 2, curY + 14 * s);
+            ctx.fillText(tagLine2, W / 2, curY + 30 * s);
+            curY += 42 * s;
+
+            // ════════════════════════════════════════
+            // TABLE CONTAINER — cream/white bg with green arch top
+            // ════════════════════════════════════════
+            const tblPad = 14 * s;
+            const tblX = tblPad;
+            const tblW = W - tblPad * 2;
+            const tblTop = curY + 4 * s;
+
+            // Table background (cream)
+            const tblBgH = H - tblTop - 100 * s;
+            ctx.fillStyle = '#fffef0';
+            roundRect(ctx, tblX, tblTop, tblW, tblBgH, 10 * s);
+            ctx.fill();
+            ctx.strokeStyle = '#c8a63a';
+            ctx.lineWidth = 2 * s;
+            roundRect(ctx, tblX, tblTop, tblW, tblBgH, 10 * s);
+            ctx.stroke();
+
+            // ── TABLE HEADER ROW ──
+            const cols = [
+                { label: 'क्रम\nसंख्या', x: tblX, w: 52 * s, align: 'center' },
+                { label: 'बीज का नाम (Variety)', x: tblX + 52 * s, w: 220 * s, align: 'left' },
+                { label: 'बीज का\nप्रकार', x: tblX + 272 * s, w: 110 * s, align: 'center' },
+                { label: 'कंपनी / ब्रांड', x: tblX + 382 * s, w: 170 * s, align: 'center' },
+                { label: 'अवधि\n(दिन)', x: tblX + 552 * s, w: tblW - 552 * s, align: 'center' },
+            ];
+
+            const thH = 44 * s;
+            const thY = tblTop + 6 * s;
+
+            // header bg
+            const thGrad = ctx.createLinearGradient(0, thY, 0, thY + thH);
+            thGrad.addColorStop(0, '#2e7d32');
+            thGrad.addColorStop(1, '#1b5e20');
+            ctx.fillStyle = thGrad;
+            roundRect(ctx, tblX + 2 * s, thY, tblW - 4 * s, thH, 8 * s);
+            ctx.fill();
+
+            ctx.fillStyle = '#ffd600';
+            cols.forEach(col => {
+                const lines = col.label.split('\n');
+                const cx = col.align === 'center' ? col.x + col.w / 2 : col.x + 7 * s;
+                const lineH = 14 * s;
+                const startY = thY + thH / 2 - (lines.length - 1) * lineH / 2 - 2 * s;
+                lines.forEach((ln, li) => {
+                    ctx.font = `700 ${11 * s}px "Noto Sans Devanagari", serif`;
+                    ctx.textAlign = col.align === 'center' ? 'center' : 'left';
+                    ctx.fillText(ln, cx, startY + li * lineH + 10 * s);
+                });
+                // col separator
+                if (col.x + col.w < tblX + tblW - 2 * s) {
+                    ctx.strokeStyle = 'rgba(255,214,0,0.4)';
+                    ctx.lineWidth = 1 * s;
+                    ctx.beginPath();
+                    ctx.moveTo(col.x + col.w, thY + 4 * s);
+                    ctx.lineTo(col.x + col.w, thY + thH - 4 * s);
+                    ctx.stroke();
+                }
+            });
+
+            // ── TABLE ROWS ──
+            const rowH = 30 * s;
+            let rowY = thY + thH + 2 * s;
+
+            pageSeeds.forEach((seed, i) => {
+                const globalSno = (pageNum - 1) * PER_PAGE + i + 1;
+                const isEven = i % 2 === 1;
+                const isNaya = seed.isNew;
+                const isMot = seed.type === 'motka';
+
+                // alternating row bg
+                ctx.fillStyle = isNaya ? '#f5e8ff' : (isEven ? '#f0ffe8' : '#ffffff');
+                ctx.fillRect(tblX + 2 * s, rowY, tblW - 4 * s, rowH);
+
+                // row bottom border
+                ctx.strokeStyle = '#d4b86a';
+                ctx.lineWidth = 0.7 * s;
+                ctx.beginPath();
+                ctx.moveTo(tblX + 2 * s, rowY + rowH);
+                ctx.lineTo(tblX + tblW - 2 * s, rowY + rowH);
+                ctx.stroke();
+
+                const midY = rowY + rowH / 2 + 5 * s;
+
+                // 1. Serial number
+                ctx.fillStyle = '#5d2600';
+                ctx.font = `700 ${13 * s}px "Noto Sans Devanagari", serif`;
+                ctx.textAlign = 'center';
+                ctx.fillText(String(globalSno), cols[0].x + cols[0].w / 2, midY);
+
+                // 2. Name
+                ctx.fillStyle = '#1a0a00';
+                ctx.font = `600 ${12.5 * s}px "Noto Sans Devanagari", serif`;
+                ctx.textAlign = 'left';
+                const nameX = cols[1].x + 7 * s;
+                ctx.fillText(seed.name, nameX, midY);
+                if (seed.isNew) {
+                    const nmW = ctx.measureText(seed.name).width;
+                    ctx.font = `700 ${8.5 * s}px "Noto Sans Devanagari", serif`;
+                    const bw = ctx.measureText('★नया').width + 10 * s;
+                    const bx = nameX + nmW + 5 * s;
+                    roundRect(ctx, bx, rowY + 8 * s, bw, 15 * s, 7 * s);
+                    ctx.fillStyle = '#6a1b9a'; ctx.fill();
+                    ctx.fillStyle = '#fff';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('★नया', bx + bw / 2, rowY + 19 * s);
+                }
+
+                // 3. Type
+                const typeLabel = isMot ? 'मोटका' : 'मेही';
+                const typeBg = isMot ? '#ff7043' : '#43a047';
+                const typeFg = '#ffffff';
+                ctx.font = `700 ${11 * s}px "Noto Sans Devanagari", serif`;
+                ctx.textAlign = 'center';
+                const tcx = cols[2].x + cols[2].w / 2;
+                const tw2 = ctx.measureText(typeLabel).width + 18 * s;
+                roundRect(ctx, tcx - tw2 / 2, rowY + 8 * s, tw2, 16 * s, 8 * s);
+                ctx.fillStyle = typeBg; ctx.fill();
+                ctx.fillStyle = typeFg;
+                ctx.fillText(typeLabel, tcx, rowY + 20 * s);
+
+                // 4. Company
+                ctx.fillStyle = '#1a0a00';
+                ctx.font = `500 ${11.5 * s}px "Noto Sans Devanagari", serif`;
+                ctx.textAlign = 'center';
+                ctx.fillText(seed.company || '—', cols[3].x + cols[3].w / 2, midY);
+
+                // 5. Days
+                const dLabel = seed.days || '—';
+                const dcx = cols[4].x + cols[4].w / 2;
+                ctx.font = `700 ${11.5 * s}px "Noto Sans Devanagari", serif`;
+                ctx.fillStyle = '#1b5e20';
+                ctx.fillText(dLabel, dcx, midY);
+
+                // vertical col separators
+                ctx.strokeStyle = '#c8b86a';
+                ctx.lineWidth = 0.7 * s;
+                [cols[1].x, cols[2].x, cols[3].x, cols[4].x].forEach(cx => {
+                    ctx.beginPath();
+                    ctx.moveTo(cx, rowY); ctx.lineTo(cx, rowY + rowH);
+                    ctx.stroke();
+                });
+
+                rowY += rowH;
+            });
+
+            // close table bottom border
+            ctx.strokeStyle = '#c8a63a';
+            ctx.lineWidth = 1.5 * s;
+            ctx.beginPath();
+            ctx.moveTo(tblX + 2 * s, rowY);
+            ctx.lineTo(tblX + tblW - 2 * s, rowY);
+            ctx.stroke();
+
+            // ════════════════════════════════════════
+            // FOOTER SECTION
+            // ════════════════════════════════════════
+            const ftTop = rowY + 10 * s;
+
+            // ── SLOGAN BANNER (red ribbon style) ──
+            const sloganH = 32 * s;
+            const sloganY = ftTop;
+            const sloganGrad = ctx.createLinearGradient(0, sloganY, 0, sloganY + sloganH);
+            sloganGrad.addColorStop(0, '#c62828');
+            sloganGrad.addColorStop(1, '#8b0000');
+            ctx.fillStyle = sloganGrad;
+            roundRect(ctx, pad, sloganY, W - pad * 2, sloganH, 16 * s);
+            ctx.fill();
+            ctx.strokeStyle = '#ffd600';
+            ctx.lineWidth = 1.5 * s;
+            roundRect(ctx, pad, sloganY, W - pad * 2, sloganH, 16 * s);
+            ctx.stroke();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = `700 ${13 * s}px "Noto Sans Devanagari", serif`;
+            ctx.textAlign = 'center';
+            ctx.fillText('अच्छा बीज ही अच्छी पैदावार की पहचान', W / 2, sloganY + sloganH / 2 + 5 * s);
+
+            // ── ADDRESS LINE ──
+            const addrY = sloganY + sloganH + 12 * s;
+            ctx.fillStyle = '#ffffff';
+            ctx.font = `600 ${12 * s}px "Noto Sans Devanagari", serif`;
+            ctx.textAlign = 'center';
+            ctx.fillText('📍 स्थान: ' + SHOP.addr, W / 2, addrY);
+
+            // ── PHONE LINE ──
+            const phoneY = addrY + 18 * s;
+            ctx.font = `600 ${12 * s}px "Noto Sans Devanagari", serif`;
+            ctx.fillStyle = '#ffd600';
+            ctx.fillText('📞 मो.: ' + SHOP.phone, W / 2, phoneY);
+
+            // ── WELCOME RIBBON ──
+            const welY = H - brd - 32 * s;
+            const welH = 26 * s;
+            const welGrad = ctx.createLinearGradient(0, welY, 0, welY + welH);
+            welGrad.addColorStop(0, '#c62828');
+            welGrad.addColorStop(1, '#8b0000');
+            ctx.fillStyle = welGrad;
+            roundRect(ctx, pad * 1.5, welY, W - pad * 3, welH, 13 * s);
+            ctx.fill();
+            ctx.strokeStyle = '#ffd600';
+            ctx.lineWidth = 1.5 * s;
+            roundRect(ctx, pad * 1.5, welY, W - pad * 3, welH, 13 * s);
+            ctx.stroke();
+
+            ctx.fillStyle = '#ffd600';
+            ctx.font = `700 ${12 * s}px "Noto Sans Devanagari", serif`;
+            ctx.textAlign = 'center';
+            ctx.fillText('✿ आपका हार्दिक स्वागत है ✿', W / 2, welY + welH / 2 + 4 * s);
+
+            // ── PAGE NUMBER (small, bottom right inside border) ──
+            if (totalPages > 1) {
+                ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                ctx.font = `400 ${9 * s}px "Noto Sans Devanagari", serif`;
+                ctx.textAlign = 'right';
+                ctx.fillText(`Page ${pageNum}/${totalPages}`, W - brd - 6 * s, H - brd - 6 * s);
+            }
+
+            ctx.restore();
+        }
+
+        function roundRect(ctx, x, y, w, h, r) {
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.lineTo(x + w - r, y);
+            ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+            ctx.lineTo(x + w, y + h - r);
+            ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+            ctx.lineTo(x + r, y + h);
+            ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+            ctx.lineTo(x, y + r);
+            ctx.quadraticCurveTo(x, y, x + r, y);
+            ctx.closePath();
+        }
+
+        async function downloadImages() {
+            if (seeds.length === 0) { toast('⚠️', 'List is empty!', 'err'); return; }
+
+            const dlModal = document.getElementById('dlModal');
+            const dlBar = document.getElementById('dlBar');
+            const dlStatus = document.getElementById('dlStatus');
+            const dlInfo = document.getElementById('dlInfo');
+
+            dlModal.classList.add('open');
+            dlBar.style.width = '0%';
+
+            const total = seeds.length;
+            const pages = Math.ceil(total / PER_PAGE);
+            dlInfo.textContent = `${total} items — ${pages} page(s)`;
+
+            // Wait for fonts to load
+            dlStatus.textContent = 'Loading fonts...';
+            dlBar.style.width = '8%';
+            try { await document.fonts.ready; } catch (e) { }
+            await new Promise(r => setTimeout(r, 500));
+
+            for (let p = 0; p < pages; p++) {
+                const chunk = seeds.slice(p * PER_PAGE, (p + 1) * PER_PAGE);
+                dlStatus.textContent = `Creating page ${p + 1}/${pages}...`;
+                dlBar.style.width = (10 + (p / pages) * 75) + '%';
+
+                await new Promise(r => setTimeout(r, 80));
+
+                const canvas = document.createElement('canvas');
+                canvas.width = A4W * SCALE;
+                canvas.height = A4H * SCALE;
+                const ctx = canvas.getContext('2d');
+
+                drawPage(ctx, chunk, p + 1, pages);
+
+                dlBar.style.width = (10 + ((p + 0.8) / pages) * 75) + '%';
+                dlStatus.textContent = `Downloading page ${p + 1}/${pages}...`;
+                await new Promise(r => setTimeout(r, 80));
+
+                // Trigger real download
+                canvas.toBlob(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = pages === 1
+                        ? 'Pandey-Traders-Beej-Suchi.png'
+                        : `Pandey-Traders-Beej-Suchi-Page${p + 1}.png`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    setTimeout(() => URL.revokeObjectURL(url), 2000);
+                }, 'image/png', 1.0);
+
+                await new Promise(r => setTimeout(r, 600));
+            }
+
+            dlBar.style.width = '100%';
+            dlStatus.textContent = '✅ Download complete!';
+            await new Promise(r => setTimeout(r, 1200));
+            dlModal.classList.remove('open');
+            dlBar.style.width = '0';
+            toast('📥', `${pages} image(s) downloaded — Check your Gallery!`);
+        }
+
+        // ── INIT ──
+        renderRows(seeds);
+    </script>
+</body>
+
+</html>

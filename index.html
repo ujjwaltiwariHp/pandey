@@ -1294,6 +1294,115 @@
             }
         }
 
+        /* ── LIST SWITCHER & MANAGEMENT BAR ── */
+        .list-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fafaf0;
+            border-bottom: 2px solid var(--gold2);
+            padding: 10px 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .list-tabs {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 2px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
+            max-width: 100%;
+        }
+
+        .list-tabs::-webkit-scrollbar {
+            height: 4px;
+        }
+        .list-tabs::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        .list-tab {
+            padding: 6px 14px;
+            background: #eef3e0;
+            border: 1.5px solid var(--border);
+            border-radius: 20px;
+            font-family: 'Baloo 2', cursive;
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--g2);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .list-tab:hover {
+            background: var(--g-pale);
+            border-color: var(--g4);
+            transform: translateY(-1px);
+        }
+
+        .list-tab.active {
+            background: linear-gradient(135deg, var(--g3) 0%, var(--g2) 100%);
+            color: var(--gold);
+            border-color: var(--gold2);
+            box-shadow: 0 3px 8px rgba(27, 94, 32, 0.25);
+        }
+
+        .list-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-list-action {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12.5px;
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1.5px solid;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-list-add {
+            background: var(--g-pale);
+            color: var(--g1);
+            border-color: var(--g4);
+        }
+        .btn-list-add:hover {
+            background: #c8e6c9;
+            transform: scale(1.03);
+        }
+
+        .btn-list-edit {
+            background: var(--blue-pale);
+            color: var(--blue);
+            border-color: #90caf9;
+        }
+        .btn-list-edit:hover {
+            background: #bbdefb;
+            transform: scale(1.03);
+        }
+
+        .btn-list-del {
+            background: var(--red-pale);
+            color: var(--red);
+            border-color: #ef9a9a;
+        }
+        .btn-list-del:hover {
+            background: #ffcdd2;
+            transform: scale(1.03);
+        }
 
         .print-left-bar {
             position: absolute;
@@ -1332,6 +1441,85 @@
             <div class="modal-btns">
                 <button class="modal-cancel" onclick="closeDelModal()">Cancel</button>
                 <button class="modal-confirm" onclick="confirmDelete()">🗑️ Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DELETE LIST CONFIRM MODAL -->
+    <div class="modal-bg" id="delListModal">
+        <div class="modal">
+            <div class="modal-icon">🚨</div>
+            <h3>Delete Entire List?</h3>
+            <p>Are you sure you want to delete the active list "<strong id="delListName"></strong>" and all its items?<br><small style="color: var(--red);">This action cannot be undone and will delete all list data.</small></p>
+            <div class="modal-btns">
+                <button class="modal-cancel" onclick="closeDelListModal()">Cancel</button>
+                <button class="modal-confirm" onclick="confirmDeleteActiveList()">🗑️ Yes, Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CREATE / EDIT LIST MODAL -->
+    <div class="modal-bg" id="listModal">
+        <div class="modal" style="max-width: 500px; text-align: left;">
+            <div style="font-size:32px; text-align: center; margin-bottom:8px;">📋</div>
+            <h3 style="text-align: center; font-family: 'Baloo 2', cursive; margin-bottom: 15px;" id="listModalTitle">नया लिस्ट जोड़ें</h3>
+
+            <div class="field" style="margin-bottom: 12px;">
+                <label style="color: var(--g1); font-weight: 700; font-family: 'Baloo 2', cursive;">लिस्ट का शीर्षक (Title) *</label>
+                <input type="text" id="mListTitle" placeholder="जैसे: धान बीज मूल्य सूची — खरीफ">
+            </div>
+
+            <div style="margin-top: 15px; margin-bottom: 8px; border-bottom: 1.5px solid var(--border); padding-bottom: 4px;">
+                <strong style="font-size: 13px; color: var(--g2); font-family: 'Baloo 2', cursive;">कॉलम के नाम (Column Names)</strong>
+                <span style="font-size: 11px; color: #666; display: block;">(कम से कम पहले 3 कॉलम का नाम आवश्यक है)</span>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: grid; grid-template-columns: 100px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-size: 12px; font-weight: 700; color: #444;">कॉलम 1 *</label>
+                    <input type="text" id="mCol1" placeholder="जैसे: बीज का नाम" style="padding: 6px 10px; font-size: 13px;">
+                </div>
+                <div style="display: grid; grid-template-columns: 100px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-size: 12px; font-weight: 700; color: #444;">कॉलम 2 *</label>
+                    <input type="text" id="mCol2" placeholder="जैसे: प्रकार" style="padding: 6px 10px; font-size: 13px;">
+                </div>
+                <div style="display: grid; grid-template-columns: 100px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-size: 12px; font-weight: 700; color: #444;">कॉलम 3 *</label>
+                    <input type="text" id="mCol3" placeholder="जैसे: कंपनी / ब्रांड" style="padding: 6px 10px; font-size: 13px;">
+                </div>
+                <div style="display: grid; grid-template-columns: 100px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-size: 12px; font-weight: 700; color: #444;">कॉलम 4</label>
+                    <input type="text" id="mCol4" placeholder="जैसे: अवधि (दिन) (वैकल्पिक)" style="padding: 6px 10px; font-size: 13px;">
+                </div>
+                <div style="display: grid; grid-template-columns: 100px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-size: 12px; font-weight: 700; color: #444;">कॉलम 5</label>
+                    <input type="text" id="mCol5" placeholder="जैसे: मूल्य (₹) (वैकल्पिक)" style="padding: 6px 10px; font-size: 13px;">
+                </div>
+            </div>
+
+            <div style="margin-top: 15px; margin-bottom: 8px; border-bottom: 1.5px solid var(--border); padding-bottom: 4px;">
+                <strong style="font-size: 13px; color: var(--g2); font-family: 'Baloo 2', cursive;">विशेष हाइलाइट्स (Tag Labels)</strong>
+                <span style="font-size: 11px; color: #666; display: block;">(खाली छोड़ने पर हाइलाइट बंद रहेगा)</span>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+                <div style="display: grid; grid-template-columns: 120px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-size: 12px; font-weight: 700; color: #b26a00;">🟠 नारंगी टैग</label>
+                    <input type="text" id="mHighOrange" placeholder="जैसे: मोटका" style="padding: 6px 10px; font-size: 13px;">
+                </div>
+                <div style="display: grid; grid-template-columns: 120px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-size: 12px; font-weight: 700; color: #1b5e20;">🟢 हरा टैग</label>
+                    <input type="text" id="mHighGreen" placeholder="जैसे: महीन" style="padding: 6px 10px; font-size: 13px;">
+                </div>
+                <div style="display: grid; grid-template-columns: 120px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-size: 12px; font-weight: 700; color: #6a1b9a;">🟣 बैंगनी टैग</label>
+                    <input type="text" id="mHighPurple" placeholder="जैसे: नई किस्म" style="padding: 6px 10px; font-size: 13px;">
+                </div>
+            </div>
+
+            <div class="modal-btns" style="justify-content: flex-end;">
+                <button class="modal-cancel" onclick="closeListModal()">रद्द करें</button>
+                <button class="modal-confirm" onclick="saveListConfig()" style="background: var(--g2);" id="btnSaveList">सुरक्षित करें</button>
             </div>
         </div>
     </div>
@@ -1379,12 +1567,22 @@
                 </div>
             </div>
             <div class="title-bar">
-                <p>🌾 धान बीज मूल्य सूची — खरीफ 🌾</p>
+                <p id="listTitleBarText">🌾 धान बीज मूल्य सूची — खरीफ 🌾</p>
             </div>
         </header>
 
         <!-- MAIN CARD -->
         <div class="main-card">
+
+            <!-- LIST SWITCHER & MANAGEMENT BAR -->
+            <div class="list-bar">
+                <div class="list-tabs" id="listTabs"></div>
+                <div class="list-actions">
+                    <button class="btn-list-action btn-list-add" onclick="openCreateListModal()" title="नया लिस्ट बनाएं">➕ नया लिस्ट</button>
+                    <button class="btn-list-action btn-list-edit" onclick="openEditListModal()" title="लिस्ट का नाम व कॉलम बदलें">⚙️ लिस्ट बदलें</button>
+                    <button class="btn-list-action btn-list-del" onclick="askDeleteActiveList()" title="यह लिस्ट हटाएं">🗑️ लिस्ट हटाएं</button>
+                </div>
+            </div>
 
             <!-- TOOLBAR -->
             <div class="toolbar">
@@ -1395,38 +1593,24 @@
                 </div>
                 <select class="filter-sel" id="filterType" onchange="filterTable()">
                     <option value="">— सभी प्रकार —</option>
-                    <option value="motka">मोटका</option>
-                    <option value="mehi">महीन</option>
-                    <option value="naya">नई किस्म</option>
+                    <option value="orange">मोटका</option>
+                    <option value="green">महीन</option>
+                    <option value="purple">नई किस्म</option>
                 </select>
             </div>
 
             <!-- STATS -->
-            <div class="stats-bar" id="statsBar">
-                <div class="stat-chip">🌾 कुल <span id="sTotal">0</span></div>
-                <div class="stat-chip">🟠 मोटका <span id="sMotka">0</span></div>
-                <div class="stat-chip">🟢 महीन <span id="sMehi">0</span></div>
-                <div class="stat-chip">🟣 नई किस्म <span id="sNaya">0</span></div>
-            </div>
+            <div class="stats-bar" id="statsBar"></div>
 
             <!-- LEGEND -->
-            <div class="legend">
-                <div class="leg-pill lp-m">🟠 मोटका = मोटा दाना</div>
-                <div class="leg-pill lp-h">🟢 महीन = पतला / सुगंधित</div>
-                <div class="leg-pill lp-n">🟣 नई किस्म</div>
-            </div>
+            <div class="legend" id="listLegend"></div>
 
             <!-- TABLE -->
             <div class="tbl-wrap">
                 <table>
                     <thead>
                         <tr>
-                            <th>क्र.</th>
-                            <th class="left">बीज का नाम</th>
-                            <th>प्रकार</th>
-                            <th>कंपनी / ब्रांड</th>
-                            <th>अवधि (दिन)</th>
-                            <th>Actions</th>
+                            <!-- dynamic columns -->
                         </tr>
                     </thead>
                     <tbody id="tbody"></tbody>
@@ -1444,45 +1628,13 @@
 
             <!-- ADD FORM -->
             <div class="form-panel">
-                <div class="form-title">
+                <div class="form-title" id="formTitleText">
                     <div class="badge">➕</div>
-                    नई किस्म जोड़ें
+                    नया आइटम जोड़ें
                 </div>
-                <div class="form-grid">
-                    <div class="field">
-                        <label>बीज का नाम * <small style="color:#90caf9;font-weight:400">(Type in
-                                English)</small></label>
-                        <div class="translit-wrap">
-                            <input type="text" id="iName" placeholder="e.g. bangbandhu, sonam..." autocomplete="off"
-                                oninput="onTranslitInput('iName')">
-                            <div class="translit-suggestions" id="tSug_iName"></div>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label>प्रकार *</label>
-                        <select id="iType">
-                            <option value="">— चुनें —</option>
-                            <option value="motka">मोटका (मोटा दाना)</option>
-                            <option value="mehi">महीन (पतला/सुगंधित)</option>
-                            <option value="naya">नई किस्म</option>
-                        </select>
-                    </div>
-                    <div class="field">
-                        <label>कंपनी / ब्रांड <small style="color:#90caf9;font-weight:400">(Type in
-                                English)</small></label>
-                        <div class="translit-wrap">
-                            <input type="text" id="iCompany" placeholder="e.g. mali, shreeram..." autocomplete="off"
-                                oninput="onTranslitInput('iCompany')">
-                            <div class="translit-suggestions" id="tSug_iCompany"></div>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label>अवधि (दिन)</label>
-                        <input type="text" id="iDays" placeholder="जैसे: 120-125, 140">
-                    </div>
-                </div>
+                <div class="form-grid" id="dynamicFormGrid"></div>
                 <div class="btn-row">
-                    <button class="btn-add" onclick="addSeed()">➕ Add Item</button>
+                    <button class="btn-add" onclick="addItem()">➕ Add Item</button>
                     <button class="btn-outline" onclick="clearForm()">🔄 Clear</button>
                     <button class="btn-download" onclick="downloadImages()">📥 Download List</button>
                 </div>
@@ -1525,39 +1677,279 @@
             { name: "काला नमक", type: "mehi", company: "—", days: "135–145", isNew: true },
         ];
 
-        let seeds = JSON.parse(localStorage.getItem('pandeySeeds') || 'null') || [...INITIAL];
+        let lists = [];
+        let activeListId = "";
         let editingIdx = null;
         let pendingDeleteIdx = null;
 
-        function save() { localStorage.setItem('pandeySeeds', JSON.stringify(seeds)); }
+        function saveLists() {
+            localStorage.setItem('pandeyLists', JSON.stringify(lists));
+            localStorage.setItem('pandeyActiveListId', activeListId);
+        }
+
+        function initData() {
+            const savedLists = localStorage.getItem('pandeyLists');
+            const legacySeeds = localStorage.getItem('pandeySeeds');
+
+            if (savedLists) {
+                lists = JSON.parse(savedLists);
+            } else {
+                let legacyItems = null;
+                if (legacySeeds) {
+                    try { legacyItems = JSON.parse(legacySeeds); } catch (e) {}
+                }
+
+                if (legacyItems && Array.isArray(legacyItems)) {
+                    const migratedItems = legacyItems.map(item => {
+                        return {
+                            values: [
+                                item.name || '',
+                                item.type === 'motka' ? 'मोटका' : (item.type === 'mehi' ? 'महीन' : 'नई किस्म'),
+                                item.company || '—',
+                                item.days || '—'
+                            ],
+                            highlight: item.type === 'naya' ? 'purple' : (item.type === 'motka' ? 'orange' : 'green')
+                        };
+                    });
+                    lists = [
+                        {
+                            id: "dhanya_beej",
+                            title: "धान बीज मूल्य सूची — खरीफ",
+                            columns: ["बीज का नाम", "प्रकार", "कंपनी / ब्रांड", "अवधि (दिन)"],
+                            highlights: {
+                                orange: "मोटका",
+                                green: "महीन",
+                                purple: "नई किस्म"
+                            },
+                            items: migratedItems
+                        }
+                    ];
+                } else {
+                    const migratedInitial = INITIAL.map(item => {
+                        return {
+                            values: [
+                                item.name,
+                                item.type === 'motka' ? 'मोटका' : (item.type === 'mehi' ? 'महीन' : 'नई किस्म'),
+                                item.company,
+                                item.days
+                            ],
+                            highlight: item.isNew ? 'purple' : (item.type === 'motka' ? 'orange' : 'green')
+                        };
+                    });
+
+                    lists = [
+                        {
+                            id: "dhanya_beej",
+                            title: "धान बीज मूल्य सूची — खरीफ",
+                            columns: ["बीज का नाम", "प्रकार", "कंपनी / ब्रांड", "अवधि (दिन)"],
+                            highlights: {
+                                orange: "मोटका",
+                                green: "महीन",
+                                purple: "नई किस्म"
+                            },
+                            items: migratedInitial
+                        },
+                        {
+                            id: "fertiliser",
+                            title: "उन्नत खाद (Fertiliser) मूल्य सूची",
+                            columns: ["खाद का नाम", "कंपनी / ब्रांड", "पैकिंग (Kg)", "मूल्य (प्रति बैग)"],
+                            highlights: {
+                                orange: "विशेष खाद",
+                                green: "जैविक खाद",
+                                purple: "नया स्टॉक"
+                            },
+                            items: [
+                                { values: ["इफको यूरिया (Urea)", "IFFCO", "45 Kg", "₹266.50"], highlight: "green" },
+                                { values: ["डी.ए.पी. (DAP 18:46)", "IFFCO", "50 Kg", "₹1350.00"], highlight: "orange" },
+                                { values: ["एन.पी.के. (NPK 12:32:16)", "कृभको (KRIBHCO)", "50 Kg", "₹1470.00"], highlight: "orange" },
+                                { values: ["एम.ओ.पी. (Potash - MOP)", "IPL", "50 Kg", "₹1200.00"], highlight: "orange" },
+                                { values: ["सिंगल सुपर फास्फेट (SSP)", "रामबाण", "50 Kg", "₹450.00"], highlight: "green" },
+                                { values: ["जिंक सल्फेट (Zinc 33%)", "दया सीड्स", "5 Kg", "₹380.00"], highlight: "purple" },
+                                { values: ["सागरिका जैविक दानेदार", "IFFCO", "10 Kg", "₹410.00"], highlight: "purple" }
+                            ]
+                        },
+                        {
+                            id: "wheat_beej",
+                            title: "गेहूँ बीज मूल्य सूची — रबी",
+                            columns: ["किस्म का नाम", "श्रेणी", "कंपनी / ब्रांड", "औसत उपज (Q/acre)"],
+                            highlights: {
+                                orange: "अगेती बुवाई",
+                                green: "पछेती बुवाई",
+                                purple: "नई उन्नत किस्म"
+                            },
+                            items: [
+                                { values: ["HD-2967 (पूसा बहार)", "प्रमाणित", "IARI", "22-24"], highlight: "green" },
+                                { values: ["HD-3086 (पूसा गौतमी)", "प्रमाणित", "IARI", "23-25"], highlight: "orange" },
+                                { values: ["DBW-187 (करण वंदना)", "रिसर्च", "IIWBR", "26-28"], highlight: "purple" },
+                                { values: ["PBW-343", "प्रमाणित", "PAU", "20-22"], highlight: "green" },
+                                { values: ["लोकमन (Lok-1)", "प्रमाणित", "राज सीड्स", "18-20"], highlight: "green" },
+                                { values: ["श्रीराम सुपर 303", "रिसर्च", "श्रीराम सीड्स", "24-26"], highlight: "purple" }
+                            ]
+                        }
+                    ];
+                }
+                saveLists();
+            }
+            activeListId = localStorage.getItem('pandeyActiveListId') || lists[0].id;
+            if (!lists.some(l => l.id === activeListId)) {
+                activeListId = lists[0].id;
+            }
+        }
 
         // ── HINDI NUMBERS ──
         function toH(n) { return String(n); }
 
-        // ── TYPE TAG ──
-        function typeTag(type) {
-            if (type === 'motka') return '<span class="vtag vtm">मोटका</span>';
-            if (type === 'mehi') return '<span class="vtag vth">महीन</span>';
-            if (type === 'naya') return '<span class="vtag vtn">नई किस्म</span>';
-            return '';
+        // ── RENDER TABS ──
+        function renderTabs() {
+            const tabsContainer = document.getElementById('listTabs');
+            tabsContainer.innerHTML = '';
+
+            lists.forEach(list => {
+                const tab = document.createElement('div');
+                tab.className = `list-tab ${list.id === activeListId ? 'active' : ''}`;
+                tab.setAttribute('data-id', list.id);
+
+                let displayName = list.title;
+                if (displayName.length > 18) {
+                    displayName = displayName.substring(0, 16) + '...';
+                }
+
+                tab.innerHTML = `🌾 ${displayName}`;
+                tab.onclick = () => switchList(list.id);
+                tabsContainer.appendChild(tab);
+            });
+        }
+
+        // ── SWITCH LIST ──
+        function switchList(listId) {
+            activeListId = listId;
+            localStorage.setItem('pandeyActiveListId', activeListId);
+
+            editingIdx = null;
+
+            document.querySelectorAll('.list-tab').forEach(tab => {
+                if (tab.getAttribute('data-id') === listId) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+
+            const activeList = lists.find(l => l.id === activeListId);
+
+            // Update Header Title
+            document.getElementById('listTitleBarText').innerHTML = `🌾 ${activeList.title} 🌾`;
+
+            // Update Search Placeholder
+            document.getElementById('searchInput').placeholder = `${activeList.columns[0]} या अन्य विवरण से खोजें...`;
+            document.getElementById('searchInput').value = '';
+
+            // Update table headers
+            const theadTr = document.querySelector('table thead tr');
+            theadTr.innerHTML = `<th>क्र.</th>`;
+            activeList.columns.forEach((col, idx) => {
+                theadTr.innerHTML += `<th class="${idx === 0 ? 'left' : ''}">${col}</th>`;
+            });
+            theadTr.innerHTML += `<th>Actions</th>`;
+
+            updateFilterOptions();
+            updateLegend();
+            renderDynamicForm();
+
+            filterTable();
+        }
+
+        // ── UPDATE FILTER OPTIONS ──
+        function updateFilterOptions() {
+            const activeList = lists.find(l => l.id === activeListId);
+            const filterSel = document.getElementById('filterType');
+            filterSel.innerHTML = `<option value="">— सभी प्रकार —</option>`;
+
+            if (activeList.highlights) {
+                if (activeList.highlights.orange) filterSel.innerHTML += `<option value="orange">🟠 ${activeList.highlights.orange}</option>`;
+                if (activeList.highlights.green) filterSel.innerHTML += `<option value="green">🟢 ${activeList.highlights.green}</option>`;
+                if (activeList.highlights.purple) filterSel.innerHTML += `<option value="purple">🟣 ${activeList.highlights.purple}</option>`;
+            }
+        }
+
+        // ── UPDATE LEGEND ──
+        function updateLegend() {
+            const activeList = lists.find(l => l.id === activeListId);
+            const legend = document.getElementById('listLegend');
+
+            if (!activeList.highlights || (!activeList.highlights.orange && !activeList.highlights.green && !activeList.highlights.purple)) {
+                legend.style.display = 'none';
+                return;
+            }
+
+            legend.style.display = 'flex';
+            legend.innerHTML = '';
+
+            if (activeList.highlights.orange) {
+                legend.innerHTML += `<div class="leg-pill lp-m">🟠 ${activeList.highlights.orange}</div>`;
+            }
+            if (activeList.highlights.green) {
+                legend.innerHTML += `<div class="leg-pill lp-h">🟢 ${activeList.highlights.green}</div>`;
+            }
+            if (activeList.highlights.purple) {
+                legend.innerHTML += `<div class="leg-pill lp-n">🟣 ${activeList.highlights.purple}</div>`;
+            }
+        }
+
+        // ── RENDER DYNAMIC FORM ──
+        function renderDynamicForm() {
+            const activeList = lists.find(l => l.id === activeListId);
+            const grid = document.getElementById('dynamicFormGrid');
+            grid.innerHTML = '';
+
+            activeList.columns.forEach((col, idx) => {
+                grid.innerHTML += `
+                    <div class="field">
+                        <label>${col} * <small style="color:#90caf9;font-weight:400">(Type in English)</small></label>
+                        <div class="translit-wrap">
+                            <input type="text" id="iCol_${idx}" placeholder="${col} दर्ज करें..." autocomplete="off" oninput="onTranslitInput('iCol_${idx}')">
+                            <div class="translit-suggestions" id="tSug_iCol_${idx}"></div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            let highlightOptions = `<option value="none">— कोई नहीं —</option>`;
+            if (activeList.highlights) {
+                if (activeList.highlights.orange) highlightOptions += `<option value="orange">🟠 ${activeList.highlights.orange}</option>`;
+                if (activeList.highlights.green) highlightOptions += `<option value="green">🟢 ${activeList.highlights.green}</option>`;
+                if (activeList.highlights.purple) highlightOptions += `<option value="purple">🟣 ${activeList.highlights.purple}</option>`;
+            }
+
+            grid.innerHTML += `
+                <div class="field">
+                    <label>हाइलाइट श्रेणी (Tag)</label>
+                    <select id="iHighlight">
+                        ${highlightOptions}
+                    </select>
+                </div>
+            `;
         }
 
         // ── RENDER ──
         function filterTable() {
+            const activeList = lists.find(l => l.id === activeListId);
             const q = document.getElementById('searchInput').value.trim().toLowerCase();
             const ft = document.getElementById('filterType').value;
-            let data = seeds.filter((s, i) => {
-                const matchQ = !q || s.name.toLowerCase().includes(q) || (s.company || '').toLowerCase().includes(q);
-                const matchT = !ft || (ft === 'naya' ? s.isNew : s.type === ft);
+
+            let data = activeList.items.filter((item) => {
+                const matchQ = !q || item.values.some(val => (val || '').toLowerCase().includes(q));
+                const matchT = !ft || item.highlight === ft;
                 return matchQ && matchT;
             });
             renderRows(data);
         }
 
         function renderRows(data) {
+            const activeList = lists.find(l => l.id === activeListId);
             const tbody = document.getElementById('tbody');
             const empty = document.getElementById('emptyState');
-            if (!data) data = seeds;
+            if (!data) data = activeList.items;
 
             tbody.innerHTML = '';
             if (data.length === 0) { empty.style.display = 'block'; updateStats(); return; }
@@ -1565,7 +1957,7 @@
 
             let sno = 0;
             data.forEach(s => {
-                const idx = seeds.indexOf(s);
+                const idx = activeList.items.indexOf(s);
                 sno++;
                 if (editingIdx === idx) {
                     renderEditRow(tbody, s, idx, sno);
@@ -1576,111 +1968,210 @@
             updateStats();
         }
 
-        function renderViewRow(tbody, s, idx, sno) {
-            const rc = s.isNew ? 'naya' : (s.type === 'motka' ? 'motka' : 'mehi');
-            const newBadge = s.isNew ? ' <span class="vtag vtn" style="font-size:9.5px;padding:1px 6px;">नया</span>' : '';
+        function renderViewRow(tbody, item, idx, sno) {
+            const activeList = lists.find(l => l.id === activeListId);
+            const hColor = item.highlight || 'none';
             const tr = document.createElement('tr');
-            tr.className = rc;
-            tr.innerHTML = `
-    <td class="sno">${toH(sno)}</td>
-    <td class="name-col">${s.name}${newBadge}</td>
-    <td class="center">${typeTag(s.type)}</td>
-    <td class="center">${s.company || '—'}</td>
-    <td class="center"><span class="dbadge">${s.days || '—'}</span></td>
-    <td class="center">
-      <div class="action-btns">
-        <button class="btn-edit" onclick="startEdit(${idx})" title="Edit">✏️<span class="btn-lbl">Edit</span></button>
-        <button class="btn-del" onclick="askDelete(${idx})" title="Delete">🗑️<span class="btn-lbl">Delete</span></button>
-      </div>
-    </td>
-  `;
+
+            if (hColor !== 'none') {
+                tr.className = hColor === 'orange' ? 'motka' : (hColor === 'green' ? 'mehi' : 'naya');
+            }
+
+            let inner = `<td class="sno">${toH(sno)}</td>`;
+
+            item.values.forEach((val, valIdx) => {
+                let cellClass = '';
+                if (valIdx === 0) cellClass = 'name-col';
+                else cellClass = 'center';
+
+                let cellContent = val || '—';
+
+                // Tag badge next to name
+                if (valIdx === 0 && hColor !== 'none' && activeList.highlights && activeList.highlights[hColor]) {
+                    const badgeText = activeList.highlights[hColor];
+                    let badgeClass = '';
+                    if (hColor === 'orange') badgeClass = 'vtm';
+                    if (hColor === 'green') badgeClass = 'vth';
+                    if (hColor === 'purple') badgeClass = 'vtn';
+
+                    cellContent += ` <span class="vtag ${badgeClass}" style="font-size:9.5px; padding:1px 6px;">${badgeText}</span>`;
+                }
+
+                // Custom badge style for final column (price/duration/etc.)
+                if (valIdx === activeList.columns.length - 1) {
+                    cellContent = `<span class="dbadge">${val || '—'}</span>`;
+                }
+
+                inner += `<td class="${cellClass}">${cellContent}</td>`;
+            });
+
+            inner += `
+                <td class="center">
+                  <div class="action-btns">
+                    <button class="btn-edit" onclick="startEdit(${idx})" title="Edit">✏️<span class="btn-lbl">Edit</span></button>
+                    <button class="btn-del" onclick="askDelete(${idx})" title="Delete">🗑️<span class="btn-lbl">Delete</span></button>
+                  </div>
+                </td>
+            `;
+
+            tr.innerHTML = inner;
             tbody.appendChild(tr);
         }
 
-        function renderEditRow(tbody, s, idx, sno) {
+        function renderEditRow(tbody, item, idx, sno) {
+            const activeList = lists.find(l => l.id === activeListId);
             const tr = document.createElement('tr');
             tr.className = 'editing';
-            tr.innerHTML = `
-    <td class="sno">${toH(sno)}</td>
-    <td class="name-col">
-      <input class="inline-input" id="eN${idx}" value="${s.name}" placeholder="नाम">
-    </td>
-    <td class="center">
-      <select class="inline-sel" id="eT${idx}">
-        <option value="motka" ${s.type === 'motka' ? 'selected' : ''}>मोटका</option>
-        <option value="mehi"  ${s.type === 'mehi' ? 'selected' : ''}>महीन</option>
-        <option value="naya"  ${s.type === 'naya' ? 'selected' : ''}>नई किस्म</option>
-      </select>
-    </td>
-    <td class="center">
-      <input class="inline-input" id="eC${idx}" value="${s.company === '—' ? '' : s.company}" placeholder="कंपनी">
-    </td>
-    <td class="center">
-      <input class="inline-input" id="eD${idx}" value="${s.days === '—' ? '' : s.days}" placeholder="दिन" style="width:80px">
-    </td>
-    <td class="center">
-      <div class="action-btns">
-        <button class="btn-save-row" onclick="saveEdit(${idx})" title="Save">💾<span class="btn-lbl">Save</span></button>
-        <button class="btn-cancel-row" onclick="cancelEdit()" title="Cancel">✕<span class="btn-lbl">Cancel</span></button>
-      </div>
-    </td>
-  `;
+
+            let highlightOptions = `<option value="none">कोई हाइलाइट नहीं</option>`;
+            if (activeList.highlights) {
+                if (activeList.highlights.orange) highlightOptions += `<option value="orange" ${item.highlight === 'orange' ? 'selected' : ''}>🟠 ${activeList.highlights.orange}</option>`;
+                if (activeList.highlights.green) highlightOptions += `<option value="green" ${item.highlight === 'green' ? 'selected' : ''}>🟢 ${activeList.highlights.green}</option>`;
+                if (activeList.highlights.purple) highlightOptions += `<option value="purple" ${item.highlight === 'purple' ? 'selected' : ''}>🟣 ${activeList.highlights.purple}</option>`;
+            }
+
+            let inner = `<td class="sno">${toH(sno)}</td>`;
+            activeList.columns.forEach((col, colIdx) => {
+                const val = item.values[colIdx] || '';
+                if (colIdx === 0) {
+                    inner += `
+                        <td class="name-col">
+                            <input class="inline-input" id="eVal_${idx}_${colIdx}" value="${val}" placeholder="${col}">
+                            <div style="margin-top: 5px; display: flex; align-items: center; gap: 4px;">
+                                <span style="font-size:10px; color:#555; font-weight:700;">टैग:</span>
+                                <select class="inline-sel" id="eHigh_${idx}" style="font-size: 11px; padding: 2px; width: auto; font-family: 'Baloo 2', cursive;">
+                                    ${highlightOptions}
+                                </select>
+                            </div>
+                        </td>
+                    `;
+                } else {
+                    inner += `
+                        <td class="center">
+                            <input class="inline-input" id="eVal_${idx}_${colIdx}" value="${val}" placeholder="${col}" style="text-align: center;">
+                        </td>
+                    `;
+                }
+            });
+
+            inner += `
+                <td class="center">
+                  <div class="action-btns">
+                    <button class="btn-save-row" onclick="saveEdit(${idx})" title="Save">💾<span class="btn-lbl">Save</span></button>
+                    <button class="btn-cancel-row" onclick="cancelEdit()" title="Cancel">✕<span class="btn-lbl">Cancel</span></button>
+                  </div>
+                </td>
+            `;
+            tr.innerHTML = inner;
             tbody.appendChild(tr);
         }
 
         function updateStats() {
-            document.getElementById('sTotal').textContent = seeds.length;
-            document.getElementById('sMotka').textContent = seeds.filter(s => s.type === 'motka').length;
-            document.getElementById('sMehi').textContent = seeds.filter(s => s.type === 'mehi').length;
-            document.getElementById('sNaya').textContent = seeds.filter(s => s.isNew).length;
+            const activeList = lists.find(l => l.id === activeListId);
+            const statsBar = document.getElementById('statsBar');
+
+            if (!activeList || !activeList.items) {
+                statsBar.innerHTML = '';
+                return;
+            }
+
+            let html = `<div class="stat-chip">🌾 कुल <span>${activeList.items.length}</span></div>`;
+
+            if (activeList.highlights) {
+                if (activeList.highlights.orange) {
+                    const count = activeList.items.filter(item => item.highlight === 'orange').length;
+                    html += `<div class="stat-chip">🟠 ${activeList.highlights.orange} <span>${count}</span></div>`;
+                }
+                if (activeList.highlights.green) {
+                    const count = activeList.items.filter(item => item.highlight === 'green').length;
+                    html += `<div class="stat-chip">🟢 ${activeList.highlights.green} <span>${count}</span></div>`;
+                }
+                if (activeList.highlights.purple) {
+                    const count = activeList.items.filter(item => item.highlight === 'purple').length;
+                    html += `<div class="stat-chip">🟣 ${activeList.highlights.purple} <span>${count}</span></div>`;
+                }
+            }
+
+            statsBar.innerHTML = html;
         }
 
-        // ── CRUD: ADD ──
-        function addSeed() {
-            const name = document.getElementById('iName').value.trim();
-            const type = document.getElementById('iType').value;
-            const company = document.getElementById('iCompany').value.trim();
-            const days = document.getElementById('iDays').value.trim();
+        // ── CRUD: ADD ITEM ──
+        function addItem() {
+            const activeList = lists.find(l => l.id === activeListId);
+            const values = [];
+            let isValid = true;
 
-            document.getElementById('iName').classList.remove('err');
-            document.getElementById('iType').classList.remove('err');
+            activeList.columns.forEach((col, idx) => {
+                const el = document.getElementById(`iCol_${idx}`);
+                const val = el.value.trim();
+                el.classList.remove('err');
+                if (idx === 0 && !val) {
+                    el.classList.add('err');
+                    isValid = false;
+                }
+                values.push(val);
+            });
 
-            if (!name) { document.getElementById('iName').classList.add('err'); toast('❌', 'Please enter seed name!', 'err'); return; }
-            if (!type) { document.getElementById('iType').classList.add('err'); toast('❌', 'Please select type!', 'err'); return; }
+            if (!isValid) {
+                toast('❌', 'कृपया मुख्य कॉलम (नाम) अवश्य भरें!', 'err');
+                return;
+            }
 
-            seeds.push({ name, type, company: company || '—', days: days || '—', isNew: type === 'naya' });
-            save();
+            const highlight = document.getElementById('iHighlight').value;
+
+            activeList.items.push({
+                values,
+                highlight
+            });
+
+            saveLists();
             filterTable();
             clearForm();
-            toast('✅', `"${name}" added successfully!`);
+            toast('✅', `"${values[0]}" जोड़ा गया!`);
 
-            // flash last row
             setTimeout(() => {
                 const rows = document.getElementById('tbody').querySelectorAll('tr');
                 if (rows.length) { rows[rows.length - 1].classList.add('row-new'); }
             }, 50);
         }
 
-        // ── CRUD: EDIT ──
+        // ── CRUD: EDIT ROW ──
         function startEdit(idx) {
             editingIdx = idx;
             filterTable();
-            setTimeout(() => { const el = document.getElementById('eN' + idx); if (el) el.focus(); }, 50);
+            setTimeout(() => { const el = document.getElementById('eVal_' + idx + '_0'); if (el) el.focus(); }, 50);
         }
 
         function saveEdit(idx) {
-            const name = (document.getElementById('eN' + idx)?.value || '').trim();
-            const type = document.getElementById('eT' + idx)?.value || '';
-            const company = (document.getElementById('eC' + idx)?.value || '').trim();
-            const days = (document.getElementById('eD' + idx)?.value || '').trim();
+            const activeList = lists.find(l => l.id === activeListId);
+            const values = [];
+            let isValid = true;
 
-            if (!name) { toast('❌', 'Name cannot be empty!', 'err'); return; }
+            activeList.columns.forEach((col, colIdx) => {
+                const inputEl = document.getElementById(`eVal_${idx}_${colIdx}`);
+                const val = (inputEl?.value || '').trim();
+                if (colIdx === 0 && !val) {
+                    isValid = false;
+                }
+                values.push(val);
+            });
 
-            seeds[idx] = { ...seeds[idx], name, type, company: company || '—', days: days || '—', isNew: type === 'naya' };
+            if (!isValid) {
+                toast('❌', 'पहला कॉलम (नाम) खाली नहीं हो सकता!', 'err');
+                return;
+            }
+
+            const highlight = document.getElementById(`eHigh_${idx}`)?.value || 'none';
+
+            activeList.items[idx] = {
+                values,
+                highlight
+            };
+
             editingIdx = null;
-            save();
+            saveLists();
             filterTable();
-            toast('💾', `"${name}" updated successfully!`);
+            toast('💾', `"${values[0]}" अपडेट किया गया!`);
         }
 
         function cancelEdit() {
@@ -1688,33 +2179,193 @@
             filterTable();
         }
 
-        // ── CRUD: DELETE ──
+        // ── CRUD: DELETE ROW ──
         function askDelete(idx) {
+            const activeList = lists.find(l => l.id === activeListId);
             pendingDeleteIdx = idx;
-            document.getElementById('delName').textContent = seeds[idx].name;
+            document.getElementById('delName').textContent = activeList.items[idx].values[0];
             document.getElementById('delModal').classList.add('open');
         }
+
         function closeDelModal() {
             pendingDeleteIdx = null;
             document.getElementById('delModal').classList.remove('open');
         }
+
         function confirmDelete() {
+            const activeList = lists.find(l => l.id === activeListId);
             if (pendingDeleteIdx === null) return;
-            const name = seeds[pendingDeleteIdx].name;
-            seeds.splice(pendingDeleteIdx, 1);
+            const name = activeList.items[pendingDeleteIdx].values[0];
+            activeList.items.splice(pendingDeleteIdx, 1);
             if (editingIdx === pendingDeleteIdx) editingIdx = null;
             pendingDeleteIdx = null;
-            save();
+            saveLists();
             closeDelModal();
             filterTable();
-            toast('🗑️', `"${name}" deleted successfully!`, 'warn');
+            toast('🗑️', `"${name}" हटा दिया गया!`, 'warn');
         }
 
         function clearForm() {
-            ['iName', 'iCompany', 'iDays'].forEach(id => { document.getElementById(id).value = ''; document.getElementById(id).classList.remove('err'); });
-            document.getElementById('iType').value = '';
-            // Close any open suggestion dropdowns
-            document.querySelectorAll('.translit-suggestions').forEach(el => { el.classList.remove('show'); el.innerHTML = ''; });
+            const activeList = lists.find(l => l.id === activeListId);
+            activeList.columns.forEach((col, idx) => {
+                const el = document.getElementById(`iCol_${idx}`);
+                if (el) {
+                    el.value = '';
+                    el.classList.remove('err');
+                }
+            });
+            const hl = document.getElementById('iHighlight');
+            if (hl) hl.value = 'none';
+
+            document.querySelectorAll('.translit-suggestions').forEach(el => {
+                el.classList.remove('show');
+                el.innerHTML = '';
+            });
+        }
+
+        // ── CREATE / EDIT LIST MODALS ──
+        function openCreateListModal() {
+            document.getElementById('listModalTitle').textContent = 'नया लिस्ट जोड़ें';
+            document.getElementById('mListTitle').value = '';
+            document.getElementById('mCol1').value = 'नाम';
+            document.getElementById('mCol2').value = 'प्रकार';
+            document.getElementById('mCol3').value = 'कंपनी';
+            document.getElementById('mCol4').value = '';
+            document.getElementById('mCol5').value = '';
+
+            document.getElementById('mHighOrange').value = 'विशेष';
+            document.getElementById('mHighGreen').value = 'सामान्य';
+            document.getElementById('mHighPurple').value = 'नया';
+
+            document.getElementById('listModal').setAttribute('data-mode', 'create');
+            document.getElementById('listModal').classList.add('open');
+        }
+
+        function openEditListModal() {
+            const activeList = lists.find(l => l.id === activeListId);
+            document.getElementById('listModalTitle').textContent = 'लिस्ट का विवरण बदलें';
+            document.getElementById('mListTitle').value = activeList.title;
+
+            document.getElementById('mCol1').value = activeList.columns[0] || '';
+            document.getElementById('mCol2').value = activeList.columns[1] || '';
+            document.getElementById('mCol3').value = activeList.columns[2] || '';
+            document.getElementById('mCol4').value = activeList.columns[3] || '';
+            document.getElementById('mCol5').value = activeList.columns[4] || '';
+
+            document.getElementById('mHighOrange').value = activeList.highlights?.orange || '';
+            document.getElementById('mHighGreen').value = activeList.highlights?.green || '';
+            document.getElementById('mHighPurple').value = activeList.highlights?.purple || '';
+
+            document.getElementById('listModal').setAttribute('data-mode', 'edit');
+            document.getElementById('listModal').classList.add('open');
+        }
+
+        function closeListModal() {
+            document.getElementById('listModal').classList.remove('open');
+        }
+
+        function saveListConfig() {
+            const title = document.getElementById('mListTitle').value.trim();
+            if (!title) {
+                toast('❌', 'कृपया लिस्ट का शीर्षक दर्ज करें!', 'err');
+                return;
+            }
+
+            const col1 = document.getElementById('mCol1').value.trim();
+            const col2 = document.getElementById('mCol2').value.trim();
+            const col3 = document.getElementById('mCol3').value.trim();
+            const col4 = document.getElementById('mCol4').value.trim();
+            const col5 = document.getElementById('mCol5').value.trim();
+
+            if (!col1 || !col2 || !col3) {
+                toast('❌', 'कम से कम पहले 3 कॉलम का नाम आवश्यक है!', 'err');
+                return;
+            }
+
+            const columns = [col1, col2, col3];
+            if (col4) columns.push(col4);
+            if (col5) columns.push(col5);
+
+            const orange = document.getElementById('mHighOrange').value.trim();
+            const green = document.getElementById('mHighGreen').value.trim();
+            const purple = document.getElementById('mHighPurple').value.trim();
+
+            const highlights = { orange, green, purple };
+
+            const modal = document.getElementById('listModal');
+            const mode = modal.getAttribute('data-mode');
+
+            if (mode === 'create') {
+                const newId = 'list_' + Date.now();
+                const newList = {
+                    id: newId,
+                    title,
+                    columns,
+                    highlights,
+                    items: []
+                };
+                lists.push(newList);
+                activeListId = newId;
+                toast('✅', `"${title}" लिस्ट बनाई गई!`);
+            } else {
+                const activeList = lists.find(l => l.id === activeListId);
+                activeList.title = title;
+
+                const oldColCount = activeList.columns.length;
+                const newColCount = columns.length;
+
+                if (oldColCount !== newColCount) {
+                    activeList.items.forEach(item => {
+                        if (item.values.length < newColCount) {
+                            while (item.values.length < newColCount) {
+                                item.values.push('');
+                            }
+                        } else if (item.values.length > newColCount) {
+                            item.values = item.values.slice(0, newColCount);
+                        }
+                    });
+                }
+
+                activeList.columns = columns;
+                activeList.highlights = highlights;
+                toast('💾', `"${title}" अपडेट किया गया!`);
+            }
+
+            saveLists();
+            closeListModal();
+            renderTabs();
+            switchList(activeListId);
+        }
+
+        // ── DELETE LIST MODAL ──
+        function askDeleteActiveList() {
+            if (lists.length <= 1) {
+                toast('⚠️', 'आप आखिरी लिस्ट को डिलीट नहीं कर सकते!', 'err');
+                return;
+            }
+            const activeList = lists.find(l => l.id === activeListId);
+            document.getElementById('delListName').textContent = activeList.title;
+            document.getElementById('delListModal').classList.add('open');
+        }
+
+        function closeDelListModal() {
+            document.getElementById('delListModal').classList.remove('open');
+        }
+
+        function confirmDeleteActiveList() {
+            const activeIndex = lists.findIndex(l => l.id === activeListId);
+            if (activeIndex === -1) return;
+
+            const deletedTitle = lists[activeIndex].title;
+            lists.splice(activeIndex, 1);
+
+            activeListId = lists[0].id;
+
+            saveLists();
+            closeDelListModal();
+            renderTabs();
+            switchList(activeListId);
+            toast('🗑️', `"${deletedTitle}" डिलीट कर दिया गया!`, 'warn');
         }
 
         // ── TRANSLITERATION (Hinglish → Hindi) ──
@@ -1757,9 +2408,6 @@
                 if (suggestions.length > 0 && document.activeElement === input) {
                     let html = '<div class="translit-hint">🔤 Select Hindi conversion:</div>';
                     suggestions.forEach(s => {
-                        const div = document.createElement('div');
-                        div.className = 'translit-opt';
-                        div.innerHTML = `<span class="t-hindi">${s}</span><span class="t-eng">${val}</span>`;
                         html += `<div class="translit-opt" onclick="selectTranslit('${fieldId}', this)" data-val="${s}"><span class="t-hindi">${s}</span><span class="t-eng">${val}</span></div>`;
                     });
                     sugDiv.innerHTML = html;
@@ -1780,7 +2428,6 @@
             input.focus();
         }
 
-        // Close suggestions when clicking outside
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.translit-wrap')) {
                 document.querySelectorAll('.translit-suggestions').forEach(el => {
@@ -1815,17 +2462,13 @@
             tag: 'सभी प्रकार के खाद एवं बीज उचित मूल्य पर उपलब्ध हैं',
             addr: 'बड़का गांव, गोपालगंज, बिहार',
             phone: '8969730344',
-            owner: 'प्रो. रत्नेश कुमार',
-            title: 'धान बीज मूल्य सूची — खरीफ 2026'
+            owner: 'प्रो. रत्नेश कुमार'
         };
         const PER_PAGE = 20;
 
-        // px at 96dpi — A4 = 210×297mm
         const A4W = 794;
         const A4H = 1123;
         const SCALE = 2; // retina quality
-
-        function hex(h) { return h; }
 
         function drawPage(ctx, pageSeeds, pageNum, totalPages) {
             const W = A4W * SCALE;
@@ -1834,38 +2477,34 @@
 
             ctx.save();
 
-            // ════════════════════════════════════════
-            // FULL GREEN GRADIENT BACKGROUND
-            // ════════════════════════════════════════
+            // GREEN BACKGROUND
             const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
-            bgGrad.addColorStop(0, '#1a5c1a');
-            bgGrad.addColorStop(0.4, '#2e7d32');
-            bgGrad.addColorStop(1, '#1b5e20');
+            bgGrad.addColorStop(0, '#0a3d0a');
+            bgGrad.addColorStop(0.4, '#1b5e20');
+            bgGrad.addColorStop(1, '#0a2a0a');
             ctx.fillStyle = bgGrad;
             ctx.fillRect(0, 0, W, H);
 
-            // Subtle radial highlight centre
+            // Subtle highlight
             const radGrad = ctx.createRadialGradient(W / 2, H * 0.3, 50 * s, W / 2, H * 0.3, 400 * s);
-            radGrad.addColorStop(0, 'rgba(255,255,255,0.07)');
+            radGrad.addColorStop(0, 'rgba(255,255,255,0.06)');
             radGrad.addColorStop(1, 'rgba(0,0,0,0)');
             ctx.fillStyle = radGrad;
             ctx.fillRect(0, 0, W, H);
 
-            // ── OUTER DECORATIVE BORDER (thick gold) ──
+            // BORDER GOLD
             const brd = 12 * s;
             ctx.strokeStyle = '#ffd600';
             ctx.lineWidth = brd;
             ctx.strokeRect(brd / 2, brd / 2, W - brd, H - brd);
 
-            // inner thin white border
-            ctx.strokeStyle = 'rgba(255,255,255,0.5)';
-            ctx.lineWidth = 2 * s;
+            // White border inner
+            ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+            ctx.lineWidth = 1.5 * s;
             ctx.strokeRect(brd + 4 * s, brd + 4 * s, W - 2 * brd - 8 * s, H - 2 * brd - 8 * s);
 
-            // ════════════════════════════════════════
-            // TOP ROW — owner left | phone right
-            // ════════════════════════════════════════
-            const pad = 22 * s;
+            // TOP ROW
+            const pad = 24 * s;
             let curY = brd + 18 * s;
 
             ctx.font = `600 ${13 * s}px "Noto Sans Devanagari", serif`;
@@ -1876,31 +2515,26 @@
             ctx.textAlign = 'right';
             ctx.fillText('मो.: ' + SHOP.phone, W - pad, curY + 13 * s);
 
-            // gold underline for top row
+            // Divider line
             curY += 26 * s;
             ctx.strokeStyle = 'rgba(255,214,0,0.5)';
             ctx.lineWidth = 1.5 * s;
             ctx.beginPath(); ctx.moveTo(pad, curY); ctx.lineTo(W - pad, curY); ctx.stroke();
             curY += 10 * s;
 
-            // ════════════════════════════════════════
-            // MAIN SHOP NAME — big bold white with gold shadow
-            // ════════════════════════════════════════
+            // SHOP NAME
             ctx.textAlign = 'center';
             ctx.font = `900 ${52 * s}px "Noto Sans Devanagari", serif`;
-            // shadow
             ctx.fillStyle = 'rgba(0,0,0,0.35)';
             ctx.fillText(SHOP.name, W / 2 + 3 * s, curY + 52 * s + 3 * s);
-            // gold outline
             ctx.strokeStyle = '#c8860b';
             ctx.lineWidth = 3 * s;
             ctx.strokeText(SHOP.name, W / 2, curY + 52 * s);
-            // white fill
             ctx.fillStyle = '#ffffff';
             ctx.fillText(SHOP.name, W / 2, curY + 52 * s);
             curY += 62 * s;
 
-            // ── KHAD BEEJ BHANDAR — outlined red-filled big text ──
+            // SUBTITLE
             ctx.font = `900 ${40 * s}px "Noto Sans Devanagari", serif`;
             ctx.fillStyle = 'rgba(0,0,0,0.25)';
             ctx.fillText(SHOP.sub, W / 2 + 2 * s, curY + 40 * s + 2 * s);
@@ -1911,7 +2545,7 @@
             ctx.fillText(SHOP.sub, W / 2, curY + 40 * s);
             curY += 50 * s;
 
-            // ── TAGLINE ──
+            // TAGLINE
             ctx.font = `500 ${12.5 * s}px "Noto Sans Devanagari", serif`;
             ctx.fillStyle = '#ffffff';
             ctx.textAlign = 'center';
@@ -1921,15 +2555,34 @@
             ctx.fillText(tagLine2, W / 2, curY + 30 * s);
             curY += 42 * s;
 
-            // ════════════════════════════════════════
-            // TABLE CONTAINER — cream/white bg with green arch top
-            // ════════════════════════════════════════
+            const activeList = lists.find(l => l.id === activeListId);
+
+            // DYNAMIC LIST TITLE BAR
+            const titleStripH = 34 * s;
+            const titleStripY = curY;
+            const titleStripGrad = ctx.createLinearGradient(0, titleStripY, 0, titleStripY + titleStripH);
+            titleStripGrad.addColorStop(0, '#ffd600');
+            titleStripGrad.addColorStop(1, '#f9a825');
+            ctx.fillStyle = titleStripGrad;
+            roundRect(ctx, pad, titleStripY, W - pad * 2, titleStripH, 8 * s);
+            ctx.fill();
+            ctx.strokeStyle = '#c8a63a';
+            ctx.lineWidth = 1 * s;
+            roundRect(ctx, pad, titleStripY, W - pad * 2, titleStripH, 8 * s);
+            ctx.stroke();
+
+            ctx.fillStyle = '#0a3d0a';
+            ctx.font = `800 ${14 * s}px "Noto Sans Devanagari", serif`;
+            ctx.textAlign = 'center';
+            ctx.fillText('🌾 ' + activeList.title + ' 🌾', W / 2, titleStripY + titleStripH / 2 + 5 * s);
+            curY += titleStripH + 10 * s;
+
+            // TABLE BOX
             const tblPad = 14 * s;
             const tblX = tblPad;
             const tblW = W - tblPad * 2;
             const tblTop = curY + 4 * s;
 
-            // Table background (cream)
             const tblBgH = H - tblTop - 100 * s;
             ctx.fillStyle = '#fffef0';
             roundRect(ctx, tblX, tblTop, tblW, tblBgH, 10 * s);
@@ -1939,19 +2592,33 @@
             roundRect(ctx, tblX, tblTop, tblW, tblBgH, 10 * s);
             ctx.stroke();
 
-            // ── TABLE HEADER ROW ──
-            const cols = [
-                { label: 'क्रम\nसंख्या', x: tblX, w: 52 * s, align: 'center' },
-                { label: 'बीज का नाम (Variety)', x: tblX + 52 * s, w: 220 * s, align: 'left' },
-                { label: 'बीज का\nप्रकार', x: tblX + 272 * s, w: 110 * s, align: 'center' },
-                { label: 'कंपनी / ब्रांड', x: tblX + 382 * s, w: 170 * s, align: 'center' },
-                { label: 'अवधि\n(दिन)', x: tblX + 552 * s, w: tblW - 552 * s, align: 'center' },
-            ];
+            // BUILD DYNAMIC COLS WIDTHS
+            const numCols = activeList.columns.length;
+            const snoW = 52 * s;
+            const availableW = tblW - snoW;
+
+            // Column 1 is wider (38%), other custom columns are distributed equally
+            const col1W = Math.round(availableW * 0.38);
+            const otherW = Math.round((availableW - col1W) / (numCols - 1));
+
+            const cols = [];
+            cols.push({ label: 'क्रम\nसंख्या', x: tblX, w: snoW, align: 'center' });
+
+            activeList.columns.forEach((colName, colIdx) => {
+                const xPos = tblX + snoW + (colIdx === 0 ? 0 : col1W + (colIdx - 1) * otherW);
+                const width = colIdx === 0 ? col1W : (colIdx === numCols - 1 ? tblW - (snoW + col1W + (numCols - 2) * otherW) : otherW);
+                cols.push({
+                    label: colName,
+                    x: xPos,
+                    w: width,
+                    align: colIdx === 0 ? 'left' : 'center'
+                });
+            });
 
             const thH = 44 * s;
             const thY = tblTop + 6 * s;
 
-            // header bg
+            // header background
             const thGrad = ctx.createLinearGradient(0, thY, 0, thY + thH);
             thGrad.addColorStop(0, '#2e7d32');
             thGrad.addColorStop(1, '#1b5e20');
@@ -1959,6 +2626,7 @@
             roundRect(ctx, tblX + 2 * s, thY, tblW - 4 * s, thH, 8 * s);
             ctx.fill();
 
+            // header labels
             ctx.fillStyle = '#ffd600';
             cols.forEach(col => {
                 const lines = col.label.split('\n');
@@ -1970,7 +2638,7 @@
                     ctx.textAlign = col.align === 'center' ? 'center' : 'left';
                     ctx.fillText(ln, cx, startY + li * lineH + 10 * s);
                 });
-                // col separator
+
                 if (col.x + col.w < tblX + tblW - 2 * s) {
                     ctx.strokeStyle = 'rgba(255,214,0,0.4)';
                     ctx.lineWidth = 1 * s;
@@ -1981,21 +2649,31 @@
                 }
             });
 
-            // ── TABLE ROWS ──
+            // TABLE ROWS
             const rowH = 30 * s;
             let rowY = thY + thH + 2 * s;
 
             pageSeeds.forEach((seed, i) => {
                 const globalSno = (pageNum - 1) * PER_PAGE + i + 1;
                 const isEven = i % 2 === 1;
-                const isNaya = seed.isNew;
-                const isMot = seed.type === 'motka';
+                const hColor = seed.highlight || 'none';
 
-                // alternating row bg
-                ctx.fillStyle = isNaya ? '#f5e8ff' : (isEven ? '#f0ffe8' : '#ffffff');
+                if (hColor === 'purple') {
+                    ctx.fillStyle = '#f5e8ff';
+                } else if (hColor === 'orange') {
+                    ctx.fillStyle = '#fff3e0';
+                } else if (hColor === 'green') {
+                    ctx.fillStyle = '#e8f5e9';
+                } else {
+                    ctx.fillStyle = isEven ? '#fdfdf6' : '#ffffff';
+                }
                 ctx.fillRect(tblX + 2 * s, rowY, tblW - 4 * s, rowH);
 
-                // row bottom border
+                if (hColor !== 'none') {
+                    ctx.fillStyle = hColor === 'orange' ? '#e65100' : (hColor === 'green' ? '#2e7d32' : '#6a1b9a');
+                    ctx.fillRect(tblX + 2 * s, rowY, 4 * s, rowH);
+                }
+
                 ctx.strokeStyle = '#d4b86a';
                 ctx.lineWidth = 0.7 * s;
                 ctx.beginPath();
@@ -2005,69 +2683,63 @@
 
                 const midY = rowY + rowH / 2 + 5 * s;
 
-                // 1. Serial number
+                // 1. S.No
                 ctx.fillStyle = '#5d2600';
                 ctx.font = `700 ${13 * s}px "Noto Sans Devanagari", serif`;
                 ctx.textAlign = 'center';
                 ctx.fillText(String(globalSno), cols[0].x + cols[0].w / 2, midY);
 
-                // 2. Name
-                ctx.fillStyle = '#1a0a00';
-                ctx.font = `600 ${12.5 * s}px "Noto Sans Devanagari", serif`;
-                ctx.textAlign = 'left';
-                const nameX = cols[1].x + 7 * s;
-                ctx.fillText(seed.name, nameX, midY);
-                if (seed.isNew) {
-                    const nmW = ctx.measureText(seed.name).width;
-                    ctx.font = `700 ${8.5 * s}px "Noto Sans Devanagari", serif`;
-                    const bw = ctx.measureText('★नया').width + 10 * s;
-                    const bx = nameX + nmW + 5 * s;
-                    roundRect(ctx, bx, rowY + 8 * s, bw, 15 * s, 7 * s);
-                    ctx.fillStyle = '#6a1b9a'; ctx.fill();
-                    ctx.fillStyle = '#fff';
-                    ctx.textAlign = 'center';
-                    ctx.fillText('★नया', bx + bw / 2, rowY + 19 * s);
-                }
+                // Draw cell values
+                seed.values.forEach((val, valIdx) => {
+                    const col = cols[valIdx + 1];
+                    if (!col) return;
 
-                // 3. Type
-                const typeLabel = isMot ? 'मोटका' : 'मेही';
-                const typeBg = isMot ? '#ff7043' : '#43a047';
-                const typeFg = '#ffffff';
-                ctx.font = `700 ${11 * s}px "Noto Sans Devanagari", serif`;
-                ctx.textAlign = 'center';
-                const tcx = cols[2].x + cols[2].w / 2;
-                const tw2 = ctx.measureText(typeLabel).width + 18 * s;
-                roundRect(ctx, tcx - tw2 / 2, rowY + 8 * s, tw2, 16 * s, 8 * s);
-                ctx.fillStyle = typeBg; ctx.fill();
-                ctx.fillStyle = typeFg;
-                ctx.fillText(typeLabel, tcx, rowY + 20 * s);
+                    ctx.fillStyle = '#1a0a00';
+                    ctx.textAlign = col.align;
 
-                // 4. Company
-                ctx.fillStyle = '#1a0a00';
-                ctx.font = `500 ${11.5 * s}px "Noto Sans Devanagari", serif`;
-                ctx.textAlign = 'center';
-                ctx.fillText(seed.company || '—', cols[3].x + cols[3].w / 2, midY);
+                    const cx = col.align === 'center' ? col.x + col.w / 2 : col.x + 7 * s;
 
-                // 5. Days
-                const dLabel = seed.days || '—';
-                const dcx = cols[4].x + cols[4].w / 2;
-                ctx.font = `700 ${11.5 * s}px "Noto Sans Devanagari", serif`;
-                ctx.fillStyle = '#1b5e20';
-                ctx.fillText(dLabel, dcx, midY);
+                    if (valIdx === 0) {
+                        ctx.font = `600 ${12.5 * s}px "Noto Sans Devanagari", serif`;
+                        ctx.fillText(val, cx, midY);
 
-                // vertical col separators
+                        if (hColor !== 'none' && activeList.highlights && activeList.highlights[hColor]) {
+                            const badgeText = activeList.highlights[hColor];
+                            const nmW = ctx.measureText(val).width;
+                            ctx.font = `700 ${8.5 * s}px "Noto Sans Devanagari", serif`;
+                            const bw = ctx.measureText('★' + badgeText).width + 8 * s;
+                            const bx = cx + nmW + 6 * s;
+                            if (bx + bw < col.x + col.w - 5 * s) {
+                                roundRect(ctx, bx, rowY + 8 * s, bw, 15 * s, 7 * s);
+                                ctx.fillStyle = hColor === 'orange' ? '#e65100' : (hColor === 'green' ? '#2e7d32' : '#6a1b9a');
+                                ctx.fill();
+                                ctx.fillStyle = '#fff';
+                                ctx.textAlign = 'center';
+                                ctx.fillText('★' + badgeText, bx + bw / 2, rowY + 19 * s);
+                            }
+                        }
+                    } else {
+                        ctx.font = `500 ${11.5 * s}px "Noto Sans Devanagari", serif`;
+                        if (valIdx === numCols - 1) {
+                            ctx.font = `700 ${11.5 * s}px "Noto Sans Devanagari", serif`;
+                            ctx.fillStyle = '#1b5e20';
+                        }
+                        ctx.fillText(val || '—', cx, midY);
+                    }
+                });
+
                 ctx.strokeStyle = '#c8b86a';
                 ctx.lineWidth = 0.7 * s;
-                [cols[1].x, cols[2].x, cols[3].x, cols[4].x].forEach(cx => {
+                for (let c = 1; c < cols.length; c++) {
                     ctx.beginPath();
-                    ctx.moveTo(cx, rowY); ctx.lineTo(cx, rowY + rowH);
+                    ctx.moveTo(cols[c].x, rowY);
+                    ctx.lineTo(cols[c].x, rowY + rowH);
                     ctx.stroke();
-                });
+                }
 
                 rowY += rowH;
             });
 
-            // close table bottom border
             ctx.strokeStyle = '#c8a63a';
             ctx.lineWidth = 1.5 * s;
             ctx.beginPath();
@@ -2075,12 +2747,10 @@
             ctx.lineTo(tblX + tblW - 2 * s, rowY);
             ctx.stroke();
 
-            // ════════════════════════════════════════
-            // FOOTER SECTION
-            // ════════════════════════════════════════
+            // FOOTER
             const ftTop = rowY + 10 * s;
 
-            // ── SLOGAN BANNER (red ribbon style) ──
+            // SLOGAN
             const sloganH = 32 * s;
             const sloganY = ftTop;
             const sloganGrad = ctx.createLinearGradient(0, sloganY, 0, sloganY + sloganH);
@@ -2099,20 +2769,20 @@
             ctx.textAlign = 'center';
             ctx.fillText('अच्छा बीज ही अच्छी पैदावार की पहचान', W / 2, sloganY + sloganH / 2 + 5 * s);
 
-            // ── ADDRESS LINE ──
+            // ADDRESS
             const addrY = sloganY + sloganH + 12 * s;
             ctx.fillStyle = '#ffffff';
             ctx.font = `600 ${12 * s}px "Noto Sans Devanagari", serif`;
             ctx.textAlign = 'center';
             ctx.fillText('📍 स्थान: ' + SHOP.addr, W / 2, addrY);
 
-            // ── PHONE LINE ──
+            // PHONE
             const phoneY = addrY + 18 * s;
             ctx.font = `600 ${12 * s}px "Noto Sans Devanagari", serif`;
             ctx.fillStyle = '#ffd600';
             ctx.fillText('📞 मो.: ' + SHOP.phone, W / 2, phoneY);
 
-            // ── WELCOME RIBBON ──
+            // WELCOME
             const welY = H - brd - 32 * s;
             const welH = 26 * s;
             const welGrad = ctx.createLinearGradient(0, welY, 0, welY + welH);
@@ -2131,7 +2801,7 @@
             ctx.textAlign = 'center';
             ctx.fillText('✿ आपका हार्दिक स्वागत है ✿', W / 2, welY + welH / 2 + 4 * s);
 
-            // ── PAGE NUMBER (small, bottom right inside border) ──
+            // PAGE NUMBER
             if (totalPages > 1) {
                 ctx.fillStyle = 'rgba(255,255,255,0.5)';
                 ctx.font = `400 ${9 * s}px "Noto Sans Devanagari", serif`;
@@ -2157,7 +2827,8 @@
         }
 
         async function downloadImages() {
-            if (seeds.length === 0) { toast('⚠️', 'List is empty!', 'err'); return; }
+            const activeList = lists.find(l => l.id === activeListId);
+            if (!activeList || activeList.items.length === 0) { toast('⚠️', 'List is empty!', 'err'); return; }
 
             const dlModal = document.getElementById('dlModal');
             const dlBar = document.getElementById('dlBar');
@@ -2167,18 +2838,17 @@
             dlModal.classList.add('open');
             dlBar.style.width = '0%';
 
-            const total = seeds.length;
+            const total = activeList.items.length;
             const pages = Math.ceil(total / PER_PAGE);
             dlInfo.textContent = `${total} items — ${pages} page(s)`;
 
-            // Wait for fonts to load
             dlStatus.textContent = 'Loading fonts...';
             dlBar.style.width = '8%';
             try { await document.fonts.ready; } catch (e) { }
             await new Promise(r => setTimeout(r, 500));
 
             for (let p = 0; p < pages; p++) {
-                const chunk = seeds.slice(p * PER_PAGE, (p + 1) * PER_PAGE);
+                const chunk = activeList.items.slice(p * PER_PAGE, (p + 1) * PER_PAGE);
                 dlStatus.textContent = `Creating page ${p + 1}/${pages}...`;
                 dlBar.style.width = (10 + (p / pages) * 75) + '%';
 
@@ -2195,14 +2865,16 @@
                 dlStatus.textContent = `Downloading page ${p + 1}/${pages}...`;
                 await new Promise(r => setTimeout(r, 80));
 
-                // Trigger real download
                 canvas.toBlob(blob => {
                     const url = URL.createObjectURL(blob);
                     const link = document.createElement('a');
                     link.href = url;
+                    
+                    const cleanTitle = activeList.title.replace(/[^a-zA-Z0-9\u0900-\u097F]/g, '-');
                     link.download = pages === 1
-                        ? 'Pandey-Traders-Beej-Suchi.png'
-                        : `Pandey-Traders-Beej-Suchi-Page${p + 1}.png`;
+                        ? `Pandey-Traders-${cleanTitle}.png`
+                        : `Pandey-Traders-${cleanTitle}-Page${p + 1}.png`;
+                    
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
@@ -2221,7 +2893,9 @@
         }
 
         // ── INIT ──
-        renderRows(seeds);
+        initData();
+        renderTabs();
+        switchList(activeListId);
     </script>
 </body>
 

@@ -31,7 +31,9 @@ import {
   FaExternalLinkAlt,
   FaAngleLeft,
   FaAngleRight,
+  FaQuestionCircle
 } from "react-icons/fa";
+import AdminHelpGuide from "./AdminHelpGuide";
 
 export default function AdminPanel() {
   const [lists, setLists] = useState([]);
@@ -480,6 +482,12 @@ export default function AdminPanel() {
             <FaTachometerAlt /> Dashboard Home
           </button>
           <button 
+            className={`sidebar-menu-btn ${activeListId === "help" ? "active" : ""}`}
+            onClick={() => setActiveListId("help")}
+          >
+            <FaQuestionCircle /> कैसे उपयोग करें? (Guide)
+          </button>
+          <button 
             className="sidebar-menu-btn" 
             onClick={() => { setEditingList(null); setShowListModal(true); }}
           >
@@ -519,7 +527,7 @@ export default function AdminPanel() {
         {/* Navigation Bar */}
         <div className="admin-topbar">
           <div className="topbar-title">
-            {activeList ? activeList.title : "Dashboard"}
+            {activeList ? activeList.title : activeListId === "help" ? "एडमिन गाइड (Help)" : "Dashboard"}
           </div>
           <div className="topbar-actions">
             {/* Edit & Delete only visible when a category is active */}
@@ -551,6 +559,9 @@ export default function AdminPanel() {
         </div>
 
         <div className="admin-content">
+          {/* HELP GUIDE VIEW */}
+          {activeListId === "help" && <AdminHelpGuide />}
+
           {/* DASHBOARD HOME VIEW */}
           {activeListId === null && (
             <div className="dashboard-view">
@@ -558,7 +569,6 @@ export default function AdminPanel() {
                 <h2>स्वागत है, एडमिन!</h2>
                 <p>यहाँ से आप अपने खाद, बीज एवं कृषि रसायनों के मूल्य और विवरण को व्यवस्थित कर सकते हैं।</p>
               </div>
-
               {/* General Stats */}
               <div className="stats-grid">
                 <div className="stat-card">

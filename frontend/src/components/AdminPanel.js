@@ -120,13 +120,6 @@ export default function AdminPanel() {
     setEditingItemId(item.id);
     setFormValues([...(item.item_values || [])]);
     setShowItemForm(true);
-    // Scroll smoothly to form
-    setTimeout(() => {
-      const formEl = document.getElementById("inline-item-form-anchor");
-      if (formEl) {
-        formEl.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
-    }, 100);
   };
 
   const resetItemForm = () => {
@@ -221,12 +214,20 @@ export default function AdminPanel() {
 
   // Download functionality
   const downloadImage = async () => {
-    if (!activeList || !activeList.items || activeList.items.length === 0) {
-      showToast("डाउनलोड करने के लिए कोई आइटम नहीं है।", "error");
+    const items = activeList?.items || [];
+    if (!activeList || items.length === 0) {
+      showToast("डाउनलोड करने के लिए कोई उत्पाद नहीं है।", "error");
       return;
     }
+
+    const isPDF = items.length > 20;
     setIsDownloading(true);
-    showToast("छवि डाउनलोड की जा रही है, कृपया प्रतीक्षा करें...");
+
+    if (isPDF) {
+      showToast("20 से अधिक उत्पाद होने के कारण PDF फाइल तैयार की जा रही है...");
+    } else {
+      showToast("छवि (PNG) डाउनलोड की जा रही है, कृपया प्रतीक्षा करें...");
+    }
 
     setTimeout(async () => {
       try {
@@ -246,16 +247,30 @@ export default function AdminPanel() {
           canvasList.push(canvas);
         }
 
-        canvasList.forEach((canvas, index) => {
-          const link = document.createElement("a");
-          link.download = `${activeList.title.replace(/\s+/g, "_")}_Page_${index + 1}.png`;
-          link.href = canvas.toDataURL("image/png");
-          link.click();
-        });
+        if (isPDF) {
+          const { jsPDF } = await import("jspdf");
+          const doc = new jsPDF("p", "mm", "a4");
 
-        showToast("डाउनलोड सफल!");
+          for (let i = 0; i < canvasList.length; i++) {
+            if (i > 0) doc.addPage();
+            const imgData = canvasList[i].toDataURL("image/png");
+            // A4 size in mm is 210 x 297
+            doc.addImage(imgData, "PNG", 0, 0, 210, 297);
+          }
+
+          doc.save(`${activeList.title.replace(/\s+/g, "_")}.pdf`);
+          showToast("PDF डाउनलोड सफल!");
+        } else {
+          canvasList.forEach((canvas, index) => {
+            const link = document.createElement("a");
+            link.download = `${activeList.title.replace(/\s+/g, "_")}.png`;
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+          });
+          showToast("छवि डाउनलोड सफल!");
+        }
       } catch (err) {
-        showToast("छवि जनरेट करने में विफलता", "error");
+        showToast("फ़ाइल जनरेट करने में त्रुटि: " + err.message, "error");
       } finally {
         setIsDownloading(false);
       }
@@ -325,58 +340,67 @@ export default function AdminPanel() {
       pages.push(items.slice(i, i + itemsPerPagePrint));
     }
 
+    const colCount = activeList.columns.length;
+    // Dynamically scale typography & padding based on columns to guarantee ZERO clipping/overlap
+    const printFontSize = colCount > 5 ? "11px" : colCount > 4 ? "12px" : "14px";
+    const printPadding = colCount > 5 ? "6px 4px" : colCount > 4 ? "8px 6px" : "12px 10px";
+
     return (
       <div className="print-container-hidden" ref={printRef}>
         {pages.map((pageItems, pageIndex) => (
           <div className="print-page" key={pageIndex}>
-             <div className="print-header">
-                <h2>पाण्डेय ट्रेडर्स</h2>
-                <p>थोक एवं फुटकर विक्रेता</p>
-                <div className="print-contact">
-                  <span>मो: 9839424683, 9839356391</span>
-                  <span>स्थान: बस डिपो के सामने, हरैया - बस्ती</span>
-                </div>
-             </div>
-             
-             <div className="print-title">
-               {activeList.title} — Page {pageIndex + 1} of {pages.length}
-             </div>
+             <div>
+               <div className="print-header">
+                  <h2>पाण्डेय ट्रेडर्स</h2>
+                  <p>खाद बीज भंडार</p>
+                  <div className="print-contact">
+                    <span>बड़का गांव, गोपालगंज, बिहार</span>
+                    <span>📞 8969730344</span>
+                  </div>
+               </div>
+               
+               <div className="print-title">
+                 {activeList.title} — Page {pageIndex + 1} of {pages.length}
+               </div>
 
-             <table className="print-table">
-                <thead>
-                  <tr>
-                    <th style={{ width: 60 }}>क्र.सं.</th>
-                    {activeList.columns.map((col, ci) => (
-                      <th key={ci}>{col}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {pageItems.map((item, idx) => {
-                    const vals = item.item_values || [];
-                    const prakarColIdx = activeList.columns.findIndex(c => c.includes("प्रकार"));
-                    const prakarVal = prakarColIdx !== -1 ? vals[prakarColIdx] : "";
-                    const styles = getVarietyColorStyles(prakarVal);
-                    
-                    return (
-                      <tr key={item.id} className={`print-row-${styles.name}`}>
-                        <td>{pageIndex * itemsPerPagePrint + idx + 1}</td>
-                        {activeList.columns.map((col, ci) => {
-                          const isPrakar = col.includes("प्रकार");
-                          if (isPrakar && styles.name !== "none") {
-                            return (
-                              <td key={ci} style={{ fontWeight: 'bold' }}>
-                                {vals[ci] || "—"}
-                              </td>
-                            );
-                          }
-                          return <td key={ci}>{vals[ci] || "—"}</td>;
-                        })}
+               <div className="print-table-wrap">
+                 <table className="print-table" style={{ fontSize: printFontSize }}>
+                    <thead>
+                      <tr>
+                        <th style={{ width: 50, padding: printPadding }}>क्र.सं.</th>
+                        {activeList.columns.map((col, ci) => (
+                          <th key={ci} style={{ padding: printPadding }}>{col}</th>
+                        ))}
                       </tr>
-                    );
-                  })}
-                </tbody>
-             </table>
+                    </thead>
+                    <tbody>
+                      {pageItems.map((item, idx) => {
+                        const vals = item.item_values || [];
+                        const prakarColIdx = activeList.columns.findIndex(c => c.includes("प्रकार"));
+                        const prakarVal = prakarColIdx !== -1 ? vals[prakarColIdx] : "";
+                        const styles = getVarietyColorStyles(prakarVal);
+                        
+                        return (
+                          <tr key={item.id} className={`print-row-${styles.name}`}>
+                            <td style={{ padding: printPadding }}>{pageIndex * itemsPerPagePrint + idx + 1}</td>
+                            {activeList.columns.map((col, ci) => {
+                              const isPrakar = col.includes("प्रकार");
+                              if (isPrakar && styles.name !== "none") {
+                                return (
+                                  <td key={ci} style={{ fontWeight: 'bold', padding: printPadding }}>
+                                    {vals[ci] || "—"}
+                                  </td>
+                                );
+                              }
+                              return <td key={ci} style={{ padding: printPadding }}>{vals[ci] || "—"}</td>;
+                            })}
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                 </table>
+               </div>
+             </div>
              
              <div className="print-footer">
                 <p>गुणवत्तापूर्ण खाद, बीज एवं कृषि रसायन के विश्वनीय विक्रेता।</p>
@@ -456,8 +480,16 @@ export default function AdminPanel() {
             className="sidebar-menu-btn" 
             onClick={() => { setEditingList(null); setShowListModal(true); }}
           >
-            <FaPlus /> Create Category
+            <FaPlus /> Add Category
           </button>
+          <a 
+            href="/" 
+            target="_blank" 
+            className="sidebar-menu-btn"
+            style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 12 }}
+          >
+            <FaExternalLinkAlt /> Public Site
+          </a>
         </div>
 
         <div className="sidebar-section-title">Categories</div>
@@ -487,37 +519,43 @@ export default function AdminPanel() {
              {activeList ? activeList.title : "Dashboard"}
           </div>
           <div className="topbar-actions">
-            <a href="/" target="_blank" className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <FaExternalLinkAlt /> Public Site
-            </a>
-            {activeList ? (
-              <>
-                <button className="btn-primary" onClick={() => {
-                  setShowItemForm(true);
-                  setEditingItemId(null);
-                  setFormValues(new Array(activeList.columns.length).fill(""));
-                  setTimeout(() => {
-                    const formEl = document.getElementById("inline-item-form-anchor");
-                    if (formEl) formEl.scrollIntoView({ behavior: "smooth", block: "center" });
-                  }, 100);
-                }}>
-                  <FaPlus /> Add Item
-                </button>
-                <button className="btn-secondary" onClick={() => { setEditingList(activeList); setShowListModal(true); }}>
-                  <FaEdit /> Edit Category
-                </button>
-                <button className="btn-danger" onClick={() => handleDeleteList(activeList.id, activeList.title)}>
-                  <FaTrash /> Delete Category
-                </button>
-                <button className="btn-primary" onClick={downloadImage} disabled={isDownloading} style={{background: 'var(--accent)'}}>
-                  {isDownloading ? <FaSpinner className="fa-spin" /> : <FaDownload />} Download Image
-                </button>
-              </>
-            ) : (
-              <button className="btn-primary" onClick={() => { setEditingList(null); setShowListModal(true); }}>
-                <FaPlus /> Create Category
-              </button>
-            )}
+            {/* 1. Add Category Button */}
+            <button className="btn-primary" onClick={() => { setEditingList(null); setShowListModal(true); }}>
+              <FaPlus /> Add Category
+            </button>
+            
+            {/* 2. Edit Category Button */}
+            <button 
+              className="btn-secondary" 
+              onClick={() => { if (activeList) { setEditingList(activeList); setShowListModal(true); } }}
+              disabled={!activeList}
+              style={!activeList ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+            >
+              <FaEdit /> Edit Category
+            </button>
+            
+            {/* 3. Delete Category Button */}
+            <button 
+              className="btn-danger" 
+              onClick={() => { if (activeList) handleDeleteList(activeList.id, activeList.title); }}
+              disabled={!activeList}
+              style={!activeList ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+            >
+              <FaTrash /> Delete Category
+            </button>
+            
+            {/* 4. Download Button */}
+            <button 
+              className="btn-primary" 
+              onClick={downloadImage} 
+              disabled={!activeList || isDownloading} 
+              style={{
+                background: 'var(--accent)',
+                ...(!activeList ? { opacity: 0.5, cursor: 'not-allowed' } : {})
+              }}
+            >
+              {isDownloading ? <FaSpinner className="fa-spin" /> : <FaDownload />} Download
+            </button>
           </div>
         </div>
 
@@ -627,51 +665,50 @@ export default function AdminPanel() {
                 })}
               </div>
 
-              {/* Anchor for form scroll */}
-              <div id="inline-item-form-anchor" />
-
-              {/* Premium Inline Item Form Panel (Add / Edit) rendered directly above the table */}
-              {(showItemForm || editingItemId) && (
-                <div className="inline-form-card">
-                  <div className="form-card-header">
-                    <h3>
-                      {editingItemId ? "उत्पाद विवरण बदलें (Edit Item)" : "नया उत्पाद जोड़ें (Add New Item)"}
-                    </h3>
-                    <button className="btn-close-form" onClick={resetItemForm} title="Close Form">
-                      <FaTimes />
-                    </button>
-                  </div>
-                  
-                  <div className="form-card-grid">
-                    {activeList.columns.map((col, idx) => (
-                      <div className="form-field" key={idx}>
-                        <label>{col} *</label>
-                        <HindiInput
-                          value={formValues[idx] || ""}
-                          onChange={(v) => {
-                            const copy = [...formValues];
-                            copy[idx] = v;
-                            setFormValues(copy);
-                          }}
-                          placeholder={`${col} दर्ज करें...`}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                  
-                  <div className="form-card-actions">
-                    <button className="btn-secondary" onClick={resetItemForm}>
-                      Cancel
-                    </button>
-                    <button className="btn-primary" onClick={handleSaveItemForm}>
-                      <FaSave /> {editingItemId ? "Update" : "Add"}
-                    </button>
+              {/* Premium Item Form Modal (Add / Edit) Overlay */}
+              {showItemForm && (
+                <div className="modal-overlay" onClick={resetItemForm}>
+                  <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '800px', padding: '30px' }}>
+                    <div className="form-card-header" style={{ marginBottom: '20px' }}>
+                      <h3 style={{ fontSize: '1.5rem', color: 'var(--primary-dark)', fontWeight: '800', margin: 0 }}>
+                        {editingItemId ? "उत्पाद विवरण बदलें (Edit Item)" : "नया उत्पाद जोड़ें (Add New Item)"}
+                      </h3>
+                      <button className="btn-close-form" onClick={resetItemForm} title="Close Form">
+                        <FaTimes />
+                      </button>
+                    </div>
+                    
+                    <div className="form-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px', marginBottom: '24px' }}>
+                      {activeList.columns.map((col, idx) => (
+                        <div className="form-field" key={idx}>
+                          <label style={{ display: 'block', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '8px' }}>{col} *</label>
+                          <HindiInput
+                            value={formValues[idx] || ""}
+                            onChange={(v) => {
+                              const copy = [...formValues];
+                              copy[idx] = v;
+                              setFormValues(copy);
+                            }}
+                            placeholder={`${col} दर्ज करें...`}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    
+                    <div className="form-card-actions" style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px', borderTop: '1px solid #f0f0f0', paddingTop: '20px' }}>
+                      <button className="btn-secondary" onClick={resetItemForm}>
+                        Cancel
+                      </button>
+                      <button className="btn-primary" onClick={handleSaveItemForm} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <FaSave /> {editingItemId ? "Update" : "Add"}
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
 
               {/* Table Toolbar */}
-              <div className="admin-toolbar">
+              <div className="admin-toolbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
                 <div className="search-wrap">
                   <FaSearch />
                   <input
@@ -682,13 +719,28 @@ export default function AdminPanel() {
                   />
                 </div>
                 
-                {/* Custom Dropdown variety filter replace native selects */}
-                <Dropdown
-                  options={filterOptions}
-                  value={filterType}
-                  onChange={setFilterType}
-                  placeholder="— सभी प्रकार —"
-                />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  {/* Custom Dropdown variety filter replace native selects */}
+                  <Dropdown
+                    options={filterOptions}
+                    value={filterType}
+                    onChange={setFilterType}
+                    placeholder="— सभी प्रकार —"
+                  />
+                  
+                  {/* Add Item Button placed exactly in the right side of search item row! */}
+                  <button 
+                    className="btn-primary" 
+                    onClick={() => {
+                      setShowItemForm(true);
+                      setEditingItemId(null);
+                      setFormValues(new Array(activeList.columns.length).fill(""));
+                    }}
+                    style={{ height: '42px', display: 'flex', alignItems: 'center', gap: '8px' }}
+                  >
+                    <FaPlus /> Add Item
+                  </button>
+                </div>
               </div>
 
               {/* Table */}

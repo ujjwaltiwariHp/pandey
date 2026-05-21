@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import HindiInput from "./HindiInput";
-import AddItemModal from "./AddItemModal";
 import Dropdown from "./Dropdown";
 import {
   fetchLists,
@@ -39,15 +38,18 @@ export default function AdminPanel() {
   const [activeListId, setActiveListId] = useState(null); // null means Dashboard Home
   const [loading, setLoading] = useState(true);
   const [showListModal, setShowListModal] = useState(false);
-  const [showAddItemModal, setShowAddItemModal] = useState(false);
-  const [editingList, setEditingList] = useState(null);
+  
+  // Item Form Panel (rendered above table)
+  const [showItemForm, setShowItemForm] = useState(false);
+  const [formValues, setFormValues] = useState([]);
   const [editingItemId, setEditingItemId] = useState(null);
-  const [editValues, setEditValues] = useState([]);
-  const [editHighlight, setEditHighlight] = useState("none");
+  
+  const [editingList, setEditingList] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState("");
   const [toast, setToast] = useState(null);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null); // Custom Delete Confirmation Modal target
   
   // Table Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -76,6 +78,7 @@ export default function AdminPanel() {
     setCurrentPage(1);
     setSearchQuery("");
     setFilterType("");
+    resetItemForm();
   }, [activeListId]);
 
   const showToast = (message, type = "success") => {
@@ -107,60 +110,112 @@ export default function AdminPanel() {
     }
   };
 
-  const handleDeleteList = async (id = activeListId, title = activeList?.title) => {
+  const handleDeleteList = (id = activeListId, title = activeList?.title) => {
     if (!id) return;
-    if (!confirm(`क्या आप "${title}" लिस्ट को हटाना चाहते हैं?`)) return;
-    try {
-      await deleteList(id);
-      if (activeListId === id) setActiveListId(null);
-      await loadLists();
-      showToast("लिस्ट हटा दिया गया!");
-    } catch (err) {
-      showToast(err.message, "error");
-    }
+    setDeleteTarget({ type: 'list', id, title });
   };
 
-  // Item CRUD
-  const handleAddItem = async (itemData) => {
-    if (!activeList) return;
-    try {
-      await createItem(activeList.id, itemData);
-      setShowAddItemModal(false);
-      await loadLists();
-      showToast("आइटम जोड़ा गया!");
-    } catch (err) {
-      showToast(err.message, "error");
-    }
-  };
-
+  // Item Form Methods
   const startEditItem = (item) => {
     setEditingItemId(item.id);
-    setEditValues([...(item.item_values || [])]);
-    setEditHighlight(item.highlight || "none");
+    setFormValues([...(item.item_values || [])]);
+    setShowItemForm(true);
+    // Scroll smoothly to form
+    setTimeout(() => {
+      const formEl = document.getElementById("inline-item-form-anchor");
+      if (formEl) {
+        formEl.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }, 100);
   };
 
-  const handleSaveEdit = async () => {
+  const resetItemForm = () => {
+    setEditingItemId(null);
+    setShowItemForm(false);
+    if (activeList) {
+      setFormValues(new Array(activeList.columns.length).fill(""));
+    } else {
+      setFormValues([]);
+    }
+  };
+
+  const handleSaveItemForm = async () => {
+    if (!activeList) return;
+    if (!formValues[0]?.trim()) {
+      showToast("पहला कॉलम (नाम) भरना अनिवार्य है।", "error");
+      return;
+    }
     try {
-      await updateItem(editingItemId, {
-        item_values: editValues,
-        highlight: editHighlight,
-      });
-      setEditingItemId(null);
+      // Deterministic variety tag color based on hash of prakar value (usually columns[1])
+      const prakarVal = formValues[1] || formValues[0] || "";
+      const softColors = ["green", "orange", "purple", "blue", "teal", "rose", "cyan"];
+      let hash = 0;
+      for (let i = 0; i < prakarVal.length; i++) {
+        hash = prakarVal.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      const tagColor = softColors[Math.abs(hash) % softColors.length];
+
+      if (editingItemId) {
+        await updateItem(editingItemId, {
+          item_values: formValues,
+          highlight: tagColor,
+        });
+        showToast("उत्पाद अपडेट हो गया!");
+      } else {
+        await createItem(activeList.id, {
+          item_values: formValues,
+          highlight: tagColor,
+        });
+        showToast("उत्पाद जोड़ा गया!");
+      }
+      resetItemForm();
       await loadLists();
-      showToast("आइटम अपडेट हो गया!");
     } catch (err) {
       showToast(err.message, "error");
     }
   };
 
-  const handleDeleteItem = async (id, name) => {
-    if (!confirm(`"${name}" को हटाना चाहते हैं?`)) return;
+  const handleDeleteItem = (id, name) => {
+    setDeleteTarget({ type: 'item', id, title: name });
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    const { type, id } = deleteTarget;
     try {
-      await deleteItem(id);
+      if (type === 'list') {
+        await deleteList(id);
+        if (activeListId === id) setActiveListId(null);
+        showToast("लिस्ट हटा दिया गया!");
+      } else if (type === 'item') {
+        await deleteItem(id);
+        showToast("उत्पाद हटा दिया गया!");
+      }
+      setDeleteTarget(null);
       await loadLists();
-      showToast("आइटम हटा दिया गया!");
     } catch (err) {
       showToast(err.message, "error");
+    }
+  };
+
+  // Helper for color palettes
+  const getVarietyColorStyles = (varietyName) => {
+    if (!varietyName) return { bg: "#f5f5f5", text: "#666", name: "none" };
+    const softColors = ["green", "orange", "purple", "blue", "teal", "rose", "cyan"];
+    let hash = 0;
+    for (let i = 0; i < varietyName.length; i++) {
+      hash = varietyName.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const colorName = softColors[Math.abs(hash) % softColors.length];
+    switch (colorName) {
+      case "green": return { bg: "#e8f5e9", text: "#2e7d32", name: "green" };
+      case "orange": return { bg: "#fff3e0", text: "#e65100", name: "orange" };
+      case "purple": return { bg: "#f3e5f5", text: "#6a1b9a", name: "purple" };
+      case "blue": return { bg: "#e3f2fd", text: "#1565c0", name: "blue" };
+      case "teal": return { bg: "#e0f2f1", text: "#00695c", name: "teal" };
+      case "rose": return { bg: "#fce4ec", text: "#c2185b", name: "rose" };
+      case "cyan": return { bg: "#e0f7fa", text: "#00838f", name: "cyan" };
+      default: return { bg: "#f5f5f5", text: "#666", name: "none" };
     }
   };
 
@@ -170,59 +225,78 @@ export default function AdminPanel() {
       showToast("डाउनलोड करने के लिए कोई आइटम नहीं है।", "error");
       return;
     }
-    
     setIsDownloading(true);
-    showToast("इमेज बन रही है...", "success");
+    showToast("छवि डाउनलोड की जा रही है, कृपया प्रतीक्षा करें...");
 
     setTimeout(async () => {
       try {
-        const pages = printRef.current.querySelectorAll('.print-page');
+        const container = printRef.current;
+        if (!container) throw new Error("Print container not found");
+
+        const pages = container.querySelectorAll(".print-page");
+        const canvasList = [];
+
         for (let i = 0; i < pages.length; i++) {
           const canvas = await html2canvas(pages[i], {
             scale: 2,
             useCORS: true,
-            logging: false,
+            allowTaint: true,
+            backgroundColor: "#ffffff",
           });
-          const imgData = canvas.toDataURL("image/png");
-          const link = document.createElement("a");
-          link.href = imgData;
-          link.download = `${activeList.title}_Page_${i + 1}.png`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
+          canvasList.push(canvas);
         }
-        showToast("डाउनलोड पूरा हुआ!", "success");
+
+        canvasList.forEach((canvas, index) => {
+          const link = document.createElement("a");
+          link.download = `${activeList.title.replace(/\s+/g, "_")}_Page_${index + 1}.png`;
+          link.href = canvas.toDataURL("image/png");
+          link.click();
+        });
+
+        showToast("डाउनलोड सफल!");
       } catch (err) {
-        showToast("डाउनलोड विफल रहा।", "error");
-        console.error(err);
+        showToast("छवि जनरेट करने में विफलता", "error");
       } finally {
         setIsDownloading(false);
       }
     }, 500);
   };
 
-  // Filter
+  // Filtering Items
   const filteredItems = activeList
     ? (activeList.items || []).filter((item) => {
         const vals = item.item_values || [];
         const matchQ =
           !searchQuery ||
           vals.some((v) => (v || "").toLowerCase().includes(searchQuery.toLowerCase()));
-        const matchF = !filterType || item.highlight === filterType;
+        
+        // Find if types match variety filter
+        const prakarColIdx = activeList.columns.findIndex(c => c.includes("प्रकार"));
+        const itemVariety = prakarColIdx !== -1 ? vals[prakarColIdx] : "";
+        const matchF = !filterType || itemVariety === filterType;
+        
         return matchQ && matchF;
       })
     : [];
 
-  // Stats
-  const totalItems = activeList?.items?.length || 0;
-  const highlightCounts = {};
-  if (activeList?.highlights) {
-    Object.keys(activeList.highlights).forEach((key) => {
-      highlightCounts[key] = (activeList.items || []).filter(
-        (it) => it.highlight === key
-      ).length;
+  // Dynmic Variety Counts
+  const prakarCounts = {};
+  const distinctVarieties = [];
+  if (activeList && activeList.items) {
+    const prakarColIdx = activeList.columns.findIndex(c => c.includes("प्रकार"));
+    activeList.items.forEach((item) => {
+      const vals = item.item_values || [];
+      const val = prakarColIdx !== -1 ? vals[prakarColIdx] : "";
+      if (val && val !== "—") {
+        prakarCounts[val] = (prakarCounts[val] || 0) + 1;
+        if (!distinctVarieties.includes(val)) {
+          distinctVarieties.push(val);
+        }
+      }
     });
   }
+
+  const totalItems = activeList?.items?.length || 0;
 
   // Dashboard Stats
   const totalCategories = lists.length;
@@ -234,15 +308,11 @@ export default function AdminPanel() {
   const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
 
-  // Custom Dropdown values formulation
-  const filterOptions = activeList
-    ? [
-        { value: "", label: "— सभी टैग —" },
-        ...Object.entries(activeList.highlights || {})
-          .map(([key, label]) => ({ value: key, label }))
-          .filter((opt) => opt.label),
-      ]
-    : [];
+  // Dynamic filter varieties options replace orange/green highlights
+  const filterOptions = [
+    { value: "", label: "— सभी प्रकार —" },
+    ...distinctVarieties.map((v) => ({ value: v, label: v }))
+  ];
 
   // Print Pagination (Max 20 per page)
   const renderPrintPages = () => {
@@ -256,57 +326,60 @@ export default function AdminPanel() {
     }
 
     return (
-      <div ref={printRef} className="print-container-hidden">
+      <div className="print-container-hidden" ref={printRef}>
         {pages.map((pageItems, pageIndex) => (
-          <div key={pageIndex} className="print-page">
+          <div className="print-page" key={pageIndex}>
              <div className="print-header">
                 <h2>पाण्डेय ट्रेडर्स</h2>
-                <p>खाद बीज भंडार</p>
+                <p>थोक एवं फुटकर विक्रेता</p>
                 <div className="print-contact">
-                    <span>बड़का गांव, गोपालगंज, बिहार</span>
-                    <span>📞 8969730344</span>
+                  <span>मो: 9839424683, 9839356391</span>
+                  <span>स्थान: बस डिपो के सामने, हरैया - बस्ती</span>
                 </div>
              </div>
              
              <div className="print-title">
-               {activeList.title} {pages.length > 1 ? `(पेज ${pageIndex + 1}/${pages.length})` : ''}
+               {activeList.title} — Page {pageIndex + 1} of {pages.length}
              </div>
 
              <table className="print-table">
-               <thead>
-                 <tr>
-                   <th>क्र.सं.</th>
-                   {activeList.columns.map((col, i) => (
-                     <th key={i}>{col}</th>
-                   ))}
-                 </tr>
-               </thead>
-               <tbody>
-                 {pageItems.map((item, idx) => {
-                   const vals = item.item_values || [];
-                   const hColor = item.highlight || "none";
-                   return (
-                     <tr key={item.id} className={`print-row-${hColor}`}>
-                       <td>{pageIndex * itemsPerPagePrint + idx + 1}</td>
-                       {activeList.columns.map((col, ci) => {
-                         const isPrakar = col.includes("प्रकार");
-                         if (isPrakar && hColor !== "none") {
-                           return (
-                             <td key={ci} style={{ fontWeight: 'bold' }}>
-                               {vals[ci] || "—"}
-                             </td>
-                           );
-                         }
-                         return <td key={ci}>{vals[ci] || "—"}</td>;
-                       })}
-                     </tr>
-                   )
-                 })}
-               </tbody>
+                <thead>
+                  <tr>
+                    <th style={{ width: 60 }}>क्र.सं.</th>
+                    {activeList.columns.map((col, ci) => (
+                      <th key={ci}>{col}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {pageItems.map((item, idx) => {
+                    const vals = item.item_values || [];
+                    const prakarColIdx = activeList.columns.findIndex(c => c.includes("प्रकार"));
+                    const prakarVal = prakarColIdx !== -1 ? vals[prakarColIdx] : "";
+                    const styles = getVarietyColorStyles(prakarVal);
+                    
+                    return (
+                      <tr key={item.id} className={`print-row-${styles.name}`}>
+                        <td>{pageIndex * itemsPerPagePrint + idx + 1}</td>
+                        {activeList.columns.map((col, ci) => {
+                          const isPrakar = col.includes("प्रकार");
+                          if (isPrakar && styles.name !== "none") {
+                            return (
+                              <td key={ci} style={{ fontWeight: 'bold' }}>
+                                {vals[ci] || "—"}
+                              </td>
+                            );
+                          }
+                          return <td key={ci}>{vals[ci] || "—"}</td>;
+                        })}
+                      </tr>
+                    );
+                  })}
+                </tbody>
              </table>
              
              <div className="print-footer">
-               <p>गुणवत्तापूर्ण खाद, बीज एवं कृषि रसायन के विश्वनीय विक्रेता।</p>
+                <p>गुणवत्तापूर्ण खाद, बीज एवं कृषि रसायन के विश्वनीय विक्रेता।</p>
              </div>
           </div>
         ))}
@@ -327,6 +400,29 @@ export default function AdminPanel() {
     <div className="admin-layout">
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       
+      {/* Custom Delete Confirmation Modal */}
+      {deleteTarget && (
+        <div className="modal-overlay" onClick={() => setDeleteTarget(null)}>
+          <div className="modal delete-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="delete-modal-icon">
+              <FaTrash />
+            </div>
+            <h3 className="delete-modal-title">क्या आप हटाना चाहते हैं?</h3>
+            <p className="delete-modal-text">
+              क्या आप सचमुच <strong>"{deleteTarget.title}"</strong> को हमेशा के लिए हटाना चाहते हैं? यह प्रक्रिया वापस नहीं ली जा सकती।
+            </p>
+            <div className="delete-modal-actions">
+              <button className="btn-secondary" onClick={() => setDeleteTarget(null)}>
+                Cancel
+              </button>
+              <button className="btn-danger-confirm" onClick={confirmDelete}>
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showListModal && (
         <ListModal
           list={editingList}
@@ -335,15 +431,6 @@ export default function AdminPanel() {
             setShowListModal(false);
             setEditingList(null);
           }}
-        />
-      )}
-
-      {showAddItemModal && activeList && (
-        <AddItemModal
-          columns={activeList.columns}
-          highlights={activeList.highlights}
-          onSave={handleAddItem}
-          onClose={() => setShowAddItemModal(false)}
         />
       )}
 
@@ -405,7 +492,15 @@ export default function AdminPanel() {
             </a>
             {activeList ? (
               <>
-                <button className="btn-primary" onClick={() => setShowAddItemModal(true)}>
+                <button className="btn-primary" onClick={() => {
+                  setShowItemForm(true);
+                  setEditingItemId(null);
+                  setFormValues(new Array(activeList.columns.length).fill(""));
+                  setTimeout(() => {
+                    const formEl = document.getElementById("inline-item-form-anchor");
+                    if (formEl) formEl.scrollIntoView({ behavior: "smooth", block: "center" });
+                  }, 100);
+                }}>
                   <FaPlus /> Add Item
                 </button>
                 <button className="btn-secondary" onClick={() => { setEditingList(activeList); setShowListModal(true); }}>
@@ -501,7 +596,7 @@ export default function AdminPanel() {
           {/* ACTIVE CATEGORY VIEW */}
           {activeList && (
             <div className="category-view">
-              {/* Category specific stats */}
+              {/* Category specific dynamic stats */}
               <div className="stats-grid" style={{ marginBottom: 30 }}>
                 <div className="stat-card">
                   <div className="stat-icon" style={{background: 'rgba(21,76,24,0.1)', color: 'var(--primary)'}}>
@@ -512,23 +607,68 @@ export default function AdminPanel() {
                     <p>{totalItems}</p>
                   </div>
                 </div>
-                {Object.entries(highlightCounts).map(([key, count]) =>
-                  activeList.highlights[key] && (
-                    <div className="stat-card" key={key}>
+                
+                {Object.entries(prakarCounts).map(([varietyName, count]) => {
+                  const styles = getVarietyColorStyles(varietyName);
+                  return (
+                    <div className="stat-card" key={varietyName}>
                       <div className="stat-icon" style={{
-                        background: key==='orange'?'#fff3e0':key==='green'?'#e8f5e9':'#f3e5f5',
-                        color: key==='orange'?'#e65100':key==='green'?'#2e7d32':'#6a1b9a'
+                        background: styles.bg,
+                        color: styles.text
                       }}>
                         <FaBoxOpen />
                       </div>
                       <div className="stat-info">
-                        <h4>{activeList.highlights[key]}</h4>
+                        <h4>{varietyName}</h4>
                         <p>{count}</p>
                       </div>
                     </div>
-                  )
-                )}
+                  );
+                })}
               </div>
+
+              {/* Anchor for form scroll */}
+              <div id="inline-item-form-anchor" />
+
+              {/* Premium Inline Item Form Panel (Add / Edit) rendered directly above the table */}
+              {(showItemForm || editingItemId) && (
+                <div className="inline-form-card">
+                  <div className="form-card-header">
+                    <h3>
+                      {editingItemId ? "उत्पाद विवरण बदलें (Edit Item)" : "नया उत्पाद जोड़ें (Add New Item)"}
+                    </h3>
+                    <button className="btn-close-form" onClick={resetItemForm} title="Close Form">
+                      <FaTimes />
+                    </button>
+                  </div>
+                  
+                  <div className="form-card-grid">
+                    {activeList.columns.map((col, idx) => (
+                      <div className="form-field" key={idx}>
+                        <label>{col} *</label>
+                        <HindiInput
+                          value={formValues[idx] || ""}
+                          onChange={(v) => {
+                            const copy = [...formValues];
+                            copy[idx] = v;
+                            setFormValues(copy);
+                          }}
+                          placeholder={`${col} दर्ज करें...`}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div className="form-card-actions">
+                    <button className="btn-secondary" onClick={resetItemForm}>
+                      Cancel
+                    </button>
+                    <button className="btn-primary" onClick={handleSaveItemForm}>
+                      <FaSave /> {editingItemId ? "Update" : "Add"}
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* Table Toolbar */}
               <div className="admin-toolbar">
@@ -542,12 +682,12 @@ export default function AdminPanel() {
                   />
                 </div>
                 
-                {/* Premium Custom Dropdown replace native select */}
+                {/* Custom Dropdown variety filter replace native selects */}
                 <Dropdown
                   options={filterOptions}
                   value={filterType}
                   onChange={setFilterType}
-                  placeholder="— सभी टैग —"
+                  placeholder="— सभी प्रकार —"
                 />
               </div>
 
@@ -571,91 +711,34 @@ export default function AdminPanel() {
                           style={{ textAlign: "center", padding: 50, color: "#999" }}
                         >
                           <FaBoxOpen style={{ fontSize: '3rem', color: "#eee", marginBottom: 15 }} />
-                          <div>कोई आइटम नहीं मिला</div>
+                          <div>कोई उत्पाद नहीं मिला</div>
                         </td>
                       </tr>
                     ) : (
                       currentItems.map((item, idx) => {
                         const vals = item.item_values || [];
-                        const isEditing = editingItemId === item.id;
-                        const hColor = item.highlight || "none";
-
-                        if (isEditing) {
-                          return (
-                            <tr key={item.id} style={{background: '#f8faf8'}}>
-                              <td style={{fontWeight: 700}}>{indexOfFirstItem + idx + 1}</td>
-                              {activeList.columns.map((col, ci) => {
-                                const isPrakar = col.includes("प्रकार");
-                                if (isPrakar) {
-                                  return (
-                                    <td key={ci}>
-                                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                                        <HindiInput
-                                          value={editValues[ci] || ""}
-                                          onChange={(v) => {
-                                            const copy = [...editValues];
-                                            copy[ci] = v;
-                                            setEditValues(copy);
-                                          }}
-                                          placeholder={col}
-                                          className="inline-input"
-                                        />
-                                        <div className="radio-group-vertical" style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '8px', fontSize: '12px', marginTop: 4 }}>
-                                           <label style={{ fontSize: '12px', padding: '3px 8px' }}>
-                                             <input type="radio" name={`e-${item.id}`} value="none" checked={editHighlight === 'none'} onChange={(e) => setEditHighlight(e.target.value)} /> सामान्य
-                                           </label>
-                                           {Object.entries(activeList.highlights || {}).map(([k, v]) => v && (
-                                             <label key={k} style={{color: k === 'orange' ? '#e65100' : k === 'green' ? '#2e7d32' : '#6a1b9a', fontWeight: 'bold', fontSize: '12px', padding: '3px 8px'}}>
-                                               <input type="radio" name={`e-${item.id}`} value={k} checked={editHighlight === k} onChange={(e) => setEditHighlight(e.target.value)} /> {v}
-                                             </label>
-                                           ))}
-                                        </div>
-                                      </div>
-                                    </td>
-                                  );
-                                }
-                                return (
-                                  <td key={ci}>
-                                    <HindiInput
-                                      value={editValues[ci] || ""}
-                                      onChange={(v) => {
-                                        const copy = [...editValues];
-                                        copy[ci] = v;
-                                        setEditValues(copy);
-                                      }}
-                                      placeholder={col}
-                                      className="inline-input"
-                                    />
-                                  </td>
-                                );
-                              })}
-                              <td>
-                                <div style={{display: 'flex', gap: 5, justifyContent: 'center'}}>
-                                  <button className="btn-icon" onClick={handleSaveEdit} title="Save"><FaSave style={{ color: '#2e7d32' }} /></button>
-                                  <button className="btn-icon" onClick={() => setEditingItemId(null)} title="Cancel"><FaTimes style={{ color: '#dc2626' }} /></button>
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        }
-
+                        
                         return (
                           <tr key={item.id}>
                             <td style={{color: '#888', fontWeight: 'bold'}}>{indexOfFirstItem + idx + 1}</td>
                             {activeList.columns.map((col, ci) => {
                               const isPrakar = col.includes("प्रकार");
-                              if (isPrakar && hColor !== "none") {
+                              const cellVal = vals[ci] || "—";
+                              
+                              if (isPrakar && cellVal !== "—") {
+                                const styles = getVarietyColorStyles(cellVal);
                                 return (
                                   <td key={ci} className="td-center">
-                                    <span className={`label-badge label-badge-${hColor}`}>
-                                      {vals[ci] || "—"}
+                                    <span className={`label-badge label-badge-${styles.name}`}>
+                                      {cellVal}
                                     </span>
                                   </td>
                                 );
                               }
+                              
                               return (
                                 <td key={ci} className={ci === 0 ? "td-name" : "td-center"}>
-                                  {vals[ci] || "—"}
+                                  {cellVal}
                                 </td>
                               );
                             })}

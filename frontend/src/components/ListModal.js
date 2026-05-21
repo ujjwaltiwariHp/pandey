@@ -87,39 +87,6 @@ export default function ListModal({ list, onSave, onClose }) {
             </button>
           </div>
 
-          {/* Highlight Tags Section */}
-          <div className="modal-span-full">
-            <div className="form-section-label" style={{ marginTop: 20 }}>
-              हाइलाइट टैग (वैकल्पिक - विभिन्न प्रकार के आइटम के लिए रंगीन लेबल्स)
-            </div>
-            
-            <div className="modal-grid-3">
-              <div className="form-field">
-                <label style={{ color: "#e65100", fontWeight: 'bold' }}>नारंगी टैग का नाम</label>
-                <HindiInput
-                  value={highlights.orange || ""}
-                  onChange={(v) => setHighlights({ ...highlights, orange: v })}
-                  placeholder="जैसे: मोटा धान"
-                />
-              </div>
-              <div className="form-field">
-                <label style={{ color: "#2e7d32", fontWeight: 'bold' }}>हरा टैग का नाम</label>
-                <HindiInput
-                  value={highlights.green || ""}
-                  onChange={(v) => setHighlights({ ...highlights, green: v })}
-                  placeholder="जैसे: महीन धान"
-                />
-              </div>
-              <div className="form-field">
-                <label style={{ color: "#6a1b9a", fontWeight: 'bold' }}>बैंगनी टैग का नाम</label>
-                <HindiInput
-                  value={highlights.purple || ""}
-                  onChange={(v) => setHighlights({ ...highlights, purple: v })}
-                  placeholder="जैसे: नई किस्म"
-                />
-              </div>
-            </div>
-          </div>
         </div>
 
         <div className="modal-actions">

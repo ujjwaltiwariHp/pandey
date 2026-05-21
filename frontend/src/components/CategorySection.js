@@ -50,25 +50,37 @@ export default function CategorySection({ list }) {
         {list.items.map((item) => {
           const values = item.item_values || [];
           const title = values[0] || "—";
-          const highlight = item.highlight;
-          let badgeClass = "";
-          let badgeText = "";
-
-          if (highlight && highlight !== "none" && list.highlights?.[highlight]) {
-            badgeText = list.highlights[highlight];
-            badgeClass = `badge-${highlight}`;
+          
+          // Deterministically get tag color based on variety (prakar)
+          const prakarColIdx = list.columns.findIndex(c => c.includes("प्रकार"));
+          const prakarVal = prakarColIdx !== -1 ? values[prakarColIdx] : "";
+          
+          let badgeText = prakarVal;
+          let tagColor = "none";
+          if (badgeText && badgeText !== "—") {
+            const softColors = ["green", "orange", "purple", "blue", "teal", "rose", "cyan"];
+            let hash = 0;
+            for (let i = 0; i < badgeText.length; i++) {
+              hash = badgeText.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            tagColor = softColors[Math.abs(hash) % softColors.length];
           }
 
           return (
             <div className="product-card" key={item.id}>
-              {badgeText && (
-                <div className={`product-badge ${badgeClass}`}>{badgeText}</div>
+              {badgeText && badgeText !== "—" && (
+                <div className={`product-badge badge-${tagColor}`}>{badgeText}</div>
               )}
               <div className="product-title">{title}</div>
               <div className="product-details">
                 {list.columns.slice(1).map((col, i) => {
-                  const val = values[i + 1];
+                  const colIdx = i + 1;
+                  const val = values[colIdx];
                   if (!val || val === "—") return null;
+                  
+                  // Skip rendering प्रकार inside the details since it's already a badge
+                  if (col.includes("प्रकार")) return null;
+                  
                   return (
                     <div className="product-detail" key={i}>
                       <span className="detail-label">

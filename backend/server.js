@@ -21,6 +21,7 @@ const frontendUrl = process.env.FRONTEND_URL ? process.env.FRONTEND_URL.replace(
 const allowedOrigins = [
   "http://localhost:3000",
   "https://pandey-brothers.vercel.app",
+  "https://pandey-sage.vercel.app",
   frontendUrl
 ].filter(Boolean);
 

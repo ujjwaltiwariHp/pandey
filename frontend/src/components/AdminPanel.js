@@ -464,14 +464,7 @@ export default function AdminPanel() {
       {renderPrintPages()}
 
       {/* Sidebar navigation */}
-      <aside className="admin-sidebar">
-        <div className="sidebar-header">
-          <div className="sidebar-logo">
-            <FaSeedling /> पाण्डेय ट्रेडर्स
-          </div>
-          <div className="sidebar-subtitle">Admin Dashboard</div>
-        </div>
-        
+      <aside className="admin-sidebar" style={{ paddingTop: '20px' }}>
         <div className="sidebar-menu">
           <button 
             className={`sidebar-menu-btn ${activeListId === null ? "active" : ""}`}
@@ -518,46 +511,33 @@ export default function AdminPanel() {
       <main className="admin-main">
         {/* Navigation Bar */}
         <div className="admin-topbar">
-          <div className="topbar-title">
-             {activeList ? activeList.title : "Dashboard"}
+          <div className="topbar-title" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+             <span>{activeList ? activeList.title : "Dashboard"}</span>
+             {activeList && (
+               <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                 <button 
+                   className="btn-icon" 
+                   onClick={() => { setEditingList(activeList); setShowListModal(true); }}
+                   title="Edit Category Name"
+                   style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center' }}
+                 >
+                   <FaEdit style={{ color: 'var(--secondary)', fontSize: '0.95rem' }} />
+                 </button>
+                 <button 
+                   className="btn-icon" 
+                   onClick={() => handleDeleteList(activeList.id, activeList.title)}
+                   title="Delete Category"
+                   style={{ background: 'rgba(220,38,38,0.15)', border: '1px solid rgba(220,38,38,0.3)', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center' }}
+                 >
+                   <FaTrash style={{ color: '#f87171', fontSize: '0.95rem' }} />
+                 </button>
+               </div>
+             )}
           </div>
           <div className="topbar-actions">
             {/* 1. Add Category Button */}
             <button className="btn-primary" onClick={() => { setEditingList(null); setShowListModal(true); }}>
               <FaPlus /> Add Category
-            </button>
-            
-            {/* 2. Edit Category Button */}
-            <button 
-              className="btn-secondary" 
-              onClick={() => { if (activeList) { setEditingList(activeList); setShowListModal(true); } }}
-              disabled={!activeList}
-              style={!activeList ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
-            >
-              <FaEdit /> Edit Category
-            </button>
-            
-            {/* 3. Delete Category Button */}
-            <button 
-              className="btn-danger" 
-              onClick={() => { if (activeList) handleDeleteList(activeList.id, activeList.title); }}
-              disabled={!activeList}
-              style={!activeList ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
-            >
-              <FaTrash /> Delete Category
-            </button>
-            
-            {/* 4. Download Button */}
-            <button 
-              className="btn-primary" 
-              onClick={downloadImage} 
-              disabled={!activeList || isDownloading} 
-              style={{
-                background: 'var(--accent)',
-                ...(!activeList ? { opacity: 0.5, cursor: 'not-allowed' } : {})
-              }}
-            >
-              {isDownloading ? <FaSpinner className="fa-spin" /> : <FaDownload />} Download
             </button>
           </div>
         </div>
@@ -750,6 +730,22 @@ export default function AdminPanel() {
                     style={{ height: '42px', display: 'flex', alignItems: 'center', gap: '8px' }}
                   >
                     <FaPlus /> Add Item
+                  </button>
+
+                  {/* 4. Download Button */}
+                  <button 
+                    className="btn-primary" 
+                    onClick={downloadImage} 
+                    disabled={isDownloading} 
+                    style={{
+                      height: '42px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      background: 'var(--accent)'
+                    }}
+                  >
+                    {isDownloading ? <FaSpinner className="fa-spin" /> : <FaDownload />} Download
                   </button>
                 </div>
               </div>

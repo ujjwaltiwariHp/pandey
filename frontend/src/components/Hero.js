@@ -8,9 +8,6 @@ export default function Hero() {
       <div className="hero-overlay"></div>
       
       <div className="hero-content">
-        <div className="hero-badge">
-          ★ बिहार का नंबर 1 कृषि स्टोर
-        </div>
         <h1>
           उत्कृष्ट कृषि उत्पाद, <br />
           <span className="hero-highlight">सफल किसान का आधार</span>

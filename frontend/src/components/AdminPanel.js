@@ -85,13 +85,6 @@ export default function AdminPanel() {
 
   const activeList = lists.find((l) => l.id === activeListId);
 
-  useEffect(() => {
-    setCurrentPage(1);
-    setSearchQuery("");
-    setFilterType("");
-    resetItemForm();
-  }, [activeListId]);
-
   const showToast = (message, type = "success") => {
     setToast({ message, type });
   };

@@ -22,11 +22,10 @@ import {
   FaTimes,
   FaSync,
   FaDownload,
-  FaFileImage,
-  FaMapMarkerAlt,
-  FaPhone,
   FaBoxOpen,
   FaSpinner,
+  FaSeedling,
+  FaListUl,
 } from "react-icons/fa";
 
 export default function AdminPanel() {
@@ -208,7 +207,6 @@ export default function AdminPanel() {
   };
 
 
-  // Filter
   const filteredItems = activeList
     ? (activeList.items || []).filter((item) => {
         const vals = item.item_values || [];
@@ -220,7 +218,6 @@ export default function AdminPanel() {
       })
     : [];
 
-  // Stats
   const totalItems = activeList?.items?.length || 0;
   const highlightCounts = {};
   if (activeList?.highlights) {
@@ -251,7 +248,7 @@ export default function AdminPanel() {
                 <p>खाद बीज भंडार</p>
                 <div className="print-contact">
                     <span>बड़का गांव, गोपालगंज, बिहार</span>
-                    <span><FaPhone /> 8969730344</span>
+                    <span>📞 8969730344</span>
                 </div>
              </div>
              
@@ -296,19 +293,17 @@ export default function AdminPanel() {
 
   if (loading) {
     return (
-      <div className="admin-loading">
-        <FaSpinner className="fa-spin" style={{ fontSize: '2rem', marginBottom: 10 }} />
-        <div>डेटा लोड हो रहा है...</div>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', gap: 15 }}>
+        <FaSpinner className="fa-spin" style={{ fontSize: '3rem', color: "var(--primary)" }} />
+        <div style={{ fontWeight: 'bold' }}>डेटा लोड हो रहा है...</div>
       </div>
     );
   }
 
   return (
-    <div className="admin-panel">
-      {toast && (
-        <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />
-      )}
-
+    <div className="admin-layout">
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+      
       {showListModal && (
         <ListModal
           list={editingList}
@@ -320,290 +315,277 @@ export default function AdminPanel() {
         />
       )}
 
-      {/* Hidden Print Container */}
       {renderPrintPages()}
 
-      {/* Header */}
-      <div className="admin-header">
-        <div className="admin-header-top">
-          <span><FaMapMarkerAlt /> बड़का गांव, गोपालगंज, बिहार</span>
-          <span><FaPhone /> 8969730344</span>
+      <aside className="admin-sidebar hide-mobile">
+        <div className="sidebar-header">
+          <div className="sidebar-logo">
+            <FaSeedling /> पाण्डेय ट्रेडर्स
+          </div>
+          <div className="sidebar-subtitle">Admin Dashboard</div>
         </div>
-        <div className="admin-header-body">
-          <h1>पाण्डेय ट्रेडर्स</h1>
-          <p>खाद बीज भंडार — Admin Dashboard</p>
+        
+        <div className="sidebar-actions">
+          <button className="btn-sidebar-add" onClick={() => { setEditingList(null); setShowListModal(true); }}>
+            <FaPlus /> Create List
+          </button>
         </div>
-      </div>
 
-      {/* List Tabs */}
-      <div className="list-bar">
-        <div className="list-tabs">
+        <div className="sidebar-lists">
           {lists.map((l) => (
             <button
               key={l.id}
-              className={`list-tab ${l.id === activeListId ? "active" : ""}`}
+              className={`sidebar-list-item ${l.id === activeListId ? "active" : ""}`}
               onClick={() => setActiveListId(l.id)}
             >
+              <FaListUl />
               {l.title.length > 20 ? l.title.slice(0, 18) + "…" : l.title}
             </button>
           ))}
         </div>
-        <div className="list-actions">
-          <button
-            className="btn-small btn-green"
-            onClick={() => {
-              setEditingList(null);
-              setShowListModal(true);
-            }}
-          >
-            <FaPlus /> Add List
-          </button>
-          {activeList && (
+      </aside>
+
+      <main className="admin-main">
+        <div className="admin-topbar">
+          <div className="topbar-title">
+             {activeList ? activeList.title : "Dashboard"}
+          </div>
+          <div className="topbar-actions">
+            {activeList && (
+              <>
+                <button className="btn-secondary" onClick={() => { setEditingList(activeList); setShowListModal(true); }}>
+                  <FaEdit /> Edit
+                </button>
+                <button className="btn-danger" onClick={handleDeleteList}>
+                  <FaTrash /> Delete
+                </button>
+                <button className="btn-primary" onClick={downloadImage} disabled={isDownloading} style={{background: 'var(--accent)'}}>
+                  {isDownloading ? <FaSpinner className="fa-spin" /> : <FaDownload />} Download Image
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+
+        <div className="admin-content">
+          {!activeList ? (
+            <div className="empty-state">
+              <FaBoxOpen style={{ fontSize: '4rem', color: "#ccc", marginBottom: 20 }} />
+              <h2>कोई लिस्ट नहीं है</h2>
+              <p>नया लिस्ट बनाने के लिए "Create List" पर क्लिक करें।</p>
+            </div>
+          ) : (
             <>
-              <button
-                className="btn-small btn-blue"
-                onClick={() => {
-                  setEditingList(activeList);
-                  setShowListModal(true);
-                }}
-              >
-                <FaEdit /> Edit List
-              </button>
-              <button className="btn-small btn-red" onClick={handleDeleteList}>
-                <FaTrash /> Delete List
-              </button>
-              <button className="btn-small" style={{ background: '#f9a825', color: '#000' }} onClick={downloadImage} disabled={isDownloading}>
-                {isDownloading ? <FaSpinner className="fa-spin" /> : <FaDownload />} Download
-              </button>
+              {/* Stats Grid */}
+              <div className="stats-grid">
+                <div className="stat-card">
+                  <div className="stat-icon" style={{background: 'rgba(21,76,24,0.1)', color: 'var(--primary)'}}>
+                    <FaListUl />
+                  </div>
+                  <div className="stat-info">
+                    <h4>कुल आइटम</h4>
+                    <p>{totalItems}</p>
+                  </div>
+                </div>
+                {Object.entries(highlightCounts).map(([key, count]) =>
+                  activeList.highlights[key] && (
+                    <div className="stat-card" key={key}>
+                      <div className="stat-icon" style={{
+                        background: key==='orange'?'#fff3e0':key==='green'?'#e8f5e9':'#f3e5f5',
+                        color: key==='orange'?'#e65100':key==='green'?'#2e7d32':'#6a1b9a'
+                      }}>
+                        <FaBoxOpen />
+                      </div>
+                      <div className="stat-info">
+                        <h4>{activeList.highlights[key]}</h4>
+                        <p>{count}</p>
+                      </div>
+                    </div>
+                  )
+                )}
+              </div>
+
+              {/* Toolbar */}
+              <div className="admin-toolbar">
+                <div className="search-wrap">
+                  <FaSearch />
+                  <input
+                    type="text"
+                    placeholder={`${activeList.columns[0]} से खोजें...`}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+                <select
+                  className="filter-select"
+                  value={filterType}
+                  onChange={(e) => setFilterType(e.target.value)}
+                >
+                  <option value="">— सभी टैग —</option>
+                  {activeList.highlights &&
+                    Object.entries(activeList.highlights).map(([key, label]) =>
+                      label ? (
+                        <option key={key} value={key}>
+                          {label}
+                        </option>
+                      ) : null
+                    )}
+                </select>
+              </div>
+
+              {/* Table */}
+              <div className="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>क्र.सं.</th>
+                      {activeList.columns.map((col, i) => (
+                        <th key={i}>{col}</th>
+                      ))}
+                      <th style={{textAlign: 'center'}}>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredItems.length === 0 ? (
+                      <tr>
+                        <td
+                          colSpan={activeList.columns.length + 2}
+                          style={{ textAlign: "center", padding: 50, color: "#999" }}
+                        >
+                          <FaBoxOpen style={{ fontSize: '3rem', color: "#eee", marginBottom: 15 }} />
+                          <div>कोई आइटम नहीं मिला</div>
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredItems.map((item, idx) => {
+                        const vals = item.item_values || [];
+                        const isEditing = editingItemId === item.id;
+
+                        if (isEditing) {
+                          return (
+                            <tr key={item.id} style={{background: '#f8faf8'}}>
+                              <td style={{fontWeight: 700}}>{idx + 1}</td>
+                              {activeList.columns.map((col, ci) => (
+                                <td key={ci}>
+                                  <HindiInput
+                                    value={editValues[ci] || ""}
+                                    onChange={(v) => {
+                                      const copy = [...editValues];
+                                      copy[ci] = v;
+                                      setEditValues(copy);
+                                    }}
+                                    placeholder={col}
+                                    className="inline-input"
+                                  />
+                                </td>
+                              ))}
+                              <td>
+                                <div className="action-btns" style={{flexDirection: 'column', gap: 10, alignItems: 'center'}}>
+                                  <div className="radio-group-vertical">
+                                     <label><input type="radio" name={`e-${item.id}`} value="none" checked={editHighlight === 'none'} onChange={(e) => setEditHighlight(e.target.value)} /> कोई नहीं</label>
+                                     {Object.entries(activeList.highlights || {}).map(([k, v]) => v && (
+                                       <label key={k} style={{color: k === 'orange' ? '#e65100' : k === 'green' ? '#2e7d32' : '#6a1b9a', fontWeight: 'bold'}}>
+                                         <input type="radio" name={`e-${item.id}`} value={k} checked={editHighlight === k} onChange={(e) => setEditHighlight(e.target.value)} /> {v}
+                                       </label>
+                                     ))}
+                                  </div>
+                                  <div style={{display: 'flex', gap: 5}}>
+                                    <button className="btn-icon" onClick={handleSaveEdit} title="Save"><FaSave style={{ color: '#2e7d32' }} /></button>
+                                    <button className="btn-icon" onClick={() => setEditingItemId(null)} title="Cancel"><FaTimes style={{ color: '#dc2626' }} /></button>
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        }
+
+                        const hColor = item.highlight || "none";
+                        let borderClass = "";
+                        if (hColor === "orange") borderClass = "4px solid #ff9800";
+                        else if (hColor === "green") borderClass = "4px solid #4caf50";
+                        else if (hColor === "purple") borderClass = "4px solid #9c27b0";
+
+                        return (
+                          <tr key={item.id} style={{borderLeft: borderClass}}>
+                            <td style={{color: '#888', fontWeight: 'bold'}}>{idx + 1}</td>
+                            {activeList.columns.map((col, ci) => (
+                              <td key={ci} className={ci === 0 ? "td-name" : "td-center"}>
+                                {vals[ci] || "—"}
+                              </td>
+                            ))}
+                            <td className="td-center">
+                              <div className="action-btns">
+                                <button className="btn-icon" onClick={() => startEditItem(item)} title="Edit"><FaEdit style={{ color: 'var(--primary-light)' }} /></button>
+                                <button className="btn-icon" onClick={() => handleDeleteItem(item.id, vals[0])} title="Delete"><FaTrash style={{ color: '#dc2626' }} /></button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Add Item Form */}
+              <div className="add-form">
+                <div className="add-form-title">
+                  <div style={{background: 'rgba(46,125,50,0.1)', padding: 10, borderRadius: 10, display: 'flex'}}><FaPlus style={{ color: 'var(--primary-light)' }} /></div>
+                  नया आइटम जोड़ें
+                </div>
+                <div className="add-form-grid">
+                  {activeList.columns.map((col, i) => (
+                    <div className="form-field" key={i}>
+                      <label>{col}</label>
+                      <HindiInput
+                        value={newValues[i] || ""}
+                        onChange={(v) => {
+                          const copy = [...newValues];
+                          copy[i] = v;
+                          setNewValues(copy);
+                        }}
+                        placeholder={`${col} दर्ज करें...`}
+                      />
+                    </div>
+                  ))}
+                  <div className="form-field">
+                    <label>हाइलाइट टैग</label>
+                    <div className="radio-group">
+                      <label className="radio-label">
+                        <input type="radio" name="newH" value="none" checked={newHighlight === "none"} onChange={(e) => setNewHighlight(e.target.value)} />
+                        कोई नहीं
+                      </label>
+                      {Object.entries(activeList.highlights || {}).map(
+                        ([k, v]) =>
+                          v && (
+                            <label key={k} className={`radio-label radio-${k}`}>
+                              <input type="radio" name="newH" value={k} checked={newHighlight === k} onChange={(e) => setNewHighlight(e.target.value)} />
+                              {v}
+                            </label>
+                          )
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="add-form-actions">
+                  <button className="btn-primary" onClick={handleAddItem}>
+                    <FaPlus /> Add
+                  </button>
+                  <button
+                    className="btn-secondary"
+                    onClick={() => {
+                      setNewValues(new Array(activeList.columns.length).fill(""));
+                      setNewHighlight("none");
+                    }}
+                  >
+                    <FaSync /> Clear
+                  </button>
+                </div>
+              </div>
             </>
           )}
         </div>
-      </div>
-
-      {!activeList ? (
-        <div className="empty-state">
-          <FaBoxOpen style={{ fontSize: '3rem', color: "#ccc" }} />
-          <p style={{ marginTop: 10 }}>कोई लिस्ट नहीं है। "Add List" पर क्लिक करके नया लिस्ट बनाएं।</p>
-        </div>
-      ) : (
-        <>
-          {/* Toolbar */}
-          <div className="admin-toolbar">
-            <div className="search-wrap">
-              <FaSearch />
-              <input
-                type="text"
-                placeholder={`${activeList.columns[0]} से खोजें...`}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <select
-              className="filter-select"
-              value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
-            >
-              <option value="">— सभी टैग —</option>
-              {activeList.highlights &&
-                Object.entries(activeList.highlights).map(([key, label]) =>
-                  label ? (
-                    <option key={key} value={key}>
-                      {label}
-                    </option>
-                  ) : null
-                )}
-            </select>
-          </div>
-
-          {/* Stats */}
-          <div className="stats-bar">
-            <span className="stat-chip">
-              कुल आइटम <strong>{totalItems}</strong>
-            </span>
-            {Object.entries(highlightCounts).map(
-              ([key, count]) =>
-                activeList.highlights[key] && (
-                  <span className={`stat-chip stat-${key}`} key={key}>
-                     {activeList.highlights[key]} <strong>{count}</strong>
-                  </span>
-                )
-            )}
-          </div>
-
-          {/* Table */}
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>क्र.सं.</th>
-                  {activeList.columns.map((col, i) => (
-                    <th key={i}>{col}</th>
-                  ))}
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredItems.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan={activeList.columns.length + 2}
-                      style={{ textAlign: "center", padding: 30, color: "#999" }}
-                    >
-                      <FaBoxOpen style={{ fontSize: '2rem', color: "#eee", marginBottom: 10 }} />
-                      <div>कोई आइटम नहीं मिला</div>
-                    </td>
-                  </tr>
-                ) : (
-                  filteredItems.map((item, idx) => {
-                    const vals = item.item_values || [];
-                    const isEditing = editingItemId === item.id;
-
-                    if (isEditing) {
-                      return (
-                        <tr key={item.id} className="row-editing">
-                          <td className="td-sno">{idx + 1}</td>
-                          {activeList.columns.map((col, ci) => (
-                            <td key={ci}>
-                              <HindiInput
-                                value={editValues[ci] || ""}
-                                onChange={(v) => {
-                                  const copy = [...editValues];
-                                  copy[ci] = v;
-                                  setEditValues(copy);
-                                }}
-                                placeholder={col}
-                                className="inline-input"
-                              />
-                            </td>
-                          ))}
-                          <td>
-                            <div className="action-btns">
-                              <div className="radio-group-vertical">
-                                 <label><input type="radio" name={`e-${item.id}`} value="none" checked={editHighlight === 'none'} onChange={(e) => setEditHighlight(e.target.value)} /> कोई नहीं</label>
-                                 {Object.entries(activeList.highlights || {}).map(([k, v]) => v && (
-                                   <label key={k} style={{color: k === 'orange' ? '#e65100' : k === 'green' ? '#2e7d32' : '#6a1b9a'}}>
-                                     <input type="radio" name={`e-${item.id}`} value={k} checked={editHighlight === k} onChange={(e) => setEditHighlight(e.target.value)} /> {v}
-                                   </label>
-                                 ))}
-                              </div>
-                              <button className="btn-icon btn-save" onClick={handleSaveEdit} title="Save"><FaSave style={{ color: '#2e7d32' }} /></button>
-                              <button
-                                className="btn-icon btn-cancel-edit"
-                                onClick={() => setEditingItemId(null)}
-                                title="Cancel"
-                              >
-                                <FaTimes style={{ color: '#d32f2f' }} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    }
-
-                    const hColor = item.highlight || "none";
-                    let rowClass = "";
-                    if (hColor === "orange") rowClass = "row-orange";
-                    else if (hColor === "green") rowClass = "row-green";
-                    else if (hColor === "purple") rowClass = "row-purple";
-
-                    return (
-                      <tr key={item.id} className={rowClass}>
-                        <td className="td-sno">{idx + 1}</td>
-                        {activeList.columns.map((col, ci) => {
-                          const val = vals[ci] || "—";
-                          const isFirst = ci === 0;
-                          
-                          return (
-                            <td
-                              key={ci}
-                              className={isFirst ? "td-name" : "td-center"}
-                            >
-                              {val}
-                            </td>
-                          );
-                        })}
-                        <td className="td-center">
-                          <div className="action-btns">
-                            <button
-                              className="btn-icon btn-edit"
-                              onClick={() => startEditItem(item)}
-                              title="Edit"
-                            >
-                              <FaEdit style={{ color: '#1976d2' }} />
-                            </button>
-                            <button
-                              className="btn-icon btn-delete"
-                              onClick={() => handleDeleteItem(item.id, vals[0])}
-                              title="Delete"
-                            >
-                              <FaTrash style={{ color: '#d32f2f' }} />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Add Item Form */}
-          <div className="add-form">
-            <h3 className="add-form-title">
-              <FaPlus style={{ color: '#2e7d32' }} /> नया आइटम जोड़ें
-            </h3>
-            <div className="add-form-grid">
-              {activeList.columns.map((col, i) => (
-                <div className="form-field" key={i}>
-                  <label>{col}</label>
-                  <HindiInput
-                    value={newValues[i] || ""}
-                    onChange={(v) => {
-                      const copy = [...newValues];
-                      copy[i] = v;
-                      setNewValues(copy);
-                    }}
-                    placeholder={`${col} दर्ज करें...`}
-                  />
-                </div>
-              ))}
-              <div className="form-field">
-                <label>हाइलाइट टैग</label>
-                <div className="radio-group">
-                  <label className="radio-label">
-                    <input type="radio" name="newH" value="none" checked={newHighlight === "none"} onChange={(e) => setNewHighlight(e.target.value)} />
-                    कोई नहीं
-                  </label>
-                  {Object.entries(activeList.highlights || {}).map(
-                    ([k, v]) =>
-                      v && (
-                        <label key={k} className={`radio-label radio-${k}`}>
-                          <input type="radio" name="newH" value={k} checked={newHighlight === k} onChange={(e) => setNewHighlight(e.target.value)} />
-                          {v}
-                        </label>
-                      )
-                  )}
-                </div>
-              </div>
-            </div>
-            <div className="add-form-actions">
-              <button className="btn-primary" onClick={handleAddItem}>
-                <FaPlus style={{ marginRight: 6 }} /> Create
-              </button>
-              <button
-                className="btn-outline-light"
-                onClick={() => {
-                  setNewValues(new Array(activeList.columns.length).fill(""));
-                  setNewHighlight("none");
-                }}
-              >
-                <FaSync style={{ marginRight: 6 }} /> Clear
-              </button>
-            </div>
-          </div>
-        </>
-      )}
+      </main>
     </div>
   );
 }

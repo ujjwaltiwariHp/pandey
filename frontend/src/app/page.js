@@ -27,18 +27,19 @@ export default function HomePage() {
 
       <section className="products-section" id="products">
         <div className="section-header">
+          <span className="section-badge">कैटलॉग</span>
           <h2>हमारे उपलब्ध उत्पाद</h2>
         </div>
 
         {loading ? (
           <div className="empty-state">
-            <FaSpinner className="fa-spin" style={{ fontSize: '3rem', color: "#1b5e20" }} />
-            <p style={{ marginTop: 15 }}>उत्पादों की सूची लोड की जा रही है...</p>
+            <FaSpinner className="fa-spin" style={{ fontSize: '3rem', color: "var(--primary)" }} />
+            <p style={{ marginTop: 15, fontWeight: 600 }}>उत्पादों की सूची लोड की जा रही है...</p>
           </div>
         ) : lists.filter((l) => l.items?.length > 0).length === 0 ? (
           <div className="empty-state">
-            <FaBoxOpen style={{ fontSize: '3rem', color: "#ccc" }} />
-            <p style={{ marginTop: 15 }}>वर्तमान में कोई उत्पाद उपलब्ध नहीं है।</p>
+            <FaBoxOpen style={{ fontSize: '4rem', color: "#ccc", marginBottom: 15 }} />
+            <p style={{ fontSize: '1.2rem', fontWeight: 600 }}>वर्तमान में कोई उत्पाद उपलब्ध नहीं है।</p>
           </div>
         ) : (
           lists

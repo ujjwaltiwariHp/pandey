@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { login as apiLogin } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import Navbar from "@/components/Navbar";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -33,7 +34,7 @@ export default function LoginPage() {
     <>
       <Navbar />
       <div className="login-page">
-        <div className="login-card">
+        <div className="login-card glass">
           <div className="login-logo">पाण्डेय ट्रेडर्स</div>
           <div className="login-subtitle">Admin Authentication</div>
 
@@ -60,10 +61,12 @@ export default function LoginPage() {
                   placeholder="Enter Password"
                   required
                 />
-                <i
-                  className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"} toggle-eye`}
+                <div 
+                  className="toggle-eye" 
                   onClick={() => setShowPassword(!showPassword)}
-                ></i>
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </div>
               </div>
             </div>
             <button type="submit" className="btn-login" disabled={loading}>

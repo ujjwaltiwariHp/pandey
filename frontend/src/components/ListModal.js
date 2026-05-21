@@ -13,6 +13,8 @@ export default function ListModal({ list, onSave, onClose }) {
     list?.highlights || { orange: "", green: "", purple: "" }
   );
 
+  const [errorMsg, setErrorMsg] = useState("");
+
   const updateCol = (idx, val) => {
     const copy = [...columns];
     copy[idx] = val;
@@ -27,10 +29,15 @@ export default function ListModal({ list, onSave, onClose }) {
 
   const handleSave = () => {
     const validCols = columns.filter((c) => c.trim());
-    if (!title.trim() || validCols.length < 1) {
-      alert("शीर्षक और कम से कम एक कॉलम आवश्यक है।");
+    if (!title.trim()) {
+      setErrorMsg("सूची का शीर्षक दर्ज करना अनिवार्य है। *");
       return;
     }
+    if (validCols.length < 1) {
+      setErrorMsg("कम से कम एक कॉलम का नाम होना अनिवार्य है। *");
+      return;
+    }
+    setErrorMsg("");
     onSave({
       title: title.trim(),
       columns: validCols,
@@ -47,6 +54,24 @@ export default function ListModal({ list, onSave, onClose }) {
           </h2>
           <button className="btn-icon" onClick={onClose}><FaTimes /></button>
         </div>
+
+        {errorMsg && (
+          <div style={{
+            background: '#fef2f2',
+            color: '#dc2626',
+            padding: '12px 20px',
+            borderRadius: '8px',
+            marginBottom: '20px',
+            fontWeight: '700',
+            fontSize: '0.95rem',
+            border: '1px solid #fecaca',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            ⚠️ {errorMsg}
+          </div>
+        )}
 
         <div className="modal-grid-2">
           {/* List Title - Full width inside grid */}

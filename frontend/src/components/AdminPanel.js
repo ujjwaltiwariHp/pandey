@@ -43,6 +43,7 @@ export default function AdminPanel() {
   const [showItemForm, setShowItemForm] = useState(false);
   const [formValues, setFormValues] = useState([]);
   const [editingItemId, setEditingItemId] = useState(null);
+  const [itemError, setItemError] = useState("");
   
   const [editingList, setEditingList] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -125,6 +126,7 @@ export default function AdminPanel() {
   const resetItemForm = () => {
     setEditingItemId(null);
     setShowItemForm(false);
+    setItemError("");
     if (activeList) {
       setFormValues(new Array(activeList.columns.length).fill(""));
     } else {
@@ -135,9 +137,10 @@ export default function AdminPanel() {
   const handleSaveItemForm = async () => {
     if (!activeList) return;
     if (!formValues[0]?.trim()) {
-      showToast("पहला कॉलम (नाम) भरना अनिवार्य है।", "error");
+      setItemError(`पहला कॉलम (${activeList.columns[0]}) भरना अनिवार्य है। *`);
       return;
     }
+    setItemError("");
     try {
       // Deterministic variety tag color based on hash of prakar value (usually columns[1])
       const prakarVal = formValues[1] || formValues[0] || "";
@@ -164,7 +167,7 @@ export default function AdminPanel() {
       resetItemForm();
       await loadLists();
     } catch (err) {
-      showToast(err.message, "error");
+      setItemError(err.message || "त्रुटि! कृपया पुनः प्रयास करें। *");
     }
   };
 
@@ -677,6 +680,24 @@ export default function AdminPanel() {
                         <FaTimes />
                       </button>
                     </div>
+
+                    {itemError && (
+                      <div style={{
+                        background: '#fef2f2',
+                        color: '#dc2626',
+                        padding: '12px 20px',
+                        borderRadius: '8px',
+                        marginBottom: '20px',
+                        fontWeight: '700',
+                        fontSize: '0.95rem',
+                        border: '1px solid #fecaca',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px'
+                      }}>
+                        ⚠️ {itemError}
+                      </div>
+                    )}
                     
                     <div className="form-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px', marginBottom: '24px' }}>
                       {activeList.columns.map((col, idx) => (

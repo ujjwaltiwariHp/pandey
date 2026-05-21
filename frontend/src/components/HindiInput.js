@@ -57,8 +57,10 @@ export default function HindiInput({ value, onChange, placeholder, className, st
     setShowSuggestions(false);
   };
 
+  const isInline = className?.includes("inline-input");
+
   return (
-    <div className="hindi-input-wrap" ref={wrapRef}>
+    <div className={`hindi-input-wrap ${isInline ? "inline-wrap" : ""}`} ref={wrapRef}>
       <input
         type="text"
         value={value}

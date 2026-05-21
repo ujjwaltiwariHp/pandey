@@ -1101,12 +1101,12 @@ body {
   font-weight: 700;
 }
 
-/* Responsive Table */
+/* Responsive Table with clear Categorization lines */
 .table-wrap {
   background: var(--surface);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
-  border: 1px solid var(--border);
+  border: 1px solid rgba(46, 125, 50, 0.25);
   overflow-x: auto;
   margin-bottom: 20px;
   width: 100%;
@@ -1116,30 +1116,68 @@ table {
   width: 100%;
   border-collapse: collapse;
   min-width: 900px;
+  border: 1px solid rgba(46, 125, 50, 0.25);
 }
 
 /* Table Header - Same Dark Green Gradient Background */
 th {
   background: linear-gradient(90deg, var(--primary-dark) 0%, var(--primary) 100%);
   padding: 18px 16px;
-  text-align: left;
-  font-size: 14px;
+  text-align: center;
+  font-size: 16px; /* Larger, professional font */
   color: #ffffff !important;
-  font-weight: 700;
-  border-bottom: 2px solid var(--secondary);
+  font-weight: 800;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   letter-spacing: 0.5px;
 }
+th:first-child { text-align: left; }
+th:nth-child(2) { text-align: left; }
 
 td {
   padding: 16px;
-  border-bottom: 1px solid #f0f0f0;
-  font-size: 15px;
+  border: 1px solid #d4dec3; /* Clearly separated by line */
+  font-size: 16px; /* Larger, readable font */
   vertical-align: middle;
+  font-weight: 500;
 }
 
-.td-name { font-weight: 700; color: var(--primary-dark); }
+.td-name { font-weight: 700; color: var(--primary-dark); text-align: left; }
 .td-center { text-align: center; }
 th:last-child { text-align: center; }
+
+/* Inline input fields inside table (Edit Mode) */
+.inline-input-wrap {
+  position: relative;
+  width: 100%;
+}
+.inline-input {
+  width: 100% !important;
+  padding: 10px 12px !important;
+  font-size: 16px !important; /* Larger font */
+  font-weight: 700 !important;
+  border: 2px solid var(--primary-light) !important;
+  border-radius: 6px !important;
+  background: #ffffff !important;
+  color: var(--text) !important;
+  transition: all 0.2s !important;
+  box-shadow: 0 2px 6px rgba(46,125,50,0.1);
+}
+.inline-input:focus {
+  outline: none !important;
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px rgba(255,152,0,0.2) !important;
+}
+
+/* Flip Hindi suggestions UPWARDS in inline editing row to avoid clipping */
+.inline-wrap .hindi-suggestions {
+  bottom: 105% !important;
+  top: auto !important;
+  margin-bottom: 8px !important;
+  border-radius: 8px 8px 0 0 !important;
+  box-shadow: 0 -8px 24px rgba(0,0,0,0.15) !important;
+  border: 2px solid var(--primary-light);
+  width: 250px;
+}
 
 .action-btns {
   display: flex;
@@ -1151,9 +1189,9 @@ th:last-child { text-align: center; }
   background: var(--bg);
   border: 1px solid #ddd;
   cursor: pointer;
-  font-size: 16px;
-  width: 36px;
-  height: 36px;
+  font-size: 18px; /* Larger icon buttons */
+  width: 42px;
+  height: 42px;
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -1238,11 +1276,14 @@ th:last-child { text-align: center; }
 .label-badge {
   display: inline-flex;
   align-items: center;
-  padding: 6px 14px;
+  justify-content: center;
+  padding: 6px 16px;
   border-radius: 20px;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-weight: 800;
   box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  min-width: 90px;
+  text-align: center;
 }
 .label-badge-orange { background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; }
 .label-badge-green { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
@@ -1260,6 +1301,12 @@ th:last-child { text-align: center; }
   justify-content: center; 
   z-index: 2000; 
   padding: 20px;
+  animation: modalFadeIn 0.3s ease both;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 .modal { 
   background: var(--surface); 
@@ -1271,7 +1318,7 @@ th:last-child { text-align: center; }
   overflow-y: auto; 
   box-shadow: var(--shadow-lg); 
   border: 1px solid var(--border);
-  animation: slideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation: smoothModal 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; /* Smooth fade-and-scale middle pop */
 }
 .modal-title { 
   margin-bottom: 24px; 
@@ -1381,7 +1428,18 @@ th:last-child { text-align: center; }
 .toast-error { background: #dc2626; }
 .toast-close { background: none; border: none; color: white; font-size: 20px; cursor: pointer; opacity: 0.8; }
 
-/* Animations */
+/* Ultra Smooth scale & fade Middle Pop Animation */
+@keyframes smoothModal {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
 @keyframes slideUp { from { opacity: 0; transform: translate(-50%, 40px); } to { opacity: 1; transform: translate(-50%, 0); } }
 @keyframes slideRight { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: translateX(0); } }
 

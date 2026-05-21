@@ -279,21 +279,26 @@ export default function AdminPanel() {
                    {activeList.columns.map((col, i) => (
                      <th key={i}>{col}</th>
                    ))}
-                   <th>टैग</th>
                  </tr>
                </thead>
                <tbody>
                  {pageItems.map((item, idx) => {
                    const vals = item.item_values || [];
                    const hColor = item.highlight || "none";
-                   const highlightText = activeList.highlights[item.highlight] || "सामान्य";
                    return (
                      <tr key={item.id} className={`print-row-${hColor}`}>
                        <td>{pageIndex * itemsPerPagePrint + idx + 1}</td>
-                       {activeList.columns.map((col, ci) => (
-                         <td key={ci}>{vals[ci] || "—"}</td>
-                       ))}
-                       <td style={{ fontWeight: 'bold' }}>{highlightText}</td>
+                       {activeList.columns.map((col, ci) => {
+                         const isPrakar = col.includes("प्रकार");
+                         if (isPrakar && hColor !== "none") {
+                           return (
+                             <td key={ci} style={{ fontWeight: 'bold' }}>
+                               {vals[ci] || "—"}
+                             </td>
+                           );
+                         }
+                         return <td key={ci}>{vals[ci] || "—"}</td>;
+                       })}
                      </tr>
                    )
                  })}
@@ -555,7 +560,6 @@ export default function AdminPanel() {
                       {activeList.columns.map((col, i) => (
                         <th key={i}>{col}</th>
                       ))}
-                      <th>टैग (कैटेगरी)</th>
                       <th style={{textAlign: 'center'}}>Actions</th>
                     </tr>
                   </thead>
@@ -563,7 +567,7 @@ export default function AdminPanel() {
                     {currentItems.length === 0 ? (
                       <tr>
                         <td
-                          colSpan={activeList.columns.length + 3}
+                          colSpan={activeList.columns.length + 2}
                           style={{ textAlign: "center", padding: 50, color: "#999" }}
                         >
                           <FaBoxOpen style={{ fontSize: '3rem', color: "#eee", marginBottom: 15 }} />
@@ -574,35 +578,57 @@ export default function AdminPanel() {
                       currentItems.map((item, idx) => {
                         const vals = item.item_values || [];
                         const isEditing = editingItemId === item.id;
+                        const hColor = item.highlight || "none";
 
                         if (isEditing) {
                           return (
                             <tr key={item.id} style={{background: '#f8faf8'}}>
                               <td style={{fontWeight: 700}}>{indexOfFirstItem + idx + 1}</td>
-                              {activeList.columns.map((col, ci) => (
-                                <td key={ci}>
-                                  <HindiInput
-                                    value={editValues[ci] || ""}
-                                    onChange={(v) => {
-                                      const copy = [...editValues];
-                                      copy[ci] = v;
-                                      setEditValues(copy);
-                                    }}
-                                    placeholder={col}
-                                    className="inline-input"
-                                  />
-                                </td>
-                              ))}
-                              <td>
-                                <div className="radio-group-vertical">
-                                   <label><input type="radio" name={`e-${item.id}`} value="none" checked={editHighlight === 'none'} onChange={(e) => setEditHighlight(e.target.value)} /> कोई नहीं</label>
-                                   {Object.entries(activeList.highlights || {}).map(([k, v]) => v && (
-                                     <label key={k} style={{color: k === 'orange' ? '#e65100' : k === 'green' ? '#2e7d32' : '#6a1b9a', fontWeight: 'bold'}}>
-                                       <input type="radio" name={`e-${item.id}`} value={k} checked={editHighlight === k} onChange={(e) => setEditHighlight(e.target.value)} /> {v}
-                                     </label>
-                                   ))}
-                                </div>
-                              </td>
+                              {activeList.columns.map((col, ci) => {
+                                const isPrakar = col.includes("प्रकार");
+                                if (isPrakar) {
+                                  return (
+                                    <td key={ci}>
+                                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                                        <HindiInput
+                                          value={editValues[ci] || ""}
+                                          onChange={(v) => {
+                                            const copy = [...editValues];
+                                            copy[ci] = v;
+                                            setEditValues(copy);
+                                          }}
+                                          placeholder={col}
+                                          className="inline-input"
+                                        />
+                                        <div className="radio-group-vertical" style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '8px', fontSize: '12px', marginTop: 4 }}>
+                                           <label style={{ fontSize: '12px', padding: '3px 8px' }}>
+                                             <input type="radio" name={`e-${item.id}`} value="none" checked={editHighlight === 'none'} onChange={(e) => setEditHighlight(e.target.value)} /> सामान्य
+                                           </label>
+                                           {Object.entries(activeList.highlights || {}).map(([k, v]) => v && (
+                                             <label key={k} style={{color: k === 'orange' ? '#e65100' : k === 'green' ? '#2e7d32' : '#6a1b9a', fontWeight: 'bold', fontSize: '12px', padding: '3px 8px'}}>
+                                               <input type="radio" name={`e-${item.id}`} value={k} checked={editHighlight === k} onChange={(e) => setEditHighlight(e.target.value)} /> {v}
+                                             </label>
+                                           ))}
+                                        </div>
+                                      </div>
+                                    </td>
+                                  );
+                                }
+                                return (
+                                  <td key={ci}>
+                                    <HindiInput
+                                      value={editValues[ci] || ""}
+                                      onChange={(v) => {
+                                        const copy = [...editValues];
+                                        copy[ci] = v;
+                                        setEditValues(copy);
+                                      }}
+                                      placeholder={col}
+                                      className="inline-input"
+                                    />
+                                  </td>
+                                );
+                              })}
                               <td>
                                 <div style={{display: 'flex', gap: 5, justifyContent: 'center'}}>
                                   <button className="btn-icon" onClick={handleSaveEdit} title="Save"><FaSave style={{ color: '#2e7d32' }} /></button>
@@ -613,23 +639,26 @@ export default function AdminPanel() {
                           );
                         }
 
-                        const hColor = item.highlight || "none";
-                        const labelText = activeList.highlights[item.highlight] || "सामान्य";
-
                         return (
                           <tr key={item.id}>
                             <td style={{color: '#888', fontWeight: 'bold'}}>{indexOfFirstItem + idx + 1}</td>
-                            {activeList.columns.map((col, ci) => (
-                              <td key={ci} className={ci === 0 ? "td-name" : "td-center"}>
-                                {vals[ci] || "—"}
-                              </td>
-                            ))}
-                            {/* Premium pill variety tags as labels in columns */}
-                            <td>
-                              <span className={`label-badge label-badge-${hColor}`}>
-                                {labelText}
-                              </span>
-                            </td>
+                            {activeList.columns.map((col, ci) => {
+                              const isPrakar = col.includes("प्रकार");
+                              if (isPrakar && hColor !== "none") {
+                                return (
+                                  <td key={ci} className="td-center">
+                                    <span className={`label-badge label-badge-${hColor}`}>
+                                      {vals[ci] || "—"}
+                                    </span>
+                                  </td>
+                                );
+                              }
+                              return (
+                                <td key={ci} className={ci === 0 ? "td-name" : "td-center"}>
+                                  {vals[ci] || "—"}
+                                </td>
+                              );
+                            })}
                             <td className="td-center">
                               <div className="action-btns">
                                 <button className="btn-icon" onClick={() => startEditItem(item)} title="Edit"><FaEdit style={{ color: 'var(--primary-light)' }} /></button>

@@ -513,31 +513,32 @@ export default function AdminPanel() {
       <main className="admin-main">
         {/* Navigation Bar */}
         <div className="admin-topbar">
-          <div className="topbar-title" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-             <span>{activeList ? activeList.title : "Dashboard"}</span>
-             {activeList && (
-               <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                 <button 
-                   className="btn-icon" 
-                   onClick={() => { setEditingList(activeList); setShowListModal(true); }}
-                   title="Edit Category Name"
-                   style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center' }}
-                 >
-                   <FaEdit style={{ color: 'var(--secondary)', fontSize: '0.95rem' }} />
-                 </button>
-                 <button 
-                   className="btn-icon" 
-                   onClick={() => handleDeleteList(activeList.id, activeList.title)}
-                   title="Delete Category"
-                   style={{ background: 'rgba(220,38,38,0.15)', border: '1px solid rgba(220,38,38,0.3)', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center' }}
-                 >
-                   <FaTrash style={{ color: '#f87171', fontSize: '0.95rem' }} />
-                 </button>
-               </div>
-             )}
+          <div className="topbar-title">
+            {activeList ? activeList.title : "Dashboard"}
           </div>
           <div className="topbar-actions">
-            {/* 1. Add Category Button */}
+            {/* Edit & Delete only visible when a category is active */}
+            {activeList && (
+              <>
+                <button 
+                  className="btn-icon" 
+                  onClick={() => { setEditingList(activeList); setShowListModal(true); }}
+                  title="Edit Category"
+                  style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.25)', padding: '8px 12px', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--secondary)', fontWeight: 600, fontSize: '0.85rem' }}
+                >
+                  <FaEdit /> Edit
+                </button>
+                <button 
+                  className="btn-icon" 
+                  onClick={() => handleDeleteList(activeList.id, activeList.title)}
+                  title="Delete Category"
+                  style={{ background: 'rgba(220,38,38,0.18)', border: '1px solid rgba(220,38,38,0.35)', padding: '8px 12px', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '6px', color: '#f87171', fontWeight: 600, fontSize: '0.85rem' }}
+                >
+                  <FaTrash /> Delete
+                </button>
+              </>
+            )}
+            {/* Add Category Button */}
             <button className="btn-primary" onClick={() => { setEditingList(null); setShowListModal(true); }}>
               <FaPlus /> Add Category
             </button>

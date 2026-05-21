@@ -7,12 +7,20 @@ const seed = async () => {
 
   const client = await pool.connect();
   try {
-    // Seed admin user
-    const existing = await client.query("SELECT * FROM admins WHERE username = $1", ["Ratnesh"]);
+    // Seed admin user — credentials come from .env, never hardcoded
+    const adminUsername = process.env.ADMIN_USERNAME;
+    const adminPassword = process.env.ADMIN_PASSWORD;
+
+    if (!adminUsername || !adminPassword) {
+      console.error("❌ ADMIN_USERNAME and ADMIN_PASSWORD must be set in .env before seeding.");
+      process.exit(1);
+    }
+
+    const existing = await client.query("SELECT * FROM admins WHERE username = $1", [adminUsername]);
     if (existing.rows.length === 0) {
-      const hash = await bcrypt.hash("8969730344", 12);
-      await client.query("INSERT INTO admins (username, password_hash) VALUES ($1, $2)", ["Ratnesh", hash]);
-      console.log("✅ Admin user created: Ratnesh");
+      const hash = await bcrypt.hash(adminPassword, 12);
+      await client.query("INSERT INTO admins (username, password_hash) VALUES ($1, $2)", [adminUsername, hash]);
+      console.log(`✅ Admin user created: ${adminUsername}`);
     } else {
       console.log("ℹ️  Admin user already exists.");
     }

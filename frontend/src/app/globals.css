@@ -590,6 +590,17 @@ body {
 .footer-contact a { color: #cbd5e1; text-decoration: none; transition: color 0.2s; }
 .footer-contact a:hover { color: var(--secondary); }
 
+.footer-map {
+  width: 100%;
+  max-width: 600px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 30px;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.05);
+}
+
 .footer-social {
   display: flex;
   gap: 20px;

@@ -1475,7 +1475,7 @@
 
             <div class="field" style="margin-bottom: 12px;">
                 <label style="color: var(--g1); font-weight: 700; font-family: 'Baloo 2', cursive;">लिस्ट का शीर्षक (Title) *</label>
-                <input type="text" id="mListTitle" placeholder="जैसे: धान बीज मूल्य सूची — खरीफ">
+                <div class="translit-wrap"><input autocomplete="off" oninput="onTranslitInput('mListTitle')" type="text" id="mListTitle" placeholder="जैसे: धान बीज मूल्य सूची — खरीफ"><div class="translit-suggestions" id="tSug_mListTitle"></div></div>
             </div>
 
             <div style="margin-top: 15px; margin-bottom: 8px; border-bottom: 1.5px solid var(--border); padding-bottom: 4px;">
@@ -1486,23 +1486,23 @@
             <div style="display: flex; flex-direction: column; gap: 8px;">
                 <div style="display: grid; grid-template-columns: 100px 1fr; align-items: center; gap: 10px;">
                     <label style="font-size: 12px; font-weight: 700; color: #444;">कॉलम 1 *</label>
-                    <input type="text" id="mCol1" placeholder="जैसे: बीज का नाम" style="padding: 6px 10px; font-size: 13px;">
+                    <div class="translit-wrap"><input autocomplete="off" oninput="onTranslitInput('mCol1')" type="text" id="mCol1" placeholder="जैसे: बीज का नाम" style="padding: 6px 10px; font-size: 13px;"><div class="translit-suggestions" id="tSug_mCol1"></div></div>
                 </div>
                 <div style="display: grid; grid-template-columns: 100px 1fr; align-items: center; gap: 10px;">
                     <label style="font-size: 12px; font-weight: 700; color: #444;">कॉलम 2 *</label>
-                    <input type="text" id="mCol2" placeholder="जैसे: प्रकार" style="padding: 6px 10px; font-size: 13px;">
+                    <div class="translit-wrap"><input autocomplete="off" oninput="onTranslitInput('mCol2')" type="text" id="mCol2" placeholder="जैसे: प्रकार" style="padding: 6px 10px; font-size: 13px;"><div class="translit-suggestions" id="tSug_mCol2"></div></div>
                 </div>
                 <div style="display: grid; grid-template-columns: 100px 1fr; align-items: center; gap: 10px;">
                     <label style="font-size: 12px; font-weight: 700; color: #444;">कॉलम 3 *</label>
-                    <input type="text" id="mCol3" placeholder="जैसे: कंपनी / ब्रांड" style="padding: 6px 10px; font-size: 13px;">
+                    <div class="translit-wrap"><input autocomplete="off" oninput="onTranslitInput('mCol3')" type="text" id="mCol3" placeholder="जैसे: कंपनी / ब्रांड" style="padding: 6px 10px; font-size: 13px;"><div class="translit-suggestions" id="tSug_mCol3"></div></div>
                 </div>
                 <div style="display: grid; grid-template-columns: 100px 1fr; align-items: center; gap: 10px;">
                     <label style="font-size: 12px; font-weight: 700; color: #444;">कॉलम 4</label>
-                    <input type="text" id="mCol4" placeholder="जैसे: अवधि (दिन) (वैकल्पिक)" style="padding: 6px 10px; font-size: 13px;">
+                    <div class="translit-wrap"><input autocomplete="off" oninput="onTranslitInput('mCol4')" type="text" id="mCol4" placeholder="जैसे: अवधि (दिन) (वैकल्पिक)" style="padding: 6px 10px; font-size: 13px;"><div class="translit-suggestions" id="tSug_mCol4"></div></div>
                 </div>
                 <div style="display: grid; grid-template-columns: 100px 1fr; align-items: center; gap: 10px;">
                     <label style="font-size: 12px; font-weight: 700; color: #444;">कॉलम 5</label>
-                    <input type="text" id="mCol5" placeholder="जैसे: मूल्य (₹) (वैकल्पिक)" style="padding: 6px 10px; font-size: 13px;">
+                    <div class="translit-wrap"><input autocomplete="off" oninput="onTranslitInput('mCol5')" type="text" id="mCol5" placeholder="जैसे: मूल्य (₹) (वैकल्पिक)" style="padding: 6px 10px; font-size: 13px;"><div class="translit-suggestions" id="tSug_mCol5"></div></div>
                 </div>
             </div>
 
@@ -1514,15 +1514,15 @@
             <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
                 <div style="display: grid; grid-template-columns: 120px 1fr; align-items: center; gap: 10px;">
                     <label style="font-size: 12px; font-weight: 700; color: #b26a00;">🟠 नारंगी टैग</label>
-                    <input type="text" id="mHighOrange" placeholder="जैसे: मोटका" style="padding: 6px 10px; font-size: 13px;">
+                    <div class="translit-wrap"><input autocomplete="off" oninput="onTranslitInput('mHighOrange')" type="text" id="mHighOrange" placeholder="जैसे: मोटा धान" style="padding: 6px 10px; font-size: 13px;"><div class="translit-suggestions" id="tSug_mHighOrange"></div></div>
                 </div>
                 <div style="display: grid; grid-template-columns: 120px 1fr; align-items: center; gap: 10px;">
                     <label style="font-size: 12px; font-weight: 700; color: #1b5e20;">🟢 हरा टैग</label>
-                    <input type="text" id="mHighGreen" placeholder="जैसे: महीन" style="padding: 6px 10px; font-size: 13px;">
+                    <div class="translit-wrap"><input autocomplete="off" oninput="onTranslitInput('mHighGreen')" type="text" id="mHighGreen" placeholder="जैसे: महीन धान" style="padding: 6px 10px; font-size: 13px;"><div class="translit-suggestions" id="tSug_mHighGreen"></div></div>
                 </div>
                 <div style="display: grid; grid-template-columns: 120px 1fr; align-items: center; gap: 10px;">
                     <label style="font-size: 12px; font-weight: 700; color: #6a1b9a;">🟣 बैंगनी टैग</label>
-                    <input type="text" id="mHighPurple" placeholder="जैसे: नई किस्म" style="padding: 6px 10px; font-size: 13px;">
+                    <div class="translit-wrap"><input autocomplete="off" oninput="onTranslitInput('mHighPurple')" type="text" id="mHighPurple" placeholder="जैसे: नई किस्म" style="padding: 6px 10px; font-size: 13px;"><div class="translit-suggestions" id="tSug_mHighPurple"></div></div>
                 </div>
             </div>
 
@@ -1603,8 +1603,8 @@
                 </div>
                 <select class="filter-sel" id="filterType" onchange="filterTable()">
                     <option value="">— सभी प्रकार —</option>
-                    <option value="orange">मोटका</option>
-                    <option value="green">महीन</option>
+                    <option value="orange">मोटा धान</option>
+                    <option value="green">महीन धान</option>
                     <option value="purple">नई किस्म</option>
                 </select>
             </div>
@@ -1703,6 +1703,26 @@
 
             if (savedLists) {
                 lists = JSON.parse(savedLists);
+                // MIGRATION: Add land type to dhanya_beej if missing
+                let db = lists.find(l => l.id === 'dhanya_beej');
+                if (db && db.columns.length === 4) {
+                    db.columns.push('भूमि का प्रकार');
+                    db.items.forEach(item => {
+                        let daysStr = item.values[3];
+                        let land = '—';
+                        if(daysStr) {
+                            let match = daysStr.toString().match(/\d+/);
+                            if(match) {
+                                let days = parseInt(match[0]);
+                                if(days > 140) land = 'खाला / जल जमाव (नर्सरी: 25 मई - 10 जून)';
+                                else if(days >= 120) land = 'मध्यम भूमि (नर्सरी: 10 जून - 20 जून)';
+                                else land = 'ऊँची भूमि (नर्सरी: 20 जून - 30 जून)';
+                            }
+                        }
+                        item.values.push(land);
+                    });
+                    saveLists();
+                }
             } else {
                 let legacyItems = null;
                 if (legacySeeds) {
@@ -1714,9 +1734,10 @@
                         return {
                             values: [
                                 item.name || '',
-                                item.type === 'motka' ? 'मोटका' : (item.type === 'mehi' ? 'महीन' : 'नई किस्म'),
+                                item.type === 'motka' ? 'मोटा धान' : (item.type === 'mehi' ? 'महीन धान' : 'नई किस्म'),
                                 item.company || '—',
-                                item.days || '—'
+                                item.days || '—',
+                                (function(d){ let m = (d||'').toString().match(/\d+/); if(!m) return '—'; let v = parseInt(m[0]); if(v>140) return 'खाला / जल जमाव (नर्सरी: 25 मई - 10 जून)'; if(v>=120) return 'मध्यम भूमि (नर्सरी: 10 जून - 20 जून)'; return 'ऊँची भूमि (नर्सरी: 20 जून - 30 जून)'; })(item.days)
                             ],
                             highlight: item.type === 'naya' ? 'purple' : (item.type === 'motka' ? 'orange' : 'green')
                         };
@@ -1725,10 +1746,10 @@
                         {
                             id: "dhanya_beej",
                             title: "धान बीज मूल्य सूची — खरीफ",
-                            columns: ["बीज का नाम", "प्रकार", "कंपनी / ब्रांड", "अवधि (दिन)"],
+                            columns: ["बीज का नाम", "प्रकार", "कंपनी / ब्रांड", "अवधि (दिन)", "भूमि का प्रकार"],
                             highlights: {
-                                orange: "मोटका",
-                                green: "महीन",
+                                orange: "मोटा धान",
+                                green: "महीन धान",
                                 purple: "नई किस्म"
                             },
                             items: migratedItems
@@ -1739,9 +1760,10 @@
                         return {
                             values: [
                                 item.name,
-                                item.type === 'motka' ? 'मोटका' : (item.type === 'mehi' ? 'महीन' : 'नई किस्म'),
+                                item.type === 'motka' ? 'मोटा धान' : (item.type === 'mehi' ? 'महीन धान' : 'नई किस्म'),
                                 item.company,
-                                item.days
+                                item.days,
+                                (function(d){ let m = (d||'').toString().match(/\d+/); if(!m) return '—'; let v = parseInt(m[0]); if(v>140) return 'खाला / जल जमाव (नर्सरी: 25 मई - 10 जून)'; if(v>=120) return 'मध्यम भूमि (नर्सरी: 10 जून - 20 जून)'; return 'ऊँची भूमि (नर्सरी: 20 जून - 30 जून)'; })(item.days)
                             ],
                             highlight: item.isNew ? 'purple' : (item.type === 'motka' ? 'orange' : 'green')
                         };
@@ -1751,10 +1773,10 @@
                         {
                             id: "dhanya_beej",
                             title: "धान बीज मूल्य सूची — खरीफ",
-                            columns: ["बीज का नाम", "प्रकार", "कंपनी / ब्रांड", "अवधि (दिन)"],
+                            columns: ["बीज का नाम", "प्रकार", "कंपनी / ब्रांड", "अवधि (दिन)", "भूमि का प्रकार"],
                             highlights: {
-                                orange: "मोटका",
-                                green: "महीन",
+                                orange: "मोटा धान",
+                                green: "महीन धान",
                                 purple: "नई किस्म"
                             },
                             items: migratedInitial
@@ -2046,7 +2068,7 @@
                 if (colIdx === 0) {
                     inner += `
                         <td class="name-col">
-                            <input class="inline-input" id="eVal_${idx}_${colIdx}" value="${val}" placeholder="${col}">
+                            <div class="translit-wrap"><input class="inline-input" id="eVal_${idx}_${colIdx}" value="${val}" placeholder="${col}" autocomplete="off" oninput="onTranslitInput('eVal_${idx}_${colIdx}')"><div class="translit-suggestions" id="tSug_eVal_${idx}_${colIdx}"></div></div>
                             <div style="margin-top: 5px; display: flex; align-items: center; gap: 4px;">
                                 <span style="font-size:10px; color:#555; font-weight:700;">टैग:</span>
                                 <select class="inline-sel" id="eHigh_${idx}" style="font-size: 11px; padding: 2px; width: auto; font-family: 'Baloo 2', cursive;">
@@ -2058,7 +2080,7 @@
                 } else {
                     inner += `
                         <td class="center">
-                            <input class="inline-input" id="eVal_${idx}_${colIdx}" value="${val}" placeholder="${col}" style="text-align: center;">
+                            <div class="translit-wrap"><input class="inline-input" id="eVal_${idx}_${colIdx}" value="${val}" placeholder="${col}" style="text-align: center;" autocomplete="off" oninput="onTranslitInput('eVal_${idx}_${colIdx}')"><div class="translit-suggestions" id="tSug_eVal_${idx}_${colIdx}"></div></div>
                         </td>
                     `;
                 }

@@ -1,6 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { getHindiSuggestions } from "@/lib/api";
+import { FaKeyboard } from "react-icons/fa";
 
 export default function HindiInput({ value, onChange, placeholder, className, style }) {
   const [suggestions, setSuggestions] = useState([]);
@@ -72,7 +73,10 @@ export default function HindiInput({ value, onChange, placeholder, className, st
       />
       {showSuggestions && suggestions.length > 0 && (
         <div className="hindi-suggestions">
-          <div className="hindi-hint">🔤 हिंदी में चुनें:</div>
+          <div className="hindi-hint">
+            <FaKeyboard style={{ color: "var(--primary-light)", marginRight: 6 }} /> 
+            हिंदी में चुनें:
+          </div>
           {suggestions.map((s, i) => (
             <div
               key={i}

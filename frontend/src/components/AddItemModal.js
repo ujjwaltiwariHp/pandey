@@ -26,27 +26,33 @@ export default function AddItemModal({ columns, highlights, onSave, onClose }) {
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-          <h2 className="modal-title" style={{ margin: 0 }}>नया आइटम जोड़ें</h2>
+      <div className="modal" style={{ maxWidth: '950px' }} onClick={(e) => e.stopPropagation()}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, borderBottom: '2px solid #eee', paddingBottom: 16 }}>
+          <h2 className="modal-title" style={{ margin: 0 }}>नया उत्पाद जोड़ें</h2>
           <button className="btn-icon" onClick={onClose}><FaTimes /></button>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          {columns.map((col, idx) => (
-            <div className="form-field" key={idx}>
-              <label>{col} *</label>
-              <HindiInput
-                value={values[idx] || ""}
-                onChange={(v) => updateVal(idx, v)}
-                placeholder={`${col} दर्ज करें...`}
-              />
+        <div className="modal-grid-2">
+          {/* Columns inputs in 2-column or 3-column grid */}
+          <div className="modal-span-full">
+            <div className="modal-grid-2">
+              {columns.map((col, idx) => (
+                <div className="form-field" key={idx}>
+                  <label>{col} *</label>
+                  <HindiInput
+                    value={values[idx] || ""}
+                    onChange={(v) => updateVal(idx, v)}
+                    placeholder={`${col} दर्ज करें...`}
+                  />
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
 
-          <div className="form-field">
-            <label>हाइलाइट टैग</label>
-            <div className="radio-group">
+          {/* Highlight selection in a clean section */}
+          <div className="form-field modal-span-full" style={{ marginTop: 10, paddingTop: 16, borderTop: '1px solid #f0f0f0' }}>
+            <label style={{ fontSize: '15px', color: 'var(--primary-light)', fontWeight: 'bold' }}>हाइलाइट श्रेणी (टैग लेबल)</label>
+            <div className="radio-group" style={{ marginTop: 10 }}>
               <label className="radio-label">
                 <input
                   type="radio"
@@ -79,7 +85,7 @@ export default function AddItemModal({ columns, highlights, onSave, onClose }) {
         <div className="modal-actions">
           <button className="btn-secondary" onClick={onClose}>Cancel</button>
           <button className="btn-primary" onClick={handleSave}>
-            <FaPlus /> Add
+            <FaPlus style={{ marginRight: 8 }} /> Add Product
           </button>
         </div>
       </div>

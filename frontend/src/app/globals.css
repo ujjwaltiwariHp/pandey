@@ -1695,3 +1695,8 @@ th:last-child { text-align: center; }
 .label-badge-rose { background: #fce4ec !important; color: #c2185b !important; border: 1px solid #f8bbd0 !important; }
 .label-badge-cyan { background: #e0f7fa !important; color: #00838f !important; border: 1px solid #b2ebf2 !important; }
 
+/* Spin animation for FaSpinner */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

@@ -18,7 +18,7 @@ import {
   FaPlus,
   FaEdit,
   FaTrash,
-  FaSearch,
+
   FaSave,
   FaTimes,
   FaDownload,
@@ -46,7 +46,7 @@ export default function AdminPanel() {
   const [itemError, setItemError] = useState("");
   
   const [editingList, setEditingList] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
+
   const [filterType, setFilterType] = useState("");
   const [toast, setToast] = useState(null);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -72,6 +72,14 @@ export default function AdminPanel() {
   useEffect(() => {
     loadLists();
   }, []);
+
+  // Reset pagination and filter whenever user switches category (F4 + F5 bug fix)
+  useEffect(() => {
+    setCurrentPage(1);
+    setFilterType("");
+    setShowItemForm(false);
+    setItemError("");
+  }, [activeListId]);
 
   const activeList = lists.find((l) => l.id === activeListId);
 
@@ -280,20 +288,14 @@ export default function AdminPanel() {
     }, 500);
   };
 
-  // Filtering Items
+  // Filtering Items (by variety only — search bar was removed)
   const filteredItems = activeList
     ? (activeList.items || []).filter((item) => {
         const vals = item.item_values || [];
-        const matchQ =
-          !searchQuery ||
-          vals.some((v) => (v || "").toLowerCase().includes(searchQuery.toLowerCase()));
-        
         // Find if types match variety filter
         const prakarColIdx = activeList.columns.findIndex(c => c.includes("प्रकार"));
         const itemVariety = prakarColIdx !== -1 ? vals[prakarColIdx] : "";
-        const matchF = !filterType || itemVariety === filterType;
-        
-        return matchQ && matchF;
+        return !filterType || itemVariety === filterType;
       })
     : [];
 

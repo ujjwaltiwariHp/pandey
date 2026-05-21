@@ -1,4 +1,11 @@
 require("dotenv").config();
+
+// Fail-fast: ensure critical env vars are set (S5 security fix)
+if (!process.env.JWT_SECRET) {
+  console.error("❌ FATAL: JWT_SECRET environment variable is not set. Server cannot start.");
+  process.exit(1);
+}
+
 const express = require("express");
 const cors = require("cors");
 const { initDB } = require("./config/db");

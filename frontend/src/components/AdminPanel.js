@@ -729,17 +729,7 @@ export default function AdminPanel() {
               )}
 
               {/* Table Toolbar */}
-              <div className="admin-toolbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
-                <div className="search-wrap">
-                  <FaSearch />
-                  <input
-                    type="text"
-                    placeholder={`${activeList.columns[0]} से खोजें...`}
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div>
-                
+              <div className="admin-toolbar" style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   {/* Custom Dropdown variety filter replace native selects */}
                   <Dropdown

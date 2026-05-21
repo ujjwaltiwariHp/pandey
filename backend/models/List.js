@@ -2,7 +2,7 @@ const { pool } = require("../config/db");
 
 const List = {
   findAll: async () => {
-    const result = await pool.query("SELECT * FROM lists ORDER BY sort_order ASC, id ASC");
+    const result = await pool.query("SELECT * FROM lists ORDER BY id ASC");
     return result.rows;
   },
 
@@ -15,7 +15,7 @@ const List = {
     const result = await pool.query(
       `INSERT INTO lists (title, columns, highlights, sort_order) 
        VALUES ($1, $2, $3, $4) RETURNING *`,
-      [title, JSON.stringify(columns), JSON.stringify(highlights), sort_order || 0]
+      [title, JSON.stringify(columns), JSON.stringify(highlights), sort_order || 999]
     );
     return result.rows[0];
   },
@@ -24,7 +24,7 @@ const List = {
     const result = await pool.query(
       `UPDATE lists SET title = $1, columns = $2, highlights = $3, sort_order = $4, updated_at = CURRENT_TIMESTAMP
        WHERE id = $5 RETURNING *`,
-      [title, JSON.stringify(columns), JSON.stringify(highlights), sort_order || 0, id]
+      [title, JSON.stringify(columns), JSON.stringify(highlights), sort_order || 999, id]
     );
     return result.rows[0] || null;
   },
@@ -35,7 +35,7 @@ const List = {
   },
 
   findAllWithItems: async () => {
-    const lists = await pool.query("SELECT * FROM lists ORDER BY sort_order ASC, id ASC");
+    const lists = await pool.query("SELECT * FROM lists ORDER BY id ASC");
     const items = await pool.query("SELECT * FROM items ORDER BY sort_order ASC, id ASC");
 
     return lists.rows.map((list) => ({

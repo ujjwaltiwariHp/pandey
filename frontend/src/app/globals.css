@@ -1467,12 +1467,97 @@ th:last-child { text-align: center; }
   .admin-sidebar { width: 100%; height: auto; max-height: 280px; border-right: none; border-bottom: 2px solid var(--secondary); }
   .admin-main { flex-grow: 1; height: calc(100vh - 280px); }
   .hide-mobile { display: none; }
-  .hero h1 { font-size: 3rem; }
   .section-header h2 { font-size: 2.5rem; }
   .admin-topbar { padding: 16px 20px; flex-direction: column; gap: 15px; align-items: flex-start; }
   .admin-content { padding: 20px 10px; }
   .modal { padding: 20px; }
   .modal-grid-2, .modal-grid-3 { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    min-height: 85vh;
+    padding: 120px 20px 40px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .hero-content {
+    padding-top: 0;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeInUp 0.8s ease both;
+  }
+  .hero h1 {
+    font-size: 2.2rem !important;
+    line-height: 1.25;
+    margin-bottom: 16px;
+  }
+  .hero p {
+    font-size: 1rem !important;
+    margin-bottom: 28px;
+    line-height: 1.5;
+  }
+  .hero-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+  .hero-actions a {
+    width: 100%;
+    text-align: center;
+  }
+  .hero-overlay {
+    background: rgba(10, 41, 12, 0.88) !important; /* Premium dark green solid filter to guarantee maximum text readability */
+  }
+
+  /* Navbar styling on mobile */
+  .navbar {
+    padding: 12px 16px;
+  }
+  .nav-logo {
+    font-size: 1.35rem;
+  }
+  .logo-icon {
+    font-size: 1.7rem;
+  }
+  .nav-links {
+    gap: 12px;
+  }
+  .btn-nav-admin {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+  }
+  
+  /* Footer responsiveness */
+  .site-footer {
+    padding: 50px 16px 30px;
+  }
+  .footer-content h3 {
+    font-size: 1.8rem;
+  }
+  .footer-contact {
+    flex-direction: column;
+    gap: 12px;
+    margin: 20px 0;
+    font-size: 0.95rem;
+  }
+  .footer-divider {
+    display: none;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Premium Inline Form Card rendered directly above the table */

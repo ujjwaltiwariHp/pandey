@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import HindiInput from "./HindiInput";
+import AddItemModal from "./AddItemModal";
 import {
   fetchLists,
   createList,
@@ -20,40 +21,43 @@ import {
   FaSearch,
   FaSave,
   FaTimes,
-  FaSync,
   FaDownload,
   FaBoxOpen,
   FaSpinner,
   FaSeedling,
   FaListUl,
+  FaTachometerAlt,
+  FaSignOutAlt,
+  FaExternalLinkAlt,
+  FaAngleLeft,
+  FaAngleRight,
 } from "react-icons/fa";
 
 export default function AdminPanel() {
   const [lists, setLists] = useState([]);
-  const [activeListId, setActiveListId] = useState(null);
+  const [activeListId, setActiveListId] = useState(null); // null means Dashboard Home
   const [loading, setLoading] = useState(true);
   const [showListModal, setShowListModal] = useState(false);
+  const [showAddItemModal, setShowAddItemModal] = useState(false);
   const [editingList, setEditingList] = useState(null);
   const [editingItemId, setEditingItemId] = useState(null);
   const [editValues, setEditValues] = useState([]);
   const [editHighlight, setEditHighlight] = useState("none");
-  const [newValues, setNewValues] = useState([]);
-  const [newHighlight, setNewHighlight] = useState("none");
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState("");
   const [toast, setToast] = useState(null);
   const [isDownloading, setIsDownloading] = useState(false);
+  
+  // Table Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
   const printRef = useRef(null);
 
   const loadLists = async () => {
     try {
       const data = await fetchLists();
-      setLists(data);
-      if (data.length > 0 && !activeListId) {
-        setActiveListId(data[0].id);
-      } else if (data.length > 0 && !data.find((l) => l.id === activeListId)) {
-        setActiveListId(data[0].id);
-      }
+      setLists(data || []);
     } catch (err) {
       showToast("डेटा लोड करने में त्रुटि", "error");
     } finally {
@@ -68,12 +72,9 @@ export default function AdminPanel() {
   const activeList = lists.find((l) => l.id === activeListId);
 
   useEffect(() => {
-    if (activeList) {
-      setNewValues(new Array(activeList.columns.length).fill(""));
-      setNewHighlight("none");
-      setSearchQuery("");
-      setFilterType("");
-    }
+    setCurrentPage(1);
+    setSearchQuery("");
+    setFilterType("");
   }, [activeListId]);
 
   const showToast = (message, type = "success") => {
@@ -105,12 +106,12 @@ export default function AdminPanel() {
     }
   };
 
-  const handleDeleteList = async () => {
-    if (!activeList) return;
-    if (!confirm(`क्या आप "${activeList.title}" लिस्ट को हटाना चाहते हैं?`)) return;
+  const handleDeleteList = async (id = activeListId, title = activeList?.title) => {
+    if (!id) return;
+    if (!confirm(`क्या आप "${title}" लिस्ट को हटाना चाहते हैं?`)) return;
     try {
-      await deleteList(activeList.id);
-      setActiveListId(null);
+      await deleteList(id);
+      if (activeListId === id) setActiveListId(null);
       await loadLists();
       showToast("लिस्ट हटा दिया गया!");
     } catch (err) {
@@ -119,18 +120,11 @@ export default function AdminPanel() {
   };
 
   // Item CRUD
-  const handleAddItem = async () => {
-    if (!activeList || !newValues[0]?.trim()) {
-      showToast("पहला कॉलम भरना आवश्यक है।", "error");
-      return;
-    }
+  const handleAddItem = async (itemData) => {
+    if (!activeList) return;
     try {
-      await createItem(activeList.id, {
-        item_values: newValues,
-        highlight: newHighlight,
-      });
-      setNewValues(new Array(activeList.columns.length).fill(""));
-      setNewHighlight("none");
+      await createItem(activeList.id, itemData);
+      setShowAddItemModal(false);
       await loadLists();
       showToast("आइटम जोड़ा गया!");
     } catch (err) {
@@ -203,10 +197,10 @@ export default function AdminPanel() {
       } finally {
         setIsDownloading(false);
       }
-    }, 500); // Wait for DOM to update
+    }, 500);
   };
 
-
+  // Filter
   const filteredItems = activeList
     ? (activeList.items || []).filter((item) => {
         const vals = item.item_values || [];
@@ -218,6 +212,7 @@ export default function AdminPanel() {
       })
     : [];
 
+  // Stats
   const totalItems = activeList?.items?.length || 0;
   const highlightCounts = {};
   if (activeList?.highlights) {
@@ -228,15 +223,25 @@ export default function AdminPanel() {
     });
   }
 
+  // Dashboard Stats
+  const totalCategories = lists.length;
+  const grandTotalItems = lists.reduce((acc, l) => acc + (l.items?.length || 0), 0);
+
+  // Pagination Slice
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+
   // Print Pagination (Max 20 per page)
   const renderPrintPages = () => {
     if (!activeList || !isDownloading) return null;
     const items = activeList.items || [];
-    const itemsPerPage = 20;
+    const itemsPerPagePrint = 20;
     const pages = [];
     
-    for (let i = 0; i < items.length; i += itemsPerPage) {
-      pages.push(items.slice(i, i + itemsPerPage));
+    for (let i = 0; i < items.length; i += itemsPerPagePrint) {
+      pages.push(items.slice(i, i + itemsPerPagePrint));
     }
 
     return (
@@ -271,7 +276,7 @@ export default function AdminPanel() {
                    const hColor = item.highlight || "none";
                    return (
                      <tr key={item.id} className={`print-row-${hColor}`}>
-                       <td>{pageIndex * itemsPerPage + idx + 1}</td>
+                       <td>{pageIndex * itemsPerPagePrint + idx + 1}</td>
                        {activeList.columns.map((col, ci) => (
                          <td key={ci}>{vals[ci] || "—"}</td>
                        ))}
@@ -289,7 +294,6 @@ export default function AdminPanel() {
       </div>
     );
   };
-
 
   if (loading) {
     return (
@@ -315,9 +319,19 @@ export default function AdminPanel() {
         />
       )}
 
+      {showAddItemModal && activeList && (
+        <AddItemModal
+          columns={activeList.columns}
+          highlights={activeList.highlights}
+          onSave={handleAddItem}
+          onClose={() => setShowAddItemModal(false)}
+        />
+      )}
+
       {renderPrintPages()}
 
-      <aside className="admin-sidebar hide-mobile">
+      {/* Sidebar navigation */}
+      <aside className="admin-sidebar">
         <div className="sidebar-header">
           <div className="sidebar-logo">
             <FaSeedling /> पाण्डेय ट्रेडर्स
@@ -325,65 +339,157 @@ export default function AdminPanel() {
           <div className="sidebar-subtitle">Admin Dashboard</div>
         </div>
         
-        <div className="sidebar-actions">
-          <button className="btn-sidebar-add" onClick={() => { setEditingList(null); setShowListModal(true); }}>
-            <FaPlus /> Create List
+        <div className="sidebar-menu">
+          <button 
+            className={`sidebar-menu-btn ${activeListId === null ? "active" : ""}`}
+            onClick={() => setActiveListId(null)}
+          >
+            <FaTachometerAlt /> Dashboard Home
+          </button>
+          <button 
+            className="sidebar-menu-btn" 
+            onClick={() => { setEditingList(null); setShowListModal(true); }}
+          >
+            <FaPlus /> Create Category
           </button>
         </div>
 
+        <div className="sidebar-section-title">Categories</div>
         <div className="sidebar-lists">
-          {lists.map((l) => (
-            <button
-              key={l.id}
-              className={`sidebar-list-item ${l.id === activeListId ? "active" : ""}`}
-              onClick={() => setActiveListId(l.id)}
-            >
-              <FaListUl />
-              {l.title.length > 20 ? l.title.slice(0, 18) + "…" : l.title}
-            </button>
-          ))}
+          {lists.length === 0 ? (
+            <div style={{ padding: '10px 24px', fontSize: '0.9rem', color: '#999' }}>कोई लिस्ट उपलब्ध नहीं है</div>
+          ) : (
+            lists.map((l) => (
+              <button
+                key={l.id}
+                className={`sidebar-list-item ${l.id === activeListId ? "active" : ""}`}
+                onClick={() => setActiveListId(l.id)}
+              >
+                <FaListUl />
+                {l.title.length > 20 ? l.title.slice(0, 18) + "…" : l.title}
+              </button>
+            ))
+          )}
         </div>
       </aside>
 
+      {/* Main Content Area */}
       <main className="admin-main">
+        {/* Navigation Bar */}
         <div className="admin-topbar">
           <div className="topbar-title">
              {activeList ? activeList.title : "Dashboard"}
           </div>
           <div className="topbar-actions">
-            {activeList && (
+            <a href="/" target="_blank" className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <FaExternalLinkAlt /> Public Site
+            </a>
+            {activeList ? (
               <>
-                <button className="btn-secondary" onClick={() => { setEditingList(activeList); setShowListModal(true); }}>
-                  <FaEdit /> Edit
+                <button className="btn-primary" onClick={() => setShowAddItemModal(true)}>
+                  <FaPlus /> Add Item
                 </button>
-                <button className="btn-danger" onClick={handleDeleteList}>
-                  <FaTrash /> Delete
+                <button className="btn-secondary" onClick={() => { setEditingList(activeList); setShowListModal(true); }}>
+                  <FaEdit /> Edit Category
+                </button>
+                <button className="btn-danger" onClick={() => handleDeleteList(activeList.id, activeList.title)}>
+                  <FaTrash /> Delete Category
                 </button>
                 <button className="btn-primary" onClick={downloadImage} disabled={isDownloading} style={{background: 'var(--accent)'}}>
                   {isDownloading ? <FaSpinner className="fa-spin" /> : <FaDownload />} Download Image
                 </button>
               </>
+            ) : (
+              <button className="btn-primary" onClick={() => { setEditingList(null); setShowListModal(true); }}>
+                <FaPlus /> Create Category
+              </button>
             )}
           </div>
         </div>
 
         <div className="admin-content">
-          {!activeList ? (
-            <div className="empty-state">
-              <FaBoxOpen style={{ fontSize: '4rem', color: "#ccc", marginBottom: 20 }} />
-              <h2>कोई लिस्ट नहीं है</h2>
-              <p>नया लिस्ट बनाने के लिए "Create List" पर क्लिक करें।</p>
-            </div>
-          ) : (
-            <>
-              {/* Stats Grid */}
+          {/* DASHBOARD HOME VIEW */}
+          {activeListId === null && (
+            <div className="dashboard-view">
+              <div className="dashboard-hero">
+                <h2>स्वागत है, एडमिन!</h2>
+                <p>यहाँ से आप अपने खाद, बीज एवं कृषि रसायनों के मूल्य और विवरण को व्यवस्थित कर सकते हैं।</p>
+              </div>
+
+              {/* General Stats */}
               <div className="stats-grid">
                 <div className="stat-card">
                   <div className="stat-icon" style={{background: 'rgba(21,76,24,0.1)', color: 'var(--primary)'}}>
                     <FaListUl />
                   </div>
                   <div className="stat-info">
-                    <h4>कुल आइटम</h4>
+                    <h4>कुल श्रेणियाँ (Categories)</h4>
+                    <p>{totalCategories}</p>
+                  </div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-icon" style={{background: 'rgba(255,193,7,0.1)', color: 'var(--accent)'}}>
+                    <FaSeedling />
+                  </div>
+                  <div className="stat-info">
+                    <h4>कुल उपलब्ध उत्पाद</h4>
+                    <p>{grandTotalItems}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="dashboard-section-header">
+                कैटेगरी लिस्ट
+              </div>
+
+              {/* Categories Grid (Cards) */}
+              {lists.length === 0 ? (
+                <div className="empty-state">
+                  <FaBoxOpen style={{ fontSize: '4rem', color: "#ccc", marginBottom: 20 }} />
+                  <h2>कोई लिस्ट नहीं मिली</h2>
+                  <p>नया लिस्ट बनाने के लिए ऊपर "Create Category" पर क्लिक करें।</p>
+                </div>
+              ) : (
+                <div className="category-cards-grid">
+                  {lists.map((l) => (
+                    <div className="category-card" key={l.id} onClick={() => setActiveListId(l.id)}>
+                      <div className="card-icon-wrap">
+                        <FaSeedling />
+                      </div>
+                      <h3>{l.title}</h3>
+                      <div className="card-info">
+                        <p style={{ marginBottom: 5 }}><strong>कॉलम:</strong> {l.columns.join(", ")}</p>
+                        <p><strong>उत्पाद संख्या:</strong> {l.items?.length || 0} आइटम</p>
+                      </div>
+                      <div className="card-actions" onClick={(e) => e.stopPropagation()}>
+                        <button className="btn-card-action btn-card-view" onClick={() => setActiveListId(l.id)}>
+                          View Items
+                        </button>
+                        <button className="btn-card-action btn-card-edit" onClick={() => { setEditingList(l); setShowListModal(true); }}>
+                          Edit
+                        </button>
+                        <button className="btn-card-action" style={{ background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca' }} onClick={() => handleDeleteList(l.id, l.title)}>
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ACTIVE CATEGORY VIEW */}
+          {activeList && (
+            <div className="category-view">
+              {/* Category specific stats */}
+              <div className="stats-grid" style={{ marginBottom: 30 }}>
+                <div className="stat-card">
+                  <div className="stat-icon" style={{background: 'rgba(21,76,24,0.1)', color: 'var(--primary)'}}>
+                    <FaListUl />
+                  </div>
+                  <div className="stat-info">
+                    <h4>कुल उत्पाद</h4>
                     <p>{totalItems}</p>
                   </div>
                 </div>
@@ -405,7 +511,7 @@ export default function AdminPanel() {
                 )}
               </div>
 
-              {/* Toolbar */}
+              {/* Table Toolbar */}
               <div className="admin-toolbar">
                 <div className="search-wrap">
                   <FaSearch />
@@ -446,7 +552,7 @@ export default function AdminPanel() {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredItems.length === 0 ? (
+                    {currentItems.length === 0 ? (
                       <tr>
                         <td
                           colSpan={activeList.columns.length + 2}
@@ -457,14 +563,14 @@ export default function AdminPanel() {
                         </td>
                       </tr>
                     ) : (
-                      filteredItems.map((item, idx) => {
+                      currentItems.map((item, idx) => {
                         const vals = item.item_values || [];
                         const isEditing = editingItemId === item.id;
 
                         if (isEditing) {
                           return (
                             <tr key={item.id} style={{background: '#f8faf8'}}>
-                              <td style={{fontWeight: 700}}>{idx + 1}</td>
+                              <td style={{fontWeight: 700}}>{indexOfFirstItem + idx + 1}</td>
                               {activeList.columns.map((col, ci) => (
                                 <td key={ci}>
                                   <HindiInput
@@ -507,7 +613,7 @@ export default function AdminPanel() {
 
                         return (
                           <tr key={item.id} style={{borderLeft: borderClass}}>
-                            <td style={{color: '#888', fontWeight: 'bold'}}>{idx + 1}</td>
+                            <td style={{color: '#888', fontWeight: 'bold'}}>{indexOfFirstItem + idx + 1}</td>
                             {activeList.columns.map((col, ci) => (
                               <td key={ci} className={ci === 0 ? "td-name" : "td-center"}>
                                 {vals[ci] || "—"}
@@ -527,62 +633,31 @@ export default function AdminPanel() {
                 </table>
               </div>
 
-              {/* Add Item Form */}
-              <div className="add-form">
-                <div className="add-form-title">
-                  <div style={{background: 'rgba(46,125,50,0.1)', padding: 10, borderRadius: 10, display: 'flex'}}><FaPlus style={{ color: 'var(--primary-light)' }} /></div>
-                  नया आइटम जोड़ें
-                </div>
-                <div className="add-form-grid">
-                  {activeList.columns.map((col, i) => (
-                    <div className="form-field" key={i}>
-                      <label>{col}</label>
-                      <HindiInput
-                        value={newValues[i] || ""}
-                        onChange={(v) => {
-                          const copy = [...newValues];
-                          copy[i] = v;
-                          setNewValues(copy);
-                        }}
-                        placeholder={`${col} दर्ज करें...`}
-                      />
-                    </div>
-                  ))}
-                  <div className="form-field">
-                    <label>हाइलाइट टैग</label>
-                    <div className="radio-group">
-                      <label className="radio-label">
-                        <input type="radio" name="newH" value="none" checked={newHighlight === "none"} onChange={(e) => setNewHighlight(e.target.value)} />
-                        कोई नहीं
-                      </label>
-                      {Object.entries(activeList.highlights || {}).map(
-                        ([k, v]) =>
-                          v && (
-                            <label key={k} className={`radio-label radio-${k}`}>
-                              <input type="radio" name="newH" value={k} checked={newHighlight === k} onChange={(e) => setNewHighlight(e.target.value)} />
-                              {v}
-                            </label>
-                          )
-                      )}
-                    </div>
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="pagination-bar">
+                  <div className="pagination-info">
+                    Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, filteredItems.length)} of {filteredItems.length} items
+                  </div>
+                  <div className="pagination-buttons">
+                    <button 
+                      className="btn-pagination" 
+                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                      disabled={currentPage === 1}
+                    >
+                      <FaAngleLeft style={{ marginRight: 6 }} /> Previous
+                    </button>
+                    <button 
+                      className="btn-pagination" 
+                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                      disabled={currentPage === totalPages}
+                    >
+                      Next <FaAngleRight style={{ marginLeft: 6 }} />
+                    </button>
                   </div>
                 </div>
-                <div className="add-form-actions">
-                  <button className="btn-primary" onClick={handleAddItem}>
-                    <FaPlus /> Add
-                  </button>
-                  <button
-                    className="btn-secondary"
-                    onClick={() => {
-                      setNewValues(new Array(activeList.columns.length).fill(""));
-                      setNewHighlight("none");
-                    }}
-                  >
-                    <FaSync /> Clear
-                  </button>
-                </div>
-              </div>
-            </>
+              )}
+            </div>
           )}
         </div>
       </main>

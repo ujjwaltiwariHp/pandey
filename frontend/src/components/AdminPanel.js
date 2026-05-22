@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import HindiInput from "./HindiInput";
 import Dropdown from "./Dropdown";
 import {
@@ -37,11 +38,42 @@ import {
 import AdminHelpGuide from "./AdminHelpGuide";
 
 export default function AdminPanel() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
   const [lists, setLists] = useState([]);
-  const [activeListId, setActiveListId] = useState(null); // null means Dashboard Home
+
+  // Extract from URL query param
+  const tabParam = searchParams.get("tab");
+  let activeListId = null;
+  if (tabParam === "help") {
+    activeListId = "help";
+  } else if (tabParam) {
+    const foundList = lists.find((l) => String(l.id) === String(tabParam));
+    if (foundList) {
+      activeListId = foundList.id;
+    }
+  }
+
+  const setActiveListId = (tabId) => {
+    const params = new URLSearchParams(window.location.search);
+    if (tabId === null) {
+      params.delete("tab");
+    } else {
+      params.set("tab", String(tabId));
+    }
+    router.push(`${pathname}?${params.toString()}`);
+  };
   const [loading, setLoading] = useState(true);
   const [showListModal, setShowListModal] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    const handleToggle = () => setIsSidebarOpen((prev) => !prev);
+    window.addEventListener("toggle-admin-sidebar", handleToggle);
+    return () => window.removeEventListener("toggle-admin-sidebar", handleToggle);
+  }, []);
   
   // Item Form Panel (rendered above table)
   const [showItemForm, setShowItemForm] = useState(false);
@@ -537,9 +569,6 @@ export default function AdminPanel() {
         {/* Navigation Bar */}
         <div className="admin-topbar">
           <div className="topbar-left-group">
-            <button className="mobile-menu-btn" onClick={() => setIsSidebarOpen(true)}>
-              <FaBars />
-            </button>
             <div className="topbar-title">
               {activeList ? activeList.title : activeListId === "help" ? "एडमिन गाइड (Help)" : "Dashboard"}
             </div>
@@ -549,18 +578,16 @@ export default function AdminPanel() {
             {activeList && (
               <>
                 <button 
-                  className="btn-icon" 
+                  className="btn-category-edit" 
                   onClick={() => { setEditingList(activeList); setShowListModal(true); }}
                   title="Edit Category"
-                  style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.25)', padding: '8px 12px', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--secondary)', fontWeight: 600, fontSize: '0.85rem' }}
                 >
                   <FaEdit /> Edit
                 </button>
                 <button 
-                  className="btn-icon" 
+                  className="btn-category-delete" 
                   onClick={() => handleDeleteList(activeList.id, activeList.title)}
                   title="Delete Category"
-                  style={{ background: 'rgba(220,38,38,0.18)', border: '1px solid rgba(220,38,38,0.35)', padding: '8px 12px', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '6px', color: '#f87171', fontWeight: 600, fontSize: '0.85rem' }}
                 >
                   <FaTrash /> Delete
                 </button>
@@ -742,45 +769,35 @@ export default function AdminPanel() {
               )}
 
               {/* Table Toolbar */}
-              <div className="admin-toolbar" style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  {/* Custom Dropdown variety filter replace native selects */}
-                  <Dropdown
-                    options={filterOptions}
-                    value={filterType}
-                    onChange={setFilterType}
-                    placeholder="— सभी प्रकार —"
-                  />
-                  
-                  {/* Add Item Button placed exactly in the right side of search item row! */}
-                  <button 
-                    className="btn-primary" 
-                    onClick={() => {
-                      setShowItemForm(true);
-                      setEditingItemId(null);
-                      setFormValues(new Array(activeList.columns.length).fill(""));
-                    }}
-                    style={{ height: '42px', display: 'flex', alignItems: 'center', gap: '8px' }}
-                  >
-                    <FaPlus /> Add Item
-                  </button>
+              <div className="admin-toolbar">
+                {/* Custom Dropdown variety filter replace native selects */}
+                <Dropdown
+                  options={filterOptions}
+                  value={filterType}
+                  onChange={setFilterType}
+                  placeholder="— सभी प्रकार —"
+                />
+                
+                {/* Add Item Button placed exactly in the right side of search item row! */}
+                <button 
+                  className="btn-primary" 
+                  onClick={() => {
+                    setShowItemForm(true);
+                    setEditingItemId(null);
+                    setFormValues(new Array(activeList.columns.length).fill(""));
+                  }}
+                >
+                  <FaPlus /> Add Item
+                </button>
 
-                  {/* 4. Download Button */}
-                  <button 
-                    className="btn-primary" 
-                    onClick={downloadImage} 
-                    disabled={isDownloading} 
-                    style={{
-                      height: '42px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      background: 'var(--accent)'
-                    }}
-                  >
-                    {isDownloading ? <FaSpinner className="fa-spin" /> : <FaDownload />} Download
-                  </button>
-                </div>
+                {/* 4. Download Button */}
+                <button 
+                  className="btn-primary btn-download" 
+                  onClick={downloadImage} 
+                  disabled={isDownloading} 
+                >
+                  {isDownloading ? <FaSpinner className="fa-spin" /> : <FaDownload />} Download
+                </button>
               </div>
 
               {/* Table */}

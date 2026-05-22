@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { login as apiLogin } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
@@ -13,7 +13,13 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { loginAdmin } = useAuth();
+  const { admin, loginAdmin, loading: authLoading } = useAuth();
+
+  useEffect(() => {
+    if (admin && !authLoading) {
+      router.replace("/admin");
+    }
+  }, [admin, authLoading, router]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,7 +28,7 @@ export default function LoginPage() {
     try {
       const data = await apiLogin(username, password);
       loginAdmin(data.token, data.admin);
-      router.push("/admin");
+      router.replace("/admin");
     } catch (err) {
       setError(err.message || "Invalid credentials");
     } finally {

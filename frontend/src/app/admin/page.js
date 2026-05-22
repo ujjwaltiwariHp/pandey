@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import Navbar from "@/components/Navbar";
@@ -12,7 +12,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (!loading && !admin) {
-      router.push("/login");
+      router.replace("/login");
     }
   }, [admin, loading, router]);
 
@@ -31,7 +31,14 @@ export default function AdminPage() {
     <>
       <Navbar />
       <div style={{ paddingTop: 70 }}>
-        <AdminPanel />
+        <Suspense fallback={
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "50vh", gap: "16px" }}>
+            <FaSpinner style={{ fontSize: "3rem", color: "#1b5e20", animation: "spin 1s linear infinite" }} />
+            <p style={{ color: "#1b5e20", fontWeight: 600, fontSize: "1.1rem" }}>Loading Admin Panel...</p>
+          </div>
+        }>
+          <AdminPanel />
+        </Suspense>
       </div>
     </>
   );

@@ -1,4 +1,11 @@
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+let baseApi = "http://localhost:5000/api";
+if (typeof window !== "undefined") {
+  const host = window.location.hostname;
+  if (host && host !== "localhost" && host !== "127.0.0.1") {
+    baseApi = `http://${host}:5000/api`;
+  }
+}
+const API = process.env.NEXT_PUBLIC_API_URL || baseApi;
 
 function getToken() {
   if (typeof window !== "undefined") {

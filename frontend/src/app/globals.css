@@ -552,53 +552,82 @@ body {
 
 .footer-content {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  max-width: 600px;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 50px;
+  max-width: 1200px;
   margin: 0 auto;
   position: relative;
   z-index: 2;
+  width: 100%;
 }
 
-.footer-content h3 {
-  font-size: 2.8rem;
+.footer-info {
+  flex: 1.3;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.footer-info h3 {
+  font-size: 2.5rem;
   color: var(--secondary);
-  margin-bottom: 12px;
+  margin: 0 0 12px;
   font-weight: 800;
   letter-spacing: -0.5px;
 }
 
 .footer-desc {
-  font-size: 1.15rem;
-  color: #e2e8f0;
-  margin-bottom: 30px;
-  font-weight: 500;
-}
-
-.footer-contact {
-  display: flex;
-  gap: 20px;
-  margin: 0 0 40px;
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   color: #cbd5e1;
-  align-items: center;
-  flex-wrap: wrap;
-  justify-content: center;
+  margin-bottom: 24px;
+  font-weight: 500;
+  line-height: 1.5;
 }
 
-.footer-contact a { color: #cbd5e1; text-decoration: none; transition: color 0.2s; }
-.footer-contact a:hover { color: var(--secondary); }
-
-.footer-map {
+.footer-contact-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 30px;
   width: 100%;
-  max-width: 600px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.05rem;
+  color: #e2e8f0;
+}
+
+.contact-icon {
+  color: var(--secondary);
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.contact-item a {
+  color: #e2e8f0;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.contact-item a:hover {
+  color: var(--secondary);
+}
+
+.footer-map-container {
+  flex: 1;
+  min-height: 250px;
   border-radius: 12px;
   overflow: hidden;
-  margin-bottom: 30px;
   box-shadow: 0 15px 30px rgba(0,0,0,0.3);
   border: 1px solid rgba(255,255,255,0.15);
   background: rgba(255,255,255,0.05);
+  display: flex;
 }
 
 .footer-social {
@@ -1786,28 +1815,41 @@ th:last-child { text-align: center; }
   
   /* Footer responsiveness */
   .site-footer {
-    padding: 50px 16px 30px;
+    padding: 60px 20px 40px;
   }
   .footer-content {
-    align-items: center;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 36px !important;
   }
-  .footer-content h3 {
-    font-size: 1.8rem;
+  .footer-info {
+    align-items: center !important;
+    text-align: center !important;
+    width: 100% !important;
   }
-  .footer-contact {
-    flex-direction: column;
-    gap: 12px;
-    margin: 20px 0;
-    font-size: 0.95rem;
-    text-align: center;
+  .footer-info h3 {
+    font-size: 2rem !important;
+    margin-bottom: 8px !important;
   }
-  .footer-divider {
-    display: none;
+  .footer-desc {
+    font-size: 0.95rem !important;
+    margin-bottom: 20px !important;
   }
-  .footer-map {
-    width: 100%;
-    max-width: 100%;
-    margin-bottom: 30px;
+  .footer-contact-details {
+    align-items: center !important;
+    gap: 10px !important;
+    margin-bottom: 24px !important;
+  }
+  .contact-item {
+    font-size: 0.95rem !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+  .footer-map-container {
+    width: 100% !important;
+    min-height: 240px !important;
+    max-width: 100% !important;
   }
   /* Hide sidebar close btn on mobile since it's default display block? No, wait. */
 }

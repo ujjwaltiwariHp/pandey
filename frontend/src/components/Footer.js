@@ -1,5 +1,5 @@
 "use client";
-import { FaLocationDot, FaPhone, FaFacebook, FaInstagram, FaWhatsapp } from "react-icons/fa6";
+import { FaLocationDot, FaPhone, FaFacebook, FaInstagram, FaWhatsapp, FaUser } from "react-icons/fa6";
 
 export default function Footer() {
   return (
@@ -10,6 +10,10 @@ export default function Footer() {
           <h3>पाण्डेय ट्रेडर्स</h3>
           <p className="footer-desc">गुणवत्तापूर्ण खाद, बीज एवं कृषि रसायन के विश्वसनीय विक्रेता।</p>
           <div className="footer-contact-details">
+            <div className="contact-item">
+              <FaUser className="contact-icon" />
+              <span>रतनेश पाण्डेय</span>
+            </div>
             <div className="contact-item">
               <FaLocationDot className="contact-icon" />
               <span>बड़का गांव, गोपालगंज, बिहार</span>

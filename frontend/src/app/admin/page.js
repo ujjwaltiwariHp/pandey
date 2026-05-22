@@ -30,7 +30,7 @@ export default function AdminPage() {
   return (
     <div style={{ height: "100vh", overflow: "hidden", display: "flex", flexDirection: "column", background: "var(--bg)" }}>
       <Navbar />
-      <div style={{ flex: 1, height: "calc(100vh - 70px)", overflow: "hidden", position: "relative" }}>
+      <div style={{ flex: 1, marginTop: 70, height: "calc(100vh - 70px)", overflow: "hidden", position: "relative" }}>
         <Suspense fallback={
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "50vh", gap: "16px" }}>
             <FaSpinner style={{ fontSize: "3rem", color: "#1b5e20", animation: "spin 1s linear infinite" }} />

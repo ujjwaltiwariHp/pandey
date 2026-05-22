@@ -601,6 +601,39 @@ export default function AdminPanel() {
         </div>
 
         <div className="admin-content">
+          {/* Breadcrumb Trail */}
+          <nav className="admin-breadcrumb" aria-label="Breadcrumb">
+            <ol className="breadcrumb-list">
+              <li className="breadcrumb-item">
+                {activeListId === null ? (
+                  <span className="breadcrumb-current">🏠 Dashboard</span>
+                ) : (
+                  <button onClick={() => setActiveListId(null)} className="breadcrumb-btn">
+                    🏠 Dashboard
+                  </button>
+                )}
+              </li>
+              {activeListId === "help" && (
+                <li className="breadcrumb-item">
+                  <span className="breadcrumb-separator">/</span>
+                  <span className="breadcrumb-current">Guide & Help</span>
+                </li>
+              )}
+              {activeList && (
+                <>
+                  <li className="breadcrumb-item">
+                    <span className="breadcrumb-separator">/</span>
+                    <span className="breadcrumb-current">Category</span>
+                  </li>
+                  <li className="breadcrumb-item">
+                    <span className="breadcrumb-separator">/</span>
+                    <span className="breadcrumb-current">{activeList.title}</span>
+                  </li>
+                </>
+              )}
+            </ol>
+          </nav>
+
           {/* HELP GUIDE VIEW */}
           {activeListId === "help" && <AdminHelpGuide />}
 

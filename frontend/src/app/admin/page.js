@@ -28,9 +28,9 @@ export default function AdminPage() {
   if (!admin) return null;
 
   return (
-    <>
+    <div style={{ height: "100vh", overflow: "hidden", display: "flex", flexDirection: "column", background: "var(--bg)" }}>
       <Navbar />
-      <div style={{ paddingTop: 70 }}>
+      <div style={{ flex: 1, height: "calc(100vh - 70px)", overflow: "hidden", position: "relative" }}>
         <Suspense fallback={
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "50vh", gap: "16px" }}>
             <FaSpinner style={{ fontSize: "3rem", color: "#1b5e20", animation: "spin 1s linear infinite" }} />
@@ -40,6 +40,6 @@ export default function AdminPage() {
           <AdminPanel />
         </Suspense>
       </div>
-    </>
+    </div>
   );
 }

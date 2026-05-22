@@ -56,12 +56,12 @@ export default function Navbar() {
         {admin ? (
           <>
             {isHome ? (
-              <Link href="/admin" className="nav-link hide-mobile">
-                Admin Panel
+              <Link href="/admin" className="btn-nav-admin" style={{ background: 'var(--secondary)', color: 'var(--primary-dark)', border: '1px solid var(--secondary)' }}>
+                <FaUserShield /> Dashboard
               </Link>
             ) : (
-              <Link href="/" className="nav-link hide-mobile">
-                Public Site
+              <Link href="/" className="btn-nav-toggle-view">
+                Public View
               </Link>
             )}
             <button onClick={logout} className="btn-nav-logout">

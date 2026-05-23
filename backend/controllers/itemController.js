@@ -58,4 +58,22 @@ const deleteItem = async (req, res) => {
   }
 };
 
-module.exports = { getItemsByListId, createItem, updateItem, deleteItem };
+const reorderItems = async (req, res) => {
+  try {
+    const { itemIds } = req.body;
+    const { listId } = req.params;
+
+    if (!itemIds || !Array.isArray(itemIds)) {
+      return res.status(400).json({ error: "itemIds must be an array." });
+    }
+
+    await Item.reorder(listId, itemIds);
+    res.json({ message: "Items reordered successfully." });
+  } catch (err) {
+    console.error("Reorder items error:", err);
+    res.status(500).json({ error: "Failed to reorder items." });
+  }
+};
+
+module.exports = { getItemsByListId, createItem, updateItem, deleteItem, reorderItems };
+

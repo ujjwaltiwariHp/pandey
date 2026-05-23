@@ -112,6 +112,18 @@ export async function deleteItem(id) {
   return data;
 }
 
+export async function reorderItems(listId, itemIds) {
+  const res = await fetch(`${API}/lists/${listId}/items/reorder`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", ...authHeaders() },
+    body: JSON.stringify({ itemIds }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Failed to reorder items");
+  return data;
+}
+
+
 // Hindi Transliteration via Google API
 let translitCache = {};
 export async function getHindiSuggestions(text) {

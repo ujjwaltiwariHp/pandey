@@ -11,6 +11,7 @@ import {
   createItem,
   updateItem,
   deleteItem,
+  reorderItems,
 } from "@/lib/api";
 import ListModal from "./ListModal";
 import Toast from "./Toast";
@@ -93,6 +94,66 @@ export default function AdminPanel() {
   const itemsPerPage = 10;
 
   const printRef = useRef(null);
+
+  // Drag and drop states for row reordering
+  const [draggedItemId, setDraggedItemId] = useState(null);
+  const [dragOverItemId, setDragOverItemId] = useState(null);
+
+  const handleDragStart = (e, id) => {
+    setDraggedItemId(id);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOver = (e, id) => {
+    e.preventDefault();
+    if (draggedItemId !== id) {
+      setDragOverItemId(id);
+    }
+  };
+
+  const handleDragEnd = () => {
+    setDraggedItemId(null);
+    setDragOverItemId(null);
+  };
+
+  const handleDrop = async (e, targetItemId) => {
+    e.preventDefault();
+    if (!draggedItemId || draggedItemId === targetItemId) {
+      setDraggedItemId(null);
+      setDragOverItemId(null);
+      return;
+    }
+
+    const items = [...(activeList?.items || [])];
+    const dragIndex = items.findIndex((item) => item.id === draggedItemId);
+    const targetIndex = items.findIndex((item) => item.id === targetItemId);
+
+    if (dragIndex !== -1 && targetIndex !== -1) {
+      const [draggedItem] = items.splice(dragIndex, 1);
+      items.splice(targetIndex, 0, draggedItem);
+
+      // Optimistic update of UI
+      const updatedLists = lists.map((l) => {
+        if (l.id === activeList.id) {
+          return { ...l, items };
+        }
+        return l;
+      });
+      setLists(updatedLists);
+
+      try {
+        const itemIds = items.map((item) => item.id);
+        await reorderItems(activeList.id, itemIds);
+        showToast("उत्पाद का क्रम सफलतापूर्वक बदल दिया गया है!");
+      } catch (err) {
+        showToast("क्रम बदलने में विफलता: " + err.message, "error");
+        await loadLists(); // revert
+      }
+    }
+
+    setDraggedItemId(null);
+    setDragOverItemId(null);
+  };
 
   const loadLists = async () => {
     try {
@@ -880,7 +941,15 @@ export default function AdminPanel() {
                         const vals = item.item_values || [];
                         
                         return (
-                          <tr key={item.id}>
+                          <tr
+                            key={item.id}
+                            draggable
+                            onDragStart={(e) => handleDragStart(e, item.id)}
+                            onDragOver={(e) => handleDragOver(e, item.id)}
+                            onDragEnd={handleDragEnd}
+                            onDrop={(e) => handleDrop(e, item.id)}
+                            className={`draggable-row ${draggedItemId === item.id ? "row-dragging" : ""} ${dragOverItemId === item.id && draggedItemId !== item.id ? "row-drag-over" : ""}`}
+                          >
                             <td style={{color: '#888', fontWeight: 'bold'}}>{indexOfFirstItem + idx + 1}</td>
                             {activeList.columns.map((col, ci) => {
                               const isPrakar = col.includes("प्रकार");

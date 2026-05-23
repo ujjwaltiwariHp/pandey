@@ -44,6 +44,27 @@ const Item = {
     );
     return result.rows[0].next_order;
   },
+
+  reorder: async (listId, itemIds) => {
+    const client = await pool.connect();
+    try {
+      await client.query("BEGIN");
+      for (let i = 0; i < itemIds.length; i++) {
+        await client.query(
+          "UPDATE items SET sort_order = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 AND list_id = $3",
+          [i + 1, itemIds[i], listId]
+        );
+      }
+      await client.query("COMMIT");
+      return true;
+    } catch (err) {
+      await client.query("ROLLBACK");
+      throw err;
+    } finally {
+      client.release();
+    }
+  },
 };
 
 module.exports = Item;
+

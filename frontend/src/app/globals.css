@@ -111,15 +111,20 @@ body {
 .btn-nav-admin {
   background: var(--secondary);
   color: var(--primary-dark) !important;
-  padding: 10px 24px;
+  width: 145px;
+  height: 42px;
+  padding: 0;
   border-radius: 30px;
   font-weight: 700 !important;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   text-decoration: none;
   box-shadow: 0 4px 15px rgba(0,0,0,0.2);
   transition: all 0.3s ease;
+  font-size: 0.88rem;
+  box-sizing: border-box;
 }
 
 .btn-nav-admin:hover {
@@ -132,14 +137,19 @@ body {
   background: transparent;
   color: #ff8a80 !important;
   border: 1px solid #ff8a80;
-  padding: 8px 20px;
+  width: 145px;
+  height: 42px;
+  padding: 0;
   border-radius: 30px;
   font-weight: 700;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   cursor: pointer;
   transition: all 0.2s;
+  font-size: 0.88rem;
+  box-sizing: border-box;
 }
 .btn-nav-logout:hover {
   background: rgba(255, 138, 128, 0.1);
@@ -151,16 +161,20 @@ body {
   background: rgba(255, 255, 255, 0.08);
   color: var(--secondary) !important;
   border: 1px solid var(--secondary);
-  padding: 8px 18px;
+  width: 145px;
+  height: 42px;
+  padding: 0;
   border-radius: 30px;
   font-weight: 700;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   text-decoration: none;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-size: 0.85rem;
+  font-size: 0.88rem;
+  box-sizing: border-box;
 }
 .btn-nav-toggle-view:hover {
   background: var(--secondary);
@@ -1957,22 +1971,34 @@ th:last-child { text-align: center; }
     gap: 6px !important;
   }
   .btn-nav-toggle-view {
-    padding: 6px 10px !important;
+    width: 105px !important;
+    height: 32px !important;
+    padding: 0 !important;
     font-size: 0.72rem !important;
     gap: 4px !important;
     border-radius: 20px !important;
+    justify-content: center !important;
+    align-items: center !important;
   }
   .btn-nav-logout {
-    padding: 6px 10px !important;
+    width: 105px !important;
+    height: 32px !important;
+    padding: 0 !important;
     font-size: 0.72rem !important;
     gap: 4px !important;
     border-radius: 20px !important;
+    justify-content: center !important;
+    align-items: center !important;
   }
   .btn-nav-admin {
-    padding: 6px 10px !important;
+    width: 105px !important;
+    height: 32px !important;
+    padding: 0 !important;
     font-size: 0.72rem !important;
     gap: 4px !important;
     border-radius: 20px !important;
+    justify-content: center !important;
+    align-items: center !important;
   }
   
   /* Footer responsiveness */
@@ -2503,4 +2529,22 @@ th:last-child { text-align: center; }
     white-space: nowrap !important;
     width: auto !important;
   }
+}
+
+/* Drag and drop reordering row styles */
+.draggable-row {
+  cursor: grab;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+.draggable-row:active {
+  cursor: grabbing;
+}
+.row-dragging {
+  opacity: 0.4;
+  background-color: rgba(46, 125, 50, 0.05) !important;
+  border: 2px dashed var(--primary);
+}
+.row-drag-over {
+  border-top: 3px solid var(--primary-light) !important;
+  background-color: rgba(46, 125, 50, 0.08) !important;
 }

@@ -98,6 +98,9 @@ export default function AdminPanel() {
   // Drag and drop states for row reordering
   const [draggedItemId, setDraggedItemId] = useState(null);
   const [dragOverItemId, setDragOverItemId] = useState(null);
+  // Click-to-jump position editing state
+  const [editingPositionId, setEditingPositionId] = useState(null);
+  const [positionInputVal, setPositionInputVal] = useState("");
 
   const handleDragStart = (e, id) => {
     setDraggedItemId(id);
@@ -153,6 +156,46 @@ export default function AdminPanel() {
 
     setDraggedItemId(null);
     setDragOverItemId(null);
+  };
+
+  // Move any item (from any page) to a target 1-based position across the full list
+  const handleMoveToPosition = async (itemId, newPos) => {
+    if (!activeList) return;
+    // Use filteredItems (full list, not paginated) so cross-page moves work correctly
+    const items = [...filteredItems];
+    const fromIndex = items.findIndex((item) => item.id === itemId);
+    if (fromIndex === -1) return;
+
+    const clampedPos = Math.max(1, Math.min(newPos, items.length));
+    const toIndex = clampedPos - 1;
+
+    if (fromIndex === toIndex) {
+      setEditingPositionId(null);
+      return;
+    }
+
+    const [movedItem] = items.splice(fromIndex, 1);
+    items.splice(toIndex, 0, movedItem);
+
+    // Optimistic UI update
+    const updatedLists = lists.map((l) =>
+      l.id === activeList.id ? { ...l, items } : l
+    );
+    setLists(updatedLists);
+    setEditingPositionId(null);
+
+    // Jump to the page containing the new position so the admin can see it
+    const newPage = Math.ceil(clampedPos / itemsPerPage);
+    setCurrentPage(newPage);
+
+    try {
+      const itemIds = items.map((item) => item.id);
+      await reorderItems(activeList.id, itemIds);
+      showToast(`उत्पाद क्रम ${clampedPos} पर सफलतापूर्वक स्थानांतरित किया गया!`);
+    } catch (err) {
+      showToast("क्रम बदलने में विफलता: " + err.message, "error");
+      await loadLists(); // revert
+    }
   };
 
   const loadLists = async () => {
@@ -950,7 +993,42 @@ export default function AdminPanel() {
                             onDrop={(e) => handleDrop(e, item.id)}
                             className={`draggable-row ${draggedItemId === item.id ? "row-dragging" : ""} ${dragOverItemId === item.id && draggedItemId !== item.id ? "row-drag-over" : ""}`}
                           >
-                            <td style={{color: '#888', fontWeight: 'bold'}}>{indexOfFirstItem + idx + 1}</td>
+                             <td
+                               style={{ color: '#888', fontWeight: 'bold', cursor: 'pointer', userSelect: 'none', minWidth: 52 }}
+                               title="क्लिक करें और नया क्रमांक टाइप करें"
+                               onClick={() => {
+                                 const globalIdx = filteredItems.findIndex(fi => fi.id === item.id);
+                                 setEditingPositionId(item.id);
+                                 setPositionInputVal(String(globalIdx + 1));
+                               }}
+                             >
+                               {editingPositionId === item.id ? (
+                                 <input
+                                   type="number"
+                                   className="pos-input"
+                                   value={positionInputVal}
+                                   autoFocus
+                                   min={1}
+                                   max={filteredItems.length}
+                                   onChange={(e) => setPositionInputVal(e.target.value)}
+                                   onKeyDown={(e) => {
+                                     if (e.key === 'Enter') {
+                                       const n = parseInt(positionInputVal, 10);
+                                       if (!isNaN(n)) handleMoveToPosition(item.id, n);
+                                       else setEditingPositionId(null);
+                                     } else if (e.key === 'Escape') {
+                                       setEditingPositionId(null);
+                                     }
+                                   }}
+                                   onBlur={() => setEditingPositionId(null)}
+                                   onClick={(e) => e.stopPropagation()}
+                                 />
+                               ) : (
+                                 <span className="pos-badge">
+                                   {filteredItems.findIndex(fi => fi.id === item.id) + 1}
+                                 </span>
+                               )}
+                             </td>
                             {activeList.columns.map((col, ci) => {
                               const isPrakar = col.includes("प्रकार");
                               const cellVal = vals[ci] || "—";

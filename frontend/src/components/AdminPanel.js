@@ -283,6 +283,10 @@ export default function AdminPanel() {
             useCORS: true,
             allowTaint: true,
             backgroundColor: "#ffffff",
+            width: 794,
+            height: 1123,
+            windowWidth: 794,
+            windowHeight: 1123,
           });
           canvasList.push(canvas);
         }
@@ -375,77 +379,92 @@ export default function AdminPanel() {
     }
 
     const colCount = activeList.columns.length;
-    // Dynamically scale typography & padding based on columns to guarantee ZERO clipping/overlap
-    const printFontSize = colCount > 5 ? "11px" : colCount > 4 ? "12px" : "14px";
-    const printPadding = colCount > 5 ? "6px 4px" : colCount > 4 ? "8px 6px" : "12px 10px";
 
     return (
       <div className="print-container-hidden" ref={printRef}>
-        {pages.map((pageItems, pageIndex) => (
-          <div className="print-page" key={pageIndex}>
-             <div>
-               <div className="print-header">
-                  <h2>पाण्डेय ट्रेडर्स</h2>
-                  <p>खाद बीज भंडार</p>
-                  <div className="print-contact">
-                    <span>बड़का गांव, गोपालगंज, बिहार</span>
-                    <span>📞 8969730344</span>
-                  </div>
+        {pages.map((pageItems, pageIndex) => {
+          const itemCount = pageItems.length;
+          let printFontSize = "14px";
+          let printPadding = "12px 10px";
+
+          // Dynamically scale typography & padding based on columns AND item count to guarantee ZERO clipping/overlap
+          if (itemCount > 16) {
+            printFontSize = colCount > 5 ? "10.5px" : colCount > 4 ? "11.5px" : "12px";
+            printPadding = colCount > 5 ? "4px 3px" : colCount > 4 ? "6px 4px" : "8px 5px";
+          } else if (itemCount > 12) {
+            printFontSize = colCount > 5 ? "11px" : colCount > 4 ? "12px" : "13px";
+            printPadding = colCount > 5 ? "5px 4px" : colCount > 4 ? "7px 5px" : "9px 7px";
+          } else {
+            printFontSize = colCount > 5 ? "11px" : colCount > 4 ? "12px" : "14px";
+            printPadding = colCount > 5 ? "6px 4px" : colCount > 4 ? "8px 6px" : "12px 10px";
+          }
+
+          return (
+            <div className="print-page" key={pageIndex}>
+               <div style={{ width: "100%" }}>
+                 <div className="print-header">
+                    <h2>पाण्डेय ट्रेडर्स</h2>
+                    <p>खाद बीज भंडार</p>
+                    <div className="print-contact">
+                      <span>बड़का गांव, गोपालगंज, बिहार</span>
+                      <span>📞 8969730344</span>
+                    </div>
+                 </div>
+                 
+                 <div className="print-title">
+                   {activeList.title}
+                 </div>
+  
+                 <div className="print-table-wrap">
+                   <table className="print-table" style={{ fontSize: printFontSize }}>
+                      <thead>
+                        <tr>
+                          <th style={{ width: 50, padding: printPadding }}>क्र.सं.</th>
+                          {activeList.columns.map((col, ci) => (
+                            <th key={ci} style={{ padding: printPadding }}>{col}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {pageItems.map((item, idx) => {
+                          const vals = item.item_values || [];
+                          const prakarColIdx = activeList.columns.findIndex(c => c.includes("प्रकार"));
+                          const prakarVal = prakarColIdx !== -1 ? vals[prakarColIdx] : "";
+                          const styles = getVarietyColorStyles(prakarVal);
+                          
+                          return (
+                            <tr key={item.id} className={`print-row-${styles.name}`}>
+                              <td style={{ padding: printPadding }}>{pageIndex * itemsPerPagePrint + idx + 1}</td>
+                              {activeList.columns.map((col, ci) => {
+                                const isPrakar = col.includes("प्रकार");
+                                if (isPrakar && styles.name !== "none") {
+                                  return (
+                                    <td key={ci} style={{ fontWeight: 'bold', padding: printPadding }}>
+                                      {vals[ci] || "—"}
+                                    </td>
+                                  );
+                                }
+                                return <td key={ci} style={{ padding: printPadding }}>{vals[ci] || "—"}</td>;
+                              })}
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                   </table>
+                 </div>
                </div>
                
-               <div className="print-title">
-                 {activeList.title}
+               <div className="print-footer">
+                  <p>गुणवत्तापूर्ण खाद, बीज एवं कृषि रसायन के विश्वनीय विक्रेता।</p>
+                  {pages.length > 1 && (
+                    <p style={{ fontSize: '10px', color: '#888', marginTop: '6px', fontWeight: 400 }}>
+                      पृष्ठ {pageIndex + 1} / {pages.length}
+                    </p>
+                  )}
                </div>
-
-               <div className="print-table-wrap">
-                 <table className="print-table" style={{ fontSize: printFontSize }}>
-                    <thead>
-                      <tr>
-                        <th style={{ width: 50, padding: printPadding }}>क्र.सं.</th>
-                        {activeList.columns.map((col, ci) => (
-                          <th key={ci} style={{ padding: printPadding }}>{col}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {pageItems.map((item, idx) => {
-                        const vals = item.item_values || [];
-                        const prakarColIdx = activeList.columns.findIndex(c => c.includes("प्रकार"));
-                        const prakarVal = prakarColIdx !== -1 ? vals[prakarColIdx] : "";
-                        const styles = getVarietyColorStyles(prakarVal);
-                        
-                        return (
-                          <tr key={item.id} className={`print-row-${styles.name}`}>
-                            <td style={{ padding: printPadding }}>{pageIndex * itemsPerPagePrint + idx + 1}</td>
-                            {activeList.columns.map((col, ci) => {
-                              const isPrakar = col.includes("प्रकार");
-                              if (isPrakar && styles.name !== "none") {
-                                return (
-                                  <td key={ci} style={{ fontWeight: 'bold', padding: printPadding }}>
-                                    {vals[ci] || "—"}
-                                  </td>
-                                );
-                              }
-                              return <td key={ci} style={{ padding: printPadding }}>{vals[ci] || "—"}</td>;
-                            })}
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                 </table>
-               </div>
-             </div>
-             
-             <div className="print-footer">
-                <p>गुणवत्तापूर्ण खाद, बीज एवं कृषि रसायन के विश्वनीय विक्रेता।</p>
-                {pages.length > 1 && (
-                  <p style={{ fontSize: '10px', color: '#888', marginTop: '6px', fontWeight: 400 }}>
-                    पृष्ठ {pageIndex + 1} / {pages.length}
-                  </p>
-                )}
-             </div>
-          </div>
-        ))}
+            </div>
+          );
+        })}
       </div>
     );
   };

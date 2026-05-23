@@ -22,8 +22,10 @@ export default function HomePage() {
   return (
     <>
       <Navbar />
-      <Hero />
-      <Features />
+      <div className="hero-section-wrap">
+        <Hero />
+        <Features />
+      </div>
 
       <section className="products-section" id="products">
         <div className="section-header">

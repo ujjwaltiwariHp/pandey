@@ -20,7 +20,7 @@ export default function Navbar() {
 
   const isHome = pathname === "/";
   const isAdmin = pathname === "/admin";
-  const showTransparent = isHome && !scrolled;
+  const showTransparent = false;
 
   return (
     <nav 
